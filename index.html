@@ -1125,33 +1125,6 @@ function navClick(button, section){
 }
 
 
-function researchCreator(){
-
-    const input =
-        document.getElementById("researchUrl");
-
-    const value =
-        input.value.trim();
-
-    if(!value){
-
-        input.focus();
-
-        input.style.borderColor = "#c8ff3d";
-
-        setTimeout(()=>{
-            input.style.borderColor = "";
-        },1000);
-
-        return;
-    }
-
-    alert(
-        "Research engine আসছে। এই অংশে আমরা YouTube/Facebook/Website data collection + AI analysis connect করব।"
-    );
-
-}
-
 
 function openTool(name){
 
@@ -1274,6 +1247,6 @@ function escapeHtml(text) {
 }
 
 </script>
-
+<script src="research.js"></script>
 </body>
 </html>
