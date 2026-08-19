@@ -101,3 +101,4 @@ async function researchCreator() {
         }
     }
 }
+window.researchCreator = researchCreator;
