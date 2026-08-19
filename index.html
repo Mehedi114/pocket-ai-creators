@@ -1196,29 +1196,81 @@ function closeTool(){
 }
 
 
-function demoGenerate(){
+async function demoGenerate() {
 
-    const input =
-        document.getElementById("toolInput");
+    const input = document.getElementById("toolInput");
+    const output = document.getElementById("output");
+    const title = document.getElementById("panelTitle");
 
-    const output =
-        document.getElementById("output");
+    const text = input.value.trim();
 
-    if(!input.value.trim()){
-
+    if (!text) {
         input.focus();
-
         return;
-
     }
 
-    output.innerHTML =
-        "AI engine এখনো connect করা হয়নি.<br><br>" +
-        "<strong style='color:#c8ff3d'>Next step:</strong> " +
-        "এই interface-এর সাথে free AI API router connect করব।";
-
     output.classList.add("show");
+    output.innerHTML = `
+        <div style="color:#c8ff3d">
+            ✦ Pocket AI is thinking...
+        </div>
+    `;
 
+    try {
+
+        const response = await fetch("/api/generate", {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                tool: title.textContent,
+                input: text
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.error || "AI request failed"
+            );
+        }
+
+        if (!data.result) {
+            throw new Error("Empty AI response");
+        }
+
+        output.innerHTML = `
+            <div style="
+                white-space:pre-wrap;
+                color:#dfe3e8;
+                line-height:1.8;
+            ">${escapeHtml(data.result)}</div>
+        `;
+
+    } catch (error) {
+
+        console.error(error);
+
+        output.innerHTML = `
+            <div style="color:#ff6f91">
+                ✕ ${escapeHtml(error.message)}
+            </div>
+        `;
+    }
+}
+
+
+function escapeHtml(text) {
+
+    const div = document.createElement("div");
+
+    div.textContent = text;
+
+    return div.innerHTML;
 }
 
 </script>
