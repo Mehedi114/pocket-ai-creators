@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pocket AI — Creator Intelligence</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+    --bg:#08090b;
+    --panel:#0e1013;
+    --panel2:#12151a;
+    --line:#20242b;
+    --line2:#292e36;
+    --text:#f4f5f7;
+    --muted:#858b96;
+    --muted2:#5f6671;
+    --lime:#c8ff3d;
+    --lime2:#a8e52b;
+    --blue:#7c9cff;
+    --orange:#ff9f43;
+    --pink:#ff6f91;
+    --cyan:#48d9ff;
+    --radius:18px;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"DM Sans",sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+button,input{
+    font-family:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+/* subtle creator-grid */
+body:before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:.18;
+    background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+    background-size:48px 48px;
+    mask-image:linear-gradient(to bottom,#000,transparent 75%);
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    width:245px;
+    background:rgba(9,10,12,.94);
+    border-right:1px solid var(--line);
+    padding:25px 16px;
+    z-index:100;
+    backdrop-filter:blur(18px);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    padding:5px 10px 30px;
+}
+
+.brand-mark{
+    width:35px;
+    height:35px;
+    border:1px solid #3c442e;
+    background:var(--lime);
+    color:#080a06;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:"Space Grotesk";
+    font-weight:700;
+    font-size:16px;
+    transform:rotate(-5deg);
+}
+
+.brand-name{
+    font-family:"Space Grotesk";
+    font-weight:700;
+    letter-spacing:-.5px;
+    font-size:16px;
+}
+
+.brand-name span{
+    color:var(--lime);
+}
+
+.nav-label{
+    color:#505762;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    padding:0 12px 9px;
+}
+
+.nav{
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+}
+
+.nav button{
+    border:0;
+    background:transparent;
+    color:#8d939d;
+    width:100%;
+    text-align:left;
+    padding:11px 12px;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    gap:11px;
+    font-size:13px;
+    transition:.2s;
+}
+
+.nav button:hover{
+    background:#14171b;
+    color:#fff;
+}
+
+.nav button.active{
+    background:#171b14;
+    color:var(--lime);
+}
+
+.nav-icon{
+    width:18px;
+    text-align:center;
+    font-size:14px;
+}
+
+.sidebar-bottom{
+    position:absolute;
+    left:16px;
+    right:16px;
+    bottom:20px;
+    border-top:1px solid var(--line);
+    padding-top:15px;
+}
+
+.creator-mode{
+    padding:13px;
+    background:#10130e;
+    border:1px solid #252c1d;
+    border-radius:12px;
+}
+
+.creator-mode small{
+    color:#62695c;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+.creator-mode div{
+    margin-top:5px;
+    color:#d8e5c1;
+    font-size:12px;
+}
+
+/* ================= MAIN ================= */
+
+.main{
+    margin-left:245px;
+    min-height:100vh;
+    padding:30px 38px 70px;
+    position:relative;
+}
+
+.topbar{
+    height:48px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:35px;
+}
+
+.crumb{
+    color:#666d77;
+    font-size:12px;
+}
+
+.crumb strong{
+    color:#b8bdc5;
+}
+
+.top-actions{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.icon-btn{
+    width:36px;
+    height:36px;
+    border:1px solid var(--line);
+    background:#0d0f12;
+    color:#9ba1aa;
+    border-radius:10px;
+}
+
+.avatar{
+    width:36px;
+    height:36px;
+    background:#20242a;
+    border:1px solid #30353d;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    font-weight:700;
+}
+
+/* ================= HERO ================= */
+
+.hero{
+    max-width:950px;
+    margin:0 auto;
+    padding:45px 0 38px;
+}
+
+.hero-top{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:19px;
+}
+
+.live{
+    width:7px;
+    height:7px;
+    background:var(--lime);
+    border-radius:50%;
+    box-shadow:0 0 12px rgba(200,255,61,.6);
+}
+
+.hero-top span:last-child{
+    color:#68705f;
+    font-size:11px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+}
+
+.hero h1{
+    font-family:"Space Grotesk";
+    font-size:clamp(40px,6vw,72px);
+    line-height:.98;
+    letter-spacing:-3.5px;
+    max-width:800px;
+    font-weight:600;
+}
+
+.hero h1 em{
+    font-style:normal;
+    color:var(--lime);
+}
+
+.hero-description{
+    margin-top:20px;
+    color:#777e88;
+    font-size:15px;
+    max-width:590px;
+    line-height:1.7;
+}
+
+/* ================= RESEARCH ================= */
+
+.research{
+    max-width:950px;
+    margin:0 auto;
+}
+
+.research-label{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:1.3px;
+    color:#707780;
+    text-transform:uppercase;
+    margin-bottom:9px;
+}
+
+.research-box{
+    border:1px solid #30353d;
+    background:#0d0f12;
+    border-radius:16px;
+    padding:8px;
+    display:flex;
+    align-items:center;
+    transition:.25s;
+    box-shadow:0 15px 50px rgba(0,0,0,.18);
+}
+
+.research-box:focus-within{
+    border-color:#59633d;
+    box-shadow:0 0 0 3px rgba(200,255,61,.045);
+}
+
+.url-icon{
+    width:45px;
+    height:45px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#707781;
+    font-size:17px;
+}
+
+.research-box input{
+    flex:1;
+    background:transparent;
+    border:0;
+    outline:0;
+    color:#e9ebee;
+    font-size:14px;
+    min-width:0;
+}
+
+.research-box input::placeholder{
+    color:#535963;
+}
+
+.research-btn{
+    border:0;
+    background:var(--lime);
+    color:#0b0d08;
+    font-weight:700;
+    padding:14px 20px;
+    border-radius:11px;
+    font-size:13px;
+    transition:.2s;
+}
+
+.research-btn:hover{
+    background:#d4ff61;
+    transform:translateY(-1px);
+}
+
+.research-hint{
+    display:flex;
+    justify-content:space-between;
+    margin-top:9px;
+    color:#555b64;
+    font-size:11px;
+}
+
+.platforms{
+    display:flex;
+    gap:7px;
+}
+
+.platform{
+    padding:3px 7px;
+    border:1px solid #252a31;
+    border-radius:5px;
+}
+
+/* ================= DIVIDER ================= */
+
+.section-divider{
+    max-width:950px;
+    margin:48px auto 28px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.section-divider:before,
+.section-divider:after{
+    content:"";
+    height:1px;
+    background:var(--line);
+    flex:1;
+}
+
+.section-divider span{
+    color:#626872;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:1.3px;
+    white-space:nowrap;
+}
+
+/* ================= TOOLS ================= */
+
+.tools{
+    max-width:950px;
+    margin:0 auto;
+}
+
+.tool-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+
+.tool{
+    position:relative;
+    min-height:145px;
+    padding:19px;
+    background:#0d0f12;
+    border:1px solid var(--line);
+    border-radius:15px;
+    overflow:hidden;
+    transition:.25s;
+    cursor:pointer;
+}
+
+.tool:hover{
+    border-color:#343a43;
+    background:#111418;
+    transform:translateY(-3px);
+}
+
+.tool:hover .tool-arrow{
+    transform:translate(2px,-2px);
+    color:var(--lime);
+}
+
+.tool-number{
+    color:#4d535d;
+    font-size:10px;
+    font-weight:700;
+    font-family:"Space Grotesk";
+}
+
+.tool-icon{
+    margin-top:22px;
+    width:29px;
+    height:29px;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:13px;
+    background:#171a1f;
+    color:#b8bec7;
+}
+
+.tool h3{
+    margin-top:12px;
+    font-size:14px;
+    font-weight:600;
+    color:#e6e8eb;
+}
+
+.tool p{
+    margin-top:5px;
+    color:#626973;
+    font-size:11px;
+    line-height:1.45;
+}
+
+.tool-arrow{
+    position:absolute;
+    top:18px;
+    right:18px;
+    color:#444a53;
+    transition:.2s;
+}
+
+/* Accent lines */
+
+.tool.youtube:hover{border-top-color:var(--blue)}
+.tool.social:hover{border-top-color:var(--pink)}
+.tool.marketing:hover{border-top-color:var(--orange)}
+.tool.writing:hover{border-top-color:var(--cyan)}
+
+/* ================= CREATOR NOTE ================= */
+
+.creator-note{
+    max-width:950px;
+    margin:45px auto 0;
+    padding:22px;
+    border:1px solid var(--line);
+    background:#0b0d0f;
+    border-radius:15px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:25px;
+}
+
+.note-left{
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+}
+
+.note-symbol{
+    color:var(--lime);
+    font-size:18px;
+}
+
+.note-title{
+    font-size:13px;
+    font-weight:600;
+}
+
+.note-text{
+    color:#626973;
+    font-size:11px;
+    margin-top:5px;
+    line-height:1.5;
+}
+
+.shortcut{
+    white-space:nowrap;
+    color:#555b64;
+    font-size:10px;
+}
+
+kbd{
+    border:1px solid #30353d;
+    background:#15181c;
+    border-radius:5px;
+    padding:3px 6px;
+    color:#9298a0;
+}
+
+/* ================= TOOL PANEL ================= */
+
+.tool-panel{
+    display:none;
+    max-width:950px;
+    margin:30px auto 0;
+    border:1px solid var(--line2);
+    background:#0d0f12;
+    border-radius:16px;
+    padding:22px;
+}
+
+.tool-panel.show{
+    display:block;
+    animation:panelIn .25s ease;
+}
+
+@keyframes panelIn{
+    from{
+        opacity:0;
+        transform:translateY(8px);
+    }
+    to{
+        opacity:1;
+        transform:none;
+    }
+}
+
+.panel-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:20px;
+}
+
+.panel-head h2{
+    font-family:"Space Grotesk";
+    font-size:20px;
+}
+
+.close-panel{
+    border:1px solid var(--line);
+    background:transparent;
+    color:#777e87;
+    width:32px;
+    height:32px;
+    border-radius:8px;
+}
+
+textarea{
+    width:100%;
+    min-height:130px;
+    resize:vertical;
+    background:#080a0c;
+    color:#e8eaed;
+    border:1px solid #272c33;
+    border-radius:11px;
+    padding:14px;
+    outline:none;
+    font-size:13px;
+}
+
+textarea:focus{
+    border-color:#505a3a;
+}
+
+.generate{
+    margin-top:10px;
+    border:0;
+    background:var(--lime);
+    color:#090b07;
+    padding:12px 17px;
+    border-radius:9px;
+    font-weight:700;
+    font-size:12px;
+}
+
+.output{
+    margin-top:16px;
+    border:1px solid var(--line);
+    background:#090b0d;
+    border-radius:11px;
+    padding:15px;
+    color:#777f89;
+    font-size:12px;
+    line-height:1.7;
+    display:none;
+}
+
+.output.show{
+    display:block;
+}
+
+/* ================= MOBILE ================= */
+
+.mobile-menu{
+    display:none;
+}
+
+@media(max-width:1050px){
+
+    .tool-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:760px){
+
+    .sidebar{
+        transform:translateX(-100%);
+        transition:.25s;
+        box-shadow:20px 0 60px rgba(0,0,0,.4);
+    }
+
+    .sidebar.open{
+        transform:translateX(0);
+    }
+
+    .main{
+        margin-left:0;
+        padding:18px 16px 50px;
+    }
+
+    .mobile-menu{
+        display:flex;
+        position:fixed;
+        z-index:150;
+        left:14px;
+        top:14px;
+        width:38px;
+        height:38px;
+        border:1px solid var(--line2);
+        background:#101216;
+        color:#ddd;
+        border-radius:9px;
+        align-items:center;
+        justify-content:center;
+    }
+
+    .topbar{
+        justify-content:flex-end;
+        margin-bottom:15px;
+    }
+
+    .crumb{
+        display:none;
+    }
+
+    .hero{
+        padding:35px 4px 28px;
+    }
+
+    .hero h1{
+        font-size:43px;
+        letter-spacing:-2.3px;
+    }
+
+    .hero-description{
+        font-size:13px;
+    }
+
+    .research-box{
+        padding:6px;
+        flex-wrap:wrap;
+    }
+
+    .url-icon{
+        width:39px;
+        height:42px;
+    }
+
+    .research-box input{
+        width:calc(100% - 50px);
+    }
+
+    .research-btn{
+        width:100%;
+        margin-top:6px;
+    }
+
+    .research-hint{
+        flex-direction:column;
+        gap:8px;
+    }
+
+    .tool-grid{
+        grid-template-columns:1fr 1fr;
+        gap:8px;
+    }
+
+    .tool{
+        min-height:137px;
+        padding:15px;
+    }
+
+    .tool-icon{
+        margin-top:19px;
+    }
+
+    .creator-note{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .shortcut{
+        display:none;
+    }
+}
+
+@media(max-width:420px){
+
+    .tool-grid{
+        grid-template-columns:1fr;
+    }
+
+    .tool{
+        min-height:120px;
+    }
+
+    .tool-icon{
+        margin-top:15px;
+    }
+
+    .hero h1{
+        font-size:38px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<button class="mobile-menu" onclick="toggleSidebar()">☰</button>
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="brand">
+        <div class="brand-mark">P</div>
+        <div class="brand-name">Pocket <span>AI</span></div>
+    </div>
+
+    <div class="nav-label">Workspace</div>
+
+    <nav class="nav">
+
+        <button class="active" onclick="navClick(this,'home')">
+            <span class="nav-icon">⌂</span>
+            Command Center
+        </button>
+
+        <button onclick="navClick(this,'research')">
+            <span class="nav-icon">⌕</span>
+            Creator Research
+        </button>
+
+        <button onclick="navClick(this,'youtube')">
+            <span class="nav-icon">▶</span>
+            YouTube
+        </button>
+
+        <button onclick="navClick(this,'social')">
+            <span class="nav-icon">◉</span>
+            Social Content
+        </button>
+
+        <button onclick="navClick(this,'marketing')">
+            <span class="nav-icon">↗</span>
+            Marketing
+        </button>
+
+        <button onclick="navClick(this,'writing')">
+            <span class="nav-icon">✎</span>
+            Writing
+        </button>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+        <div class="creator-mode">
+            <small>Mode</small>
+            <div>● Creator Intelligence</div>
+        </div>
+    </div>
+
+</aside>
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+    <div class="topbar">
+
+        <div class="crumb">
+            Pocket AI / <strong>Command Center</strong>
+        </div>
+
+        <div class="top-actions">
+            <button class="icon-btn">?</button>
+            <div class="avatar">M</div>
+        </div>
+
+    </div>
+
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <div class="hero-top">
+            <span class="live"></span>
+            <span>Creator Intelligence Workspace</span>
+        </div>
+
+        <h1>
+            Don't just create.<br>
+            <em>Create smarter.</em>
+        </h1>
+
+        <p class="hero-description">
+            Research creators, discover content opportunities and turn
+            one idea into a complete content strategy — from your pocket.
+        </p>
+
+    </section>
+
+
+    <!-- RESEARCH -->
+
+    <section class="research">
+
+        <div class="research-label">
+            Research a creator
+        </div>
+
+        <div class="research-box">
+
+            <div class="url-icon">⌁</div>
+
+            <input
+                id="researchUrl"
+                type="text"
+                placeholder="Paste a YouTube channel, video, Facebook page or website..."
+            >
+
+            <button class="research-btn" onclick="researchCreator()">
+                Research →
+            </button>
+
+        </div>
+
+        <div class="research-hint">
+
+            <span>
+                Give Pocket AI a creator to study.
+            </span>
+
+            <div class="platforms">
+                <span class="platform">YouTube</span>
+                <span class="platform">Facebook</span>
+                <span class="platform">Web</span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- TOOLS -->
+
+    <div class="section-divider">
+        <span>Creator Toolkit</span>
+    </div>
+
+
+    <section class="tools">
+
+        <div class="tool-grid">
+
+            <div class="tool youtube" onclick="openTool('YouTube Title Generator')">
+                <span class="tool-number">01</span>
+                <span class="tool-arrow">↗</span>
+
+                <div class="tool-icon">T</div>
+
+                <h3>YouTube Titles</h3>
+                <p>Build curiosity-driven titles designed to earn the click.</p>
+            </div>
+
+
+            <div class="tool youtube" onclick="openTool('SEO Description Generator')">
+                <span class="tool-number">02</span>
+                <span class="tool-arrow">↗</span>
+
+                <div class="tool-icon">⌕</div>
+
+                <h3>SEO Description</h3>
+                <p>Turn your topic into a searchable, structured description.</p>
+            </div>
+
+
+            <div class="tool youtube" onclick="openTool('YouTube Tags')">
+                <span class="tool-number">03</span>
+                <span class="tool-arrow">↗</span>
+
+                <div class="tool-icon">#</div>
+
+                <h3>YouTube Tags</h3>
+                <p>Find relevant keywords and search phrases for your video.</p>
+            </div>
+
+
+            <div class="tool social" onclick="openTool('Facebook Caption')">
+                <span class="tool-number">04</span>
+                <span class="tool-arrow">↗</span>
+
+                <div class="tool-icon">f</div>
+
+                <h3>Facebook Caption</h3>
+                <p>Write posts that feel human, sharp and worth stopping for.</p>
+            </div>
+
+
+            <div class="tool marketing" onclick="openTool('Product Description')">
+                <span class="tool-number">05</span>
+                <span class="tool-arrow">↗</span>
+
+                <div class="tool-icon">□</div>
+
+                <h3>Product Description</h3>
+                <p>Turn product details into clear, persuasive selling copy.</p>
+            </div>
+
+
+            <div class="tool marketing" onclick="openTool('Ad Copy')">
+                <span class="tool-number">06</span>
+                <span class="tool-arrow">↗</span>
+
+                <div class="tool-icon">↗</div>
+
+                <h3>Ad Copy</h3>
+                <p>Generate hooks, benefits and CTAs for your next campaign.</p>
+            </div>
+
+
+            <div class="tool writing" onclick="openTool('Blog Writer')">
+                <span class="tool-number">07</span>
+                <span class="tool-arrow">↗</span>
+
+                <div class="tool-icon">≡</div>
+
+                <h3>Blog Writer</h3>
+                <p>Shape rough ideas into useful, structured long-form content.</p>
+            </div>
+
+
+            <div class="tool writing" onclick="openTool('Script Generator')">
+                <span class="tool-number">08</span>
+                <span class="tool-arrow">↗</span>
+
+                <div class="tool-icon">✦</div>
+
+                <h3>Script Generator</h3>
+                <p>Build hooks, story flow and scripts made for attention.</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- DYNAMIC TOOL PANEL -->
+
+    <section class="tool-panel" id="toolPanel">
+
+        <div class="panel-head">
+
+            <h2 id="panelTitle">
+                Tool
+            </h2>
+
+            <button class="close-panel" onclick="closeTool()">×</button>
+
+        </div>
+
+        <textarea
+            id="toolInput"
+            placeholder="Tell Pocket AI what you're creating..."
+        ></textarea>
+
+        <button class="generate" onclick="demoGenerate()">
+            ✦ Generate
+        </button>
+
+        <div class="output" id="output">
+            Your generated result will appear here.
+        </div>
+
+    </section>
+
+
+    <!-- CREATOR NOTE -->
+
+    <div class="creator-note">
+
+        <div class="note-left">
+
+            <div class="note-symbol">✦</div>
+
+            <div>
+                <div class="note-title">
+                    Built for the creator's brain.
+                </div>
+
+                <div class="note-text">
+                    Research first. Think better. Create faster.
+                    Pocket AI turns scattered ideas into a workflow.
+                </div>
+            </div>
+
+        </div>
+
+        <div class="shortcut">
+            Tip: <kbd>Research</kbd> before you <kbd>Create</kbd>
+        </div>
+
+    </div>
+
+</main>
+
+
+<script>
+
+function toggleSidebar(){
+
+    document
+        .getElementById("sidebar")
+        .classList.toggle("open");
+
+}
+
+
+function navClick(button, section){
+
+    document
+        .querySelectorAll(".nav button")
+        .forEach(btn => btn.classList.remove("active"));
+
+    button.classList.add("active");
+
+    document
+        .getElementById("sidebar")
+        .classList.remove("open");
+
+    if(section === "research"){
+
+        document
+            .getElementById("researchUrl")
+            .focus();
+
+        window.scrollTo({
+            top:300,
+            behavior:"smooth"
+        });
+
+    }
+
+}
+
+
+function researchCreator(){
+
+    const input =
+        document.getElementById("researchUrl");
+
+    const value =
+        input.value.trim();
+
+    if(!value){
+
+        input.focus();
+
+        input.style.borderColor = "#c8ff3d";
+
+        setTimeout(()=>{
+            input.style.borderColor = "";
+        },1000);
+
+        return;
+    }
+
+    alert(
+        "Research engine আসছে। এই অংশে আমরা YouTube/Facebook/Website data collection + AI analysis connect করব।"
+    );
+
+}
+
+
+function openTool(name){
+
+    const panel =
+        document.getElementById("toolPanel");
+
+    const title =
+        document.getElementById("panelTitle");
+
+    const input =
+        document.getElementById("toolInput");
+
+    const output =
+        document.getElementById("output");
+
+    title.textContent = name;
+
+    input.value = "";
+
+    output.classList.remove("show");
+
+    panel.classList.add("show");
+
+    setTimeout(()=>{
+        input.focus();
+    },100);
+
+    panel.scrollIntoView({
+        behavior:"smooth",
+        block:"center"
+    });
+
+}
+
+
+function closeTool(){
+
+    document
+        .getElementById("toolPanel")
+        .classList.remove("show");
+
+}
+
+
+function demoGenerate(){
+
+    const input =
+        document.getElementById("toolInput");
+
+    const output =
+        document.getElementById("output");
+
+    if(!input.value.trim()){
+
+        input.focus();
+
+        return;
+
+    }
+
+    output.innerHTML =
+        "AI engine এখনো connect করা হয়নি.<br><br>" +
+        "<strong style='color:#c8ff3d'>Next step:</strong> " +
+        "এই interface-এর সাথে free AI API router connect করব।";
+
+    output.classList.add("show");
+
+}
+
+</script>
+
+</body>
+</html>
