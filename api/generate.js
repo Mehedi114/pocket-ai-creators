@@ -227,7 +227,7 @@ Give a practical, useful and high-quality answer.
 
                 body: JSON.stringify({
 
-                  model: "llama-3.3-70b-versatile",
+                  model: "openai/gpt-oss-120b",
 
                     messages: [
                         {
