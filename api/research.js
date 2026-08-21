@@ -1,4 +1,9 @@
+import { callAI } from "./_providers.js";
+import { guard } from "./_auth.js";
+
 export default async function handler(req, res) {
+    if (!guard(req, res)) return;
+
     if (req.method !== "POST") {
         return res.status(405).json({
             error: "Method not allowed"
@@ -15,17 +20,10 @@ export default async function handler(req, res) {
         }
 
         const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
-        const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
         if (!YOUTUBE_API_KEY) {
             return res.status(500).json({
                 error: "YOUTUBE_API_KEY is not configured in Vercel."
-            });
-        }
-
-        if (!GROQ_API_KEY) {
-            return res.status(500).json({
-                error: "GROQ_API_KEY is not configured in Vercel."
             });
         }
 
@@ -291,7 +289,7 @@ export default async function handler(req, res) {
         }));
 
         // --------------------------------
-        // Ask Groq AI to analyze
+        // Ask AI (multi-provider) to analyze
         // --------------------------------
 
         const prompt = `
@@ -329,65 +327,14 @@ Important:
 - Be practical and specific.
 `;
 
-        const groqResponse = await fetch(
-            "https://api.groq.com/openai/v1/chat/completions",
-            {
-                method: "POST",
+        const outcome = await callAI({
+            system: "You are Pocket AI for Creators. Give accurate, practical YouTube strategy analysis.",
+            prompt,
+            temperature: 0.7,
+            maxTokens: 4096
+        });
 
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization":
-                        `Bearer ${GROQ_API_KEY}`
-                },
-
-                body: JSON.stringify({
-                    model: "openai/gpt-oss-120b",
-
-                    messages: [
-                        {
-                            role: "system",
-                            content:
-                                "You are Pocket AI for Creators. Give accurate, practical YouTube strategy analysis."
-                        },
-                        {
-                            role: "user",
-                            content: prompt
-                        }
-                    ],
-
-                    temperature: 0.7,
-                    max_completion_tokens: 4096
-                })
-            }
-        );
-
-        const groqText = await groqResponse.text();
-
-        let groqData;
-
-        try {
-            groqData = JSON.parse(groqText);
-        } catch {
-            throw new Error(
-                "AI service returned an invalid response."
-            );
-        }
-
-        if (!groqResponse.ok) {
-            throw new Error(
-                groqData?.error?.message ||
-                "AI analysis failed."
-            );
-        }
-
-        const result =
-            groqData?.choices?.[0]?.message?.content;
-
-        if (!result) {
-            throw new Error(
-                "AI returned an empty research report."
-            );
-        }
+        const result = outcome.text;
 
         // --------------------------------
         // Final response
@@ -400,7 +347,14 @@ Important:
 
             videos: videoInfo,
 
-            result: result
+            result: result,
+
+            engine: {
+                provider: outcome.provider,
+                providerLabel: outcome.providerLabel,
+                model: outcome.model,
+                attempts: outcome.attempts || null
+            }
         });
 
     } catch (error) {

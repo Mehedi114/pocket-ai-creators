@@ -1,0 +1,35 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/generate.js": {
+      "maxDuration": 60
+    },
+    "api/research.js": {
+      "maxDuration": 60
+    },
+    "api/chat.js": {
+      "maxDuration": 60
+    },
+    "api/providers.js": {
+      "maxDuration": 15
+    },
+    "api/image.js": {
+      "maxDuration": 60
+    },
+    "api/read.js": {
+      "maxDuration": 60
+    },
+    "api/search.js": {
+      "maxDuration": 60
+    },
+    "api/transcribe.js": {
+      "maxDuration": 60
+    },
+    "api/tts.js": {
+      "maxDuration": 60
+    },
+    "api/diagram.js": {
+      "maxDuration": 60
+    }
+  }
+}

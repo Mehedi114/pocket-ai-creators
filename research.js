@@ -1,15 +1,14 @@
+/**
+ * Creator Research — YouTube channel analysis.
+ * Renders into the design system defined in index.html.
+ */
+
 async function researchCreator() {
     const input = document.getElementById("researchUrl");
     const value = input.value.trim();
 
     if (!value) {
         input.focus();
-        input.style.borderColor = "#c8ff3d";
-
-        setTimeout(() => {
-            input.style.borderColor = "";
-        }, 1000);
-
         return;
     }
 
@@ -18,88 +17,98 @@ async function researchCreator() {
 
     if (button) {
         button.disabled = true;
-        button.innerHTML = "Researching...";
+        button.innerHTML = "Researching\u2026";
     }
+
+    const box = ensureResultBox(input);
+
+    box.classList.add("show");
+    box.innerHTML =
+        '<div style="color:var(--gold)"><span class="spin"></span>' +
+        "Reading the channel \u2014 this one takes a moment</div>";
 
     try {
         const response = await fetch("/api/research", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                url: value
-            })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url: value })
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(
-                data.error || data.message || "Research failed"
-            );
+            throw new Error(data.error || data.message || "Research failed.");
         }
 
-        let output = document.getElementById("researchResult");
+        const channel = data.channel || {};
 
-        if (!output) {
-            output = document.createElement("div");
-            output.id = "researchResult";
+        const stat = (label, raw) =>
+            '<div style="flex:1;min-width:104px">' +
+            '<div class="serif" style="font-size:22px;color:var(--gold)">' +
+            Number(raw || 0).toLocaleString() +
+            "</div>" +
+            '<div class="label" style="margin-top:5px">' + label + "</div>" +
+            "</div>";
 
-            output.style.marginTop = "20px";
-            output.style.padding = "20px";
-            output.style.border = "1px solid #252a30";
-            output.style.borderRadius = "14px";
-            output.style.background = "#0d0f11";
-            output.style.color = "#f3f3f3";
-            output.style.whiteSpace = "pre-wrap";
-            output.style.lineHeight = "1.7";
+        const header = channel.title
+            ? '<div style="display:flex;flex-wrap:wrap;gap:18px;padding-bottom:20px;' +
+              'margin-bottom:20px;border-bottom:1px solid var(--hair)">' +
+              '<div class="serif" style="width:100%;font-size:19px;color:var(--bone)">' +
+              escapeResearch(channel.title) + "</div>" +
+              stat("Subscribers", channel.subscribers) +
+              stat("Total views", channel.totalViews) +
+              stat("Videos", channel.totalVideos) +
+              "</div>"
+            : "";
 
-            input.parentElement.parentElement.appendChild(output);
-        }
+        const engine =
+            typeof renderEngineBadge === "function"
+                ? renderEngineBadge(data.engine)
+                : "";
 
-        if (typeof data.result === "string") {
-            output.textContent = data.result;
-        } else {
-            output.textContent = JSON.stringify(
-                data.result || data,
-                null,
-                2
-            );
-        }
+        box.innerHTML =
+            header +
+            '<div class="body-text" id="researchText">' +
+            escapeResearch(data.result || "") +
+            "</div>" +
+            '<div class="controls" style="margin-top:16px">' +
+            '<button class="mini" onclick="copyText(this,\'researchText\')">Copy</button>' +
+            "</div>" +
+            engine;
 
-        output.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-        });
-
+        box.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (error) {
         console.error("Research error:", error);
 
-        let output = document.getElementById("researchResult");
+        box.innerHTML =
+            '<div style="color:var(--rose)">' + escapeResearch(error.message) + "</div>";
 
-        if (!output) {
-            output = document.createElement("div");
-            output.id = "researchResult";
-
-            output.style.marginTop = "20px";
-            output.style.padding = "20px";
-            output.style.borderRadius = "14px";
-            output.style.background = "#180f0f";
-            output.style.color = "#ff6b6b";
-            output.style.whiteSpace = "pre-wrap";
-
-            input.parentElement.parentElement.appendChild(output);
-        }
-
-        output.textContent =
-            "Research failed: " + error.message;
+        if (typeof toast === "function") toast(error.message, "err");
     } finally {
         if (button) {
             button.disabled = false;
             button.innerHTML = originalText;
         }
     }
+}
+
+function ensureResultBox(input) {
+    let box = document.getElementById("researchResult");
+
+    if (!box) {
+        box = document.createElement("div");
+        box.id = "researchResult";
+        box.className = "out";
+        input.closest(".research").appendChild(box);
+    }
+
+    return box;
+}
+
+function escapeResearch(text) {
+    const div = document.createElement("div");
+    div.textContent = text == null ? "" : text;
+    return div.innerHTML;
 }
 
 window.researchCreator = researchCreator;
