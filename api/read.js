@@ -11,52 +11,52 @@ const MODES = {
     summary: {
         label: "Summary",
         instruction: `
-একটা পরিষ্কার সারসংক্ষেপ দাও:
-1. এক লাইনে মূল বক্তব্য
-2. ৫-৮টি মূল পয়েন্ট
-3. গুরুত্বপূর্ণ সংখ্যা/তথ্য (থাকলে)
-4. লেখাটির উদ্দেশ্য ও টার্গেট পাঠক
-5. কী বাদ পড়েছে বা দুর্বল`
+Give a clean summary:
+1. The core point in one line
+2. Five to eight key points
+3. Any important numbers or data
+4. Who wrote this, for whom, and why
+5. What is missing or weakly argued`
     },
     content: {
         label: "Content Ideas",
         instruction: `
-একজন কনটেন্ট ক্রিয়েটরের দৃষ্টিতে বিশ্লেষণ করো:
-1. এখান থেকে বানানো যায় এমন ১০টি ভিডিও/পোস্ট আইডিয়া
-2. প্রতিটির জন্য একটা হুক
-3. কোন অ্যাঙ্গেলটা সবচেয়ে কম ব্যবহৃত
-4. কোন তথ্যগুলো ভিডিওতে সরাসরি ব্যবহার করা যাবে
-5. কী কী যাচাই করে নিতে হবে`
+Read this as a content creator would:
+1. Ten video or post ideas that could come from it
+2. A hook for each one
+3. Which angle is the least covered
+4. Which facts here can be used on camera directly
+5. What needs independent verification first`
     },
     competitor: {
         label: "Competitor Teardown",
         instruction: `
-প্রতিযোগী বিশ্লেষণ করো:
-1. এরা কী অফার করছে ও কাকে টার্গেট করছে
-2. পজিশনিং ও মূল বার্তা
-3. শক্তি
-4. দুর্বলতা ও ফাঁকফোকর
-5. এদের থেকে আলাদা হওয়ার ৫টি কংক্রিট উপায়
-6. এদের কপিরাইটিং থেকে শেখার মতো ৩টি জিনিস`
+Take this apart as a competitor:
+1. What they offer and who they are speaking to
+2. Their positioning and core message
+3. Where they are strong
+4. Where they are weak, and what they leave uncovered
+5. Five concrete ways to differentiate from them
+6. Three things worth learning from their copywriting`
     },
     rewrite: {
         label: "Rewrite for me",
         instruction: `
-এই কনটেন্টকে ক্রিয়েটরের নিজের ভাষায় নতুন করে লেখো:
-1. একটি মৌলিক, সাবলীল আর্টিকেল/স্ক্রিপ্ট (কপি নয় — নতুন করে লেখা)
-2. একটি YouTube স্ক্রিপ্ট ভার্সন
-3. একটি সোশ্যাল পোস্ট ভার্সন
-মূল তথ্য ঠিক রেখো, কিন্তু বাক্য ও গঠন সম্পূর্ণ নিজের।`
+Rewrite this content in the creator's own voice:
+1. An original, natural article or script — rewritten, never copied
+2. A YouTube script version
+3. A social post version
+Keep the facts intact, but every sentence and structure must be your own.`
     },
     facts: {
         label: "Fact Extract",
         instruction: `
-শুধু যাচাইযোগ্য তথ্য বের করো:
-1. সব সংখ্যা, তারিখ, পরিসংখ্যান (উৎসসহ)
-2. উদ্ধৃতি
-3. নাম ও প্রতিষ্ঠান
-4. দাবি যেগুলো প্রমাণ ছাড়া বলা হয়েছে
-কিছু বানাবে না। পেজে না থাকলে "পেজে নেই" লেখো।`
+Extract only what is verifiable:
+1. Every number, date and statistic, with its source
+2. Direct quotes
+3. Names and organisations
+4. Claims made without evidence
+Invent nothing. If something is not on the page, write "not on the page".`
     }
 };
 
@@ -71,35 +71,35 @@ export default async function handler(req, res) {
         const { url, mode = "summary", question } = req.body || {};
 
         if (!url || !String(url).trim()) {
-            return res.status(400).json({ error: "একটি URL দিন।" });
+            return res.status(400).json({ error: "Please provide a URL." });
         }
 
         const page = await readUrl(String(url).trim());
 
         if (!page.content || page.content.length < 120) {
             return res.status(422).json({
-                error: "পেজটি থেকে যথেষ্ট টেক্সট পাওয়া যায়নি (হয়তো লগইন লাগে বা পুরোটা ভিডিও/ছবি)।"
+                error: "Not enough text on that page — it may require a login, or be all video and images."
             });
         }
 
         const selected = MODES[mode] || MODES.summary;
 
         const task = question
-            ? `ব্যবহারকারীর প্রশ্ন: ${question}\n\nশুধু পেজের তথ্য ব্যবহার করে উত্তর দাও।`
+            ? `The reader asks: ${question}\n\nAnswer using only what is on the page.`
             : selected.instruction;
 
         const outcome = await callAI({
             system:
                 "You are Pocket AI, a sharp research analyst for content creators. " +
                 "Only use the supplied page content. Never invent facts. " +
-                "Reply in natural Bangla unless the user asks otherwise.",
+                "Reply in the same language as the page content.",
             prompt: `
-পেজ: ${page.title}
+Page: ${page.title}
 URL: ${page.url}
-${page.truncated ? "(দ্রষ্টব্য: পেজটি বড়, শুরুর অংশ দেওয়া হলো)\n" : ""}
---- পেজের কনটেন্ট ---
+${page.truncated ? "(Note: the page is long — this is the opening section)\n" : ""}
+--- PAGE CONTENT ---
 ${page.content}
---- শেষ ---
+--- END ---
 
 ${task}
 `,
@@ -129,7 +129,7 @@ ${task}
     } catch (error) {
         console.error("Read API Error:", error);
         return res.status(error?.status || 500).json({
-            error: error?.message || "পেজ পড়া ব্যর্থ হয়েছে।"
+            error: error?.message || "Couldn't read that page."
         });
     }
 }

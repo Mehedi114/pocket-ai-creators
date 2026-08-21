@@ -38,7 +38,7 @@ export default async function handler(req, res) {
 
     if (tooManyAttempts(key)) {
         return res.status(429).json({
-            error: "অনেকবার ভুল কোড দেওয়া হয়েছে। ১০ মিনিট পরে আবার চেষ্টা করুন।"
+            error: "Too many incorrect codes. Try again in 10 minutes."
         });
     }
 
@@ -52,7 +52,7 @@ export default async function handler(req, res) {
         // অনুমান করা কঠিন করতে সামান্য দেরি
         await new Promise(r => setTimeout(r, 600));
 
-        return res.status(401).json({ error: "কোডটি ঠিক নয়। আবার দেখুন।" });
+        return res.status(401).json({ error: "That code isn't right. Check it and try again." });
     }
 
     clearAttempts(key);

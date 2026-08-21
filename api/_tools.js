@@ -64,7 +64,7 @@ export async function readUrl(target, { maxChars = 24000, timeoutMs = 30000 } = 
     try {
         clean = new URL(/^https?:\/\//i.test(target) ? target : `https://${target}`).toString();
     } catch {
-        const err = new Error("সঠিক একটি URL দিন।");
+        const err = new Error("Please provide a valid URL.");
         err.status = 400;
         throw err;
     }
@@ -89,8 +89,8 @@ export async function readUrl(target, { maxChars = 24000, timeoutMs = 30000 } = 
     if (!response.ok) {
         const err = new Error(
             response.status === 429
-                ? "Reader সার্ভিস ব্যস্ত (rate limit)। একটু পরে আবার চেষ্টা করুন, অথবা ফ্রি JINA_API_KEY যোগ করুন।"
-                : `পেজটি পড়া যায়নি (HTTP ${response.status})।`
+                ? "The reader service is rate limited. Try again shortly, or add a free JINA_API_KEY."
+                : `Couldn't read that page (HTTP ${response.status})।`
         );
         err.status = response.status;
         throw err;
@@ -150,7 +150,7 @@ async function jinaSearch(query, { maxResults, timeoutMs }) {
     if (process.env.JINA_API_KEY) {
         headers.Authorization = `Bearer ${process.env.JINA_API_KEY}`;
     } else {
-        throw new Error("Jina search এর জন্য JINA_API_KEY লাগে।");
+        throw new Error("Jina search needs a JINA_API_KEY.");
     }
 
     const response = await fetch(`https://s.jina.ai/${encodeURIComponent(query)}`, {
@@ -201,7 +201,7 @@ async function duckSearch(query, { maxResults, timeoutMs }) {
         }
     }
 
-    if (!results.length) throw new Error("কোনো ফলাফল পাওয়া যায়নি।");
+    if (!results.length) throw new Error("No results found.");
 
     return { engine: "duckduckgo", answer: data.AbstractText || "", results };
 }
@@ -225,7 +225,7 @@ export async function webSearch(query, { maxResults = 6, timeoutMs = 25000 } = {
     }
 
     const err = new Error(
-        "ওয়েব সার্চ ব্যর্থ। ফ্রি TAVILY_API_KEY যোগ করলে (মাসে ১০০০ সার্চ) অনেক ভালো কাজ করবে।"
+        "Web search failed. Adding a free TAVILY_API_KEY (1,000 searches a month) makes this far more reliable."
     );
     err.status = 502;
     err.detail = errors;
@@ -255,14 +255,14 @@ export async function transcribeAudio(buffer, {
     const key = process.env.GROQ_API_KEY;
 
     if (!key) {
-        const err = new Error("ট্রান্সক্রিপশনের জন্য GROQ_API_KEY লাগে (ফ্রি)।");
+        const err = new Error("Transcription needs a GROQ_API_KEY (it's free).");
         err.status = 500;
         throw err;
     }
 
     if (buffer.byteLength > MAX_AUDIO_BYTES) {
         const err = new Error(
-            `ফাইলটি খুব বড় (${(buffer.byteLength / 1048576).toFixed(1)}MB)। ফ্রি টিয়ারে সর্বোচ্চ ২৪MB।`
+            `That file is too large (${(buffer.byteLength / 1048576).toFixed(1)}MB)। The free tier allows 24 MB.`
         );
         err.status = 413;
         throw err;
@@ -284,7 +284,7 @@ export async function transcribeAudio(buffer, {
     const data = await response.json().catch(() => null);
 
     if (!response.ok) {
-        const err = new Error(data?.error?.message || `ট্রান্সক্রিপশন ব্যর্থ (HTTP ${response.status})`);
+        const err = new Error(data?.error?.message || `Transcription failed (HTTP ${response.status})`);
         err.status = response.status;
         throw err;
     }
@@ -308,7 +308,7 @@ export async function fetchAudio(url, { timeoutMs = 60000 } = {}) {
     });
 
     if (!response.ok) {
-        const err = new Error(`অডিও ফাইলটি ডাউনলোড করা যায়নি (HTTP ${response.status})।`);
+        const err = new Error(`Couldn't download that audio file (HTTP ${response.status})।`);
         err.status = response.status;
         throw err;
     }
@@ -316,7 +316,7 @@ export async function fetchAudio(url, { timeoutMs = 60000 } = {}) {
     const length = Number(response.headers.get("content-length") || 0);
 
     if (length > MAX_AUDIO_BYTES) {
-        const err = new Error(`ফাইলটি খুব বড় (${(length / 1048576).toFixed(1)}MB)। সর্বোচ্চ ২৪MB।`);
+        const err = new Error(`That file is too large (${(length / 1048576).toFixed(1)}MB)। The limit is 24 MB.`);
         err.status = 413;
         throw err;
     }
@@ -352,13 +352,13 @@ export function toSrt(segments) {
    ====================================================== */
 
 export const VOICES = [
-    { id: "auto", label: "Auto — যা পাওয়া যায়", lang: "auto" },
-    { id: "bn", label: "বাংলা কণ্ঠ", lang: "bn", forceGoogle: true },
-    { id: "hi", label: "হিন্দি কণ্ঠ", lang: "hi", forceGoogle: true },
-    { id: "Fritz-PlayAI", label: "Fritz — পুরুষ, ইংরেজি", groq: "Fritz-PlayAI", gemini: "Puck" },
-    { id: "Celeste-PlayAI", label: "Celeste — নারী, ইংরেজি", groq: "Celeste-PlayAI", gemini: "Kore" },
-    { id: "Atlas-PlayAI", label: "Atlas — গভীর, বর্ণনামূলক", groq: "Atlas-PlayAI", gemini: "Charon" },
-    { id: "Quinn-PlayAI", label: "Quinn — উজ্জ্বল, প্রাণবন্ত", groq: "Quinn-PlayAI", gemini: "Aoede" }
+    { id: "auto", label: "Auto — whatever is available", lang: "auto" },
+    { id: "bn", label: "Bangla voice", lang: "bn", forceGoogle: true },
+    { id: "hi", label: "Hindi voice", lang: "hi", forceGoogle: true },
+    { id: "Fritz-PlayAI", label: "Fritz — male, English", groq: "Fritz-PlayAI", gemini: "Puck" },
+    { id: "Celeste-PlayAI", label: "Celeste — female, English", groq: "Celeste-PlayAI", gemini: "Kore" },
+    { id: "Atlas-PlayAI", label: "Atlas — deep, narrative", groq: "Atlas-PlayAI", gemini: "Charon" },
+    { id: "Quinn-PlayAI", label: "Quinn — bright, lively", groq: "Quinn-PlayAI", gemini: "Aoede" }
 ];
 
 const BENGALI = /[\u0980-\u09FF]/;
@@ -508,7 +508,7 @@ async function googleTts(text, lang, timeoutMs) {
     const chunks = chunkText(text);
 
     if (chunks.length > 25) {
-        const err = new Error("লেখাটি খুব বড়। ছোট ছোট অংশে ভাগ করে নিন।");
+        const err = new Error("That text is too long. Break it into smaller parts.");
         err.status = 413;
         throw err;
     }
@@ -558,13 +558,13 @@ export async function textToSpeech(text, { voice = "auto", timeoutMs = 60000 } =
     const clean = String(text || "").trim();
 
     if (!clean) {
-        const err = new Error("কিছু টেক্সট দিন।");
+        const err = new Error("Please provide some text.");
         err.status = 400;
         throw err;
     }
 
     if (clean.length > 4000) {
-        const err = new Error("টেক্সট খুব বড় (সর্বোচ্চ ৪০০০ অক্ষর)। ভাগ করে দিন।");
+        const err = new Error("That text is too long (4,000 characters max). Split it up.");
         err.status = 413;
         throw err;
     }
@@ -597,7 +597,7 @@ export async function textToSpeech(text, { voice = "auto", timeoutMs = 60000 } =
         }
     }
 
-    const err = new Error("সব ভয়েস সার্ভিস ব্যর্থ হয়েছে। একটু পরে আবার চেষ্টা করুন।");
+    const err = new Error("Every voice service failed. Please try again shortly.");
     err.status = 502;
     err.attempts = attempts;
     throw err;
@@ -616,7 +616,7 @@ export function describeServices() {
             ready: true,
             keyEnv: "POLLINATIONS_TOKEN",
             optional: true,
-            note: "key ছাড়াই চলে। token দিলে watermark ওঠে ও লিমিট বাড়ে।",
+            note: "Works without a key. A token removes the watermark and raises the limit.",
             keyUrl: "https://auth.pollinations.ai/"
         },
         {
@@ -626,7 +626,7 @@ export function describeServices() {
             ready: true,
             keyEnv: "JINA_API_KEY",
             optional: true,
-            note: "key ছাড়া ~20 req/min। ফ্রি key দিলে 500 RPM + 10M টোকেন।",
+            note: "About 20 req/min without a key. A free key gives 500 RPM and 10M tokens.",
             keyUrl: "https://jina.ai/api-dashboard/"
         },
         {
@@ -638,7 +638,7 @@ export function describeServices() {
             ready: true,
             keyEnv: "TAVILY_API_KEY",
             optional: true,
-            note: "ফ্রি ১০০০ সার্চ/মাস। না দিলে সীমিত fallback চলবে।",
+            note: "1,000 free searches a month. Without it, a limited fallback is used.",
             keyUrl: "https://app.tavily.com/home"
         },
         {
@@ -648,7 +648,7 @@ export function describeServices() {
             ready: Boolean(process.env.GROQ_API_KEY),
             keyEnv: "GROQ_API_KEY",
             optional: false,
-            note: "আপনার Groq key দিয়েই চলে। দিনে ~৮ ঘণ্টা অডিও ফ্রি।",
+            note: "Runs on your Groq key. Roughly 8 hours of audio a day, free.",
             keyUrl: "https://console.groq.com/keys"
         },
         {
@@ -660,7 +660,7 @@ export function describeServices() {
             ready: true,
             keyEnv: "GROQ_API_KEY",
             optional: true,
-            note: "বাংলা/হিন্দি → Google (key ছাড়া)। ইংরেজি → Groq PlayAI, তারপর Gemini।",
+            note: "Bangla and Hindi use Google, no key. English prefers Groq PlayAI, then Gemini.",
             keyUrl: "https://console.groq.com/keys"
         }
     ];

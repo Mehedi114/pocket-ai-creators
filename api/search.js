@@ -18,7 +18,7 @@ export default async function handler(req, res) {
         const { query, intent = "answer" } = req.body || {};
 
         if (!query || !String(query).trim()) {
-            return res.status(400).json({ error: "কী খুঁজতে চান লিখুন।" });
+            return res.status(400).json({ error: "Tell it what to search for." });
         }
 
         const search = await webSearch(String(query).trim());
@@ -28,30 +28,30 @@ export default async function handler(req, res) {
             .join("\n\n");
 
         const intents = {
-            answer: "প্রশ্নের সরাসরি, নির্ভুল উত্তর দাও।",
-            trend: "এই বিষয়ে এখন কী ট্রেন্ড করছে, কোন অ্যাঙ্গেলগুলো গরম, এবং একজন ক্রিয়েটর কীভাবে দ্রুত ঢুকতে পারে তা বলো।",
-            research: "একটি বিস্তারিত রিসার্চ নোট লেখো — মূল তথ্য, বিভিন্ন মত, সংখ্যা, এবং কনটেন্টে ব্যবহারের সুযোগ।",
-            news: "সাম্প্রতিক ঘটনাগুলো সময়ক্রম অনুযায়ী সাজিয়ে বলো, প্রতিটির তারিখসহ।"
+            answer: "Answer the question directly and accurately.",
+            trend: "Explain what is trending on this right now, which angles are hot, and how a creator could move in quickly.",
+            research: "Write a detailed research note — the core facts, differing views, numbers, and where the content opportunities are.",
+            news: "Lay out recent developments in chronological order, each with its date."
         };
 
         const outcome = await callAI({
             system:
                 "You are Pocket AI, a research assistant. Answer ONLY from the supplied search results. " +
                 "Cite sources inline as [1], [2]. If the results do not answer the question, say so plainly. " +
-                "Never invent facts, dates or numbers. Reply in natural Bangla.",
+                "Never invent facts, dates or numbers. Reply in the same language the user asked in.",
             prompt: `
-আজকের তারিখ: ${new Date().toISOString().slice(0, 10)}
+Today's date: ${new Date().toISOString().slice(0, 10)}
 
-ব্যবহারকারীর অনুসন্ধান: ${query}
+The user is looking for: ${query}
 
-${search.answer ? `সার্চ ইঞ্জিনের সারসংক্ষেপ:\n${search.answer}\n` : ""}
---- সার্চ রেজাল্ট ---
+${search.answer ? `Search engine summary:\n${search.answer}\n` : ""}
+--- SEARCH RESULTS ---
 ${sources}
---- শেষ ---
+--- END ---
 
 ${intents[intent] || intents.answer}
 
-শেষে "সূত্র" শিরোনামে ব্যবহৃত লিংকগুলো তালিকা করো।
+Finish with a "Sources" heading listing the links you used.
 `,
             temperature: 0.5,
             maxTokens: 2500
@@ -74,7 +74,7 @@ ${intents[intent] || intents.answer}
     } catch (error) {
         console.error("Search API Error:", error);
         return res.status(error?.status || 500).json({
-            error: error?.message || "সার্চ ব্যর্থ হয়েছে।",
+            error: error?.message || "The search failed.",
             detail: error?.detail || null
         });
     }

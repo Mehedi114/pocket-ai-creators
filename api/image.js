@@ -18,7 +18,7 @@ export default async function handler(req, res) {
         const { idea, preset = "thumbnail", count = 4, raw = false, text } = req.body || {};
 
         if (!idea || !String(idea).trim()) {
-            return res.status(400).json({ error: "আপনার আইডিয়া লিখুন।" });
+            return res.status(400).json({ error: "Describe your idea first." });
         }
 
         const size = IMAGE_PRESETS[preset] || IMAGE_PRESETS.thumbnail;
@@ -87,7 +87,7 @@ Return only the prompt.
     } catch (error) {
         console.error("Image API Error:", error);
         return res.status(error?.status || 500).json({
-            error: error?.message || "ইমেজ তৈরি ব্যর্থ হয়েছে।"
+            error: error?.message || "The image couldn't be generated."
         });
     }
 }

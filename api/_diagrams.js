@@ -22,65 +22,65 @@ const b64url = buf =>
 export const DIAGRAM_KINDS = {
     mindmap: {
         label: "Mind Map",
-        hint: "একটা বিষয়ের সব শাখা-প্রশাখা এক নজরে",
+        hint: "Every branch of a subject, at a glance",
         syntax: `mindmap
-  root(("মূল বিষয়"))
-    শাখা এক
-      উপশাখা
-      উপশাখা
-    শাখা দুই
-      উপশাখা`
+  root(("Main subject"))
+    Branch one
+      Sub point
+      Sub point
+    Branch two
+      Sub point`
     },
     flowchart: {
         label: "Flowchart",
-        hint: "ধাপে ধাপে প্রসেস বা ওয়ার্কফ্লো",
+        hint: "A process or workflow, step by step",
         syntax: `flowchart TD
-    A["শুরু"] --> B["ধাপ এক"]
-    B --> C{"সিদ্ধান্ত"}
-    C -->|হ্যাঁ| D["ফলাফল ১"]
-    C -->|না| E["ফলাফল ২"]`
+    A["Start"] --> B["First step"]
+    B --> C{"Decision"}
+    C -->|Yes| D["Outcome one"]
+    C -->|No| E["Outcome two"]`
     },
     timeline: {
         label: "Timeline",
-        hint: "সময় ধরে ঘটনা বা পরিকল্পনা",
+        hint: "Events or plans laid out over time",
         syntax: `timeline
-    title শিরোনাম
-    সপ্তাহ ১ : কাজ এক : কাজ দুই
-    সপ্তাহ ২ : কাজ তিন`
+    title Plan title
+    Week 1 : Task one : Task two
+    Week 2 : Task three`
     },
     journey: {
         label: "Audience Journey",
-        hint: "দর্শক কীভাবে আপনাকে খুঁজে পায় ও ফ্যান হয়",
+        hint: "How a viewer finds you and becomes a fan",
         syntax: `journey
-    title দর্শকের যাত্রা
-    section আবিষ্কার
-      থাম্বনেইল দেখা: 3: দর্শক
-      ক্লিক করা: 4: দর্শক
-    section আস্থা
-      পুরো ভিডিও দেখা: 5: দর্শক`
+    title Viewer journey
+    section Discovery
+      Sees the thumbnail: 3: Viewer
+      Clicks through: 4: Viewer
+    section Trust
+      Watches to the end: 5: Viewer`
     },
     quadrant: {
         label: "Opportunity Matrix",
-        hint: "কোন আইডিয়ায় সবচেয়ে বেশি লাভ",
+        hint: "Which ideas are actually worth the effort",
         syntax: `quadrantChart
-    title সুযোগের মানচিত্র
-    x-axis "কম প্রতিযোগিতা" --> "বেশি প্রতিযোগিতা"
-    y-axis "কম চাহিদা" --> "বেশি চাহিদা"
-    quadrant-1 "সোনার খনি"
-    quadrant-2 "কঠিন লড়াই"
-    quadrant-3 "এড়িয়ে চলুন"
-    quadrant-4 "সহজ জয়"
-    "আইডিয়া এক": [0.3, 0.8]
-    "আইডিয়া দুই": [0.7, 0.6]`
+    title Opportunity map
+    x-axis "Low competition" --> "High competition"
+    y-axis "Low demand" --> "High demand"
+    quadrant-1 "Gold mine"
+    quadrant-2 "Hard fight"
+    quadrant-3 "Skip these"
+    quadrant-4 "Easy wins"
+    "Idea one": [0.3, 0.8]
+    "Idea two": [0.7, 0.6]`
     },
     pie: {
         label: "Breakdown",
-        hint: "কোন অংশ কতটুকু",
+        hint: "How the whole divides up",
         syntax: `pie showData
-    title কনটেন্ট মিক্স
-    "টিউটোরিয়াল" : 40
-    "ভ্লগ" : 30
-    "রিভিউ" : 30`
+    title Content mix
+    "Tutorials" : 40
+    "Vlogs" : 30
+    "Reviews" : 30`
     }
 };
 

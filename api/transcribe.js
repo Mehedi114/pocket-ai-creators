@@ -31,18 +31,18 @@ export default async function handler(req, res) {
             name = decodeURIComponent(String(url).split("/").pop().split("?")[0]) || name;
         } else {
             return res.status(400).json({
-                error: "একটি অডিও ফাইল আপলোড করুন অথবা সরাসরি ফাইলের লিংক দিন।"
+                error: "Upload an audio file, or paste a direct link to one."
             });
         }
 
         if (!buffer?.byteLength) {
-            return res.status(400).json({ error: "অডিও ফাইলটি খালি।" });
+            return res.status(400).json({ error: "That audio file is empty." });
         }
 
         const transcript = await transcribeAudio(buffer, { filename: name, language });
 
         if (!transcript.text) {
-            return res.status(422).json({ error: "অডিওতে কোনো কথা পাওয়া যায়নি।" });
+            return res.status(422).json({ error: "No speech was found in that audio." });
         }
 
         const payload = {
@@ -61,27 +61,27 @@ export default async function handler(req, res) {
         const outcome = await callAI({
             system:
                 "You are Pocket AI for Creators. Work only from the transcript given. " +
-                "Reply in the same language as the transcript (Bangla stays Bangla).",
+                "Reply in the same language as the transcript.",
             prompt: `
-নিচে একটি ভিডিও/অডিওর ট্রান্সক্রিপ্ট দেওয়া হলো।
+Below is the transcript of a video or audio recording.
 
---- ট্রান্সক্রিপ্ট ---
+--- TRANSCRIPT ---
 ${transcript.text.slice(0, 18000)}
---- শেষ ---
+--- END ---
 
-এই কনটেন্ট থেকে বানাও:
+From this content, produce:
 
-1. এক লাইনের সারমর্ম
-2. মূল পয়েন্টগুলো (bullet)
-3. টাইমস্ট্যাম্প চ্যাপ্টার (আনুমানিক, 0:00 দিয়ে শুরু)
-4. ৫টি YouTube টাইটেল অপশন
-5. একটি SEO ডেসক্রিপশন
-6. ২০টি ট্যাগ
-7. ৩টি Shorts/Reels ক্লিপের আইডিয়া — কোন অংশটা কাটবে ও কেন
-8. একটি ফেসবুক পোস্ট
-9. একটি ব্লগ আর্টিকেলের আউটলাইন
+1. A one-line summary
+2. The key points, as bullets
+3. Timestamped chapters (approximate, starting at 0:00)
+4. Five YouTube title options
+5. An SEO description
+6. Twenty tags
+7. Three Shorts or Reels clip ideas — which section to cut, and why
+8. A Facebook post
+9. An outline for a blog article
 
-ট্রান্সক্রিপ্টের বাইরের কিছু বানাবে না।
+Invent nothing that is not in the transcript.
 `,
             temperature: 0.7,
             maxTokens: 3500
@@ -99,7 +99,7 @@ ${transcript.text.slice(0, 18000)}
     } catch (error) {
         console.error("Transcribe API Error:", error);
         return res.status(error?.status || 500).json({
-            error: error?.message || "ট্রান্সক্রিপশন ব্যর্থ হয়েছে।"
+            error: error?.message || "Transcription failed."
         });
     }
 }

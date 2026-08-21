@@ -120,7 +120,7 @@ export function guard(req, res) {
     if (verifyToken(readToken(req))) return true;
 
     res.status(401).json({
-        error: "অ্যাক্সেস কোড লাগবে।",
+        error: "An access code is required.",
         code: "ACCESS_REQUIRED"
     });
 

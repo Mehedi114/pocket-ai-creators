@@ -5,7 +5,7 @@
 
 export const SYSTEM_PROMPT =
     "You are Pocket AI for Creators. Give high-quality, practical, creator-focused responses. " +
-    "If the user's input is in Bangla, reply in natural Bangla.";
+    "Always reply in the same language the user writes in.";
 
 export const TOOLS = {
     "YouTube Title Generator": input => `

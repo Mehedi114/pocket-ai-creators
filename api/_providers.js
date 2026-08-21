@@ -21,7 +21,7 @@ export const PROVIDERS = [
         model: "openai/gpt-oss-120b",
         tokenParam: "max_completion_tokens",
         keyUrl: "https://console.groq.com/keys",
-        note: "সবচেয়ে দ্রুত। কোনো কার্ড লাগে না। 30 RPM / 1000 RPD"
+        note: "Fastest of the lot. No card required. 30 RPM / 1000 RPD."
     },
     {
         id: "cerebras",
@@ -31,7 +31,7 @@ export const PROVIDERS = [
         baseUrl: "https://api.cerebras.ai/v1",
         model: "gpt-oss-120b",
         keyUrl: "https://cloud.cerebras.ai/",
-        note: "অবিশ্বাস্য fast inference, ফ্রি tier, কার্ড লাগে না"
+        note: "Extraordinarily fast inference. Free tier, no card."
     },
     {
         id: "gemini",
@@ -41,7 +41,7 @@ export const PROVIDERS = [
         baseUrl: "https://generativelanguage.googleapis.com/v1beta/openai",
         model: "gemini-2.5-flash",
         keyUrl: "https://aistudio.google.com/app/apikey",
-        note: "1M context, খুব ভালো Bangla, কার্ড লাগে না"
+        note: "1M context, excellent Bangla. No card required."
     },
     {
         id: "nvidia",
@@ -51,7 +51,7 @@ export const PROVIDERS = [
         baseUrl: "https://integrate.api.nvidia.com/v1",
         model: "meta/llama-3.3-70b-instruct",
         keyUrl: "https://build.nvidia.com/settings/api-keys",
-        note: "১২৫+ ফ্রি মডেল, শুধু phone verification"
+        note: "125+ free models. Phone verification only."
     },
     {
         id: "mistral",
@@ -61,7 +61,7 @@ export const PROVIDERS = [
         baseUrl: "https://api.mistral.ai/v1",
         model: "mistral-small-latest",
         keyUrl: "https://console.mistral.ai/api-keys",
-        note: "ফ্রি experiment tier, কার্ড লাগে না"
+        note: "Free experiment tier, no card required."
     },
     {
         id: "github",
@@ -71,7 +71,7 @@ export const PROVIDERS = [
         baseUrl: "https://models.github.ai/inference",
         model: "openai/gpt-4.1-mini",
         keyUrl: "https://github.com/marketplace/models",
-        note: "GitHub PAT দিয়েই চলে — GPT / Llama / Phi সব ফ্রি"
+        note: "Runs on a GitHub PAT. GPT, Llama and Phi, all free."
     },
     {
         id: "openrouter",
@@ -85,7 +85,7 @@ export const PROVIDERS = [
             "HTTP-Referer": "https://pocket-ai-creators.vercel.app",
             "X-Title": "Pocket AI Creators"
         },
-        note: "একটা key-তেই ২৭+ ফ্রি মডেল"
+        note: "One key, 27+ free models."
     },
     {
         id: "sambanova",
@@ -95,7 +95,7 @@ export const PROVIDERS = [
         baseUrl: "https://api.sambanova.ai/v1",
         model: "Meta-Llama-3.3-70B-Instruct",
         keyUrl: "https://cloud.sambanova.ai/apis",
-        note: "ফ্রি tier, দ্রুত 70B"
+        note: "Free tier with a fast 70B."
     },
     {
         id: "huggingface",
@@ -105,7 +105,7 @@ export const PROVIDERS = [
         baseUrl: "https://router.huggingface.co/v1",
         model: "meta-llama/Llama-3.3-70B-Instruct",
         keyUrl: "https://huggingface.co/settings/tokens",
-        note: "HF router — মাসে কিছু ফ্রি credit"
+        note: "Hugging Face router. A monthly free credit."
     },
     {
         id: "together",
@@ -115,7 +115,7 @@ export const PROVIDERS = [
         baseUrl: "https://api.together.xyz/v1",
         model: "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
         keyUrl: "https://api.together.ai/settings/api-keys",
-        note: "কিছু মডেল একদম ফ্রি (-Free suffix)"
+        note: "Models with the -Free suffix cost nothing."
     },
     {
         id: "zai",
@@ -125,7 +125,7 @@ export const PROVIDERS = [
         baseUrl: "https://open.bigmodel.cn/api/paas/v4",
         model: "glm-4-flash",
         keyUrl: "https://open.bigmodel.cn/usercenter/apikeys",
-        note: "GLM-4-Flash চিরস্থায়ী ফ্রি"
+        note: "GLM-4-Flash is permanently free."
     },
     {
         id: "llm7",
@@ -137,7 +137,7 @@ export const PROVIDERS = [
         keyUrl: "https://token.llm7.io/",
         optionalKey: true,
         defaultKey: "unused",
-        note: "key ছাড়াও কাজ করে — শেষ ভরসার safety net"
+        note: "Works without a key. The final safety net."
     },
     {
         id: "custom",
@@ -151,7 +151,7 @@ export const PROVIDERS = [
         optionalKey: true,
         defaultKey: "ollama",
         requiresBaseUrl: true,
-        note: "Ollama বা যেকোনো OpenAI-compatible endpoint যোগ করুন"
+        note: "Point this at Ollama or any OpenAI-compatible endpoint."
     }
 ];
 
@@ -274,7 +274,7 @@ async function callProvider(provider, { messages, temperature, maxTokens, timeou
         data = JSON.parse(text);
     } catch {
         const err = new Error(
-            `${provider.label} থেকে invalid response এসেছে।`
+            `${provider.label} returned an invalid response.`
         );
         err.status = response.status;
         err.retryable = true;
@@ -285,7 +285,7 @@ async function callProvider(provider, { messages, temperature, maxTokens, timeou
         const err = new Error(
             data?.error?.message ||
             data?.message ||
-            `${provider.label} request ব্যর্থ (HTTP ${response.status})`
+            `${provider.label} request failed (HTTP ${response.status})`
         );
         err.status = response.status;
         err.retryable = isRetryable(response.status);
@@ -302,7 +302,7 @@ async function callProvider(provider, { messages, temperature, maxTokens, timeou
         : String(content || "").trim();
 
     if (!clean) {
-        const err = new Error(`${provider.label} খালি উত্তর দিয়েছে।`);
+        const err = new Error(`${provider.label} returned an empty response.`);
         err.status = 502;
         err.retryable = true;
         throw err;
@@ -334,7 +334,7 @@ export async function callAI({
 
     if (!chain.length) {
         const err = new Error(
-            "কোনো AI provider configure করা নেই। অন্তত একটি API key (যেমন GROQ_API_KEY) environment variable এ যোগ করুন।"
+            "No AI provider is configured. Add at least one API key (such as GROQ_API_KEY) to your environment variables."
         );
         err.status = 500;
         err.noProviders = true;
@@ -376,7 +376,7 @@ export async function callAI({
             return { ...result, attempts };
         } catch (error) {
             const reason = error?.name === "AbortError"
-                ? `টাইমআউট (${timeoutMs}ms)`
+                ? `timed out (${timeoutMs}ms)`
                 : error?.message || "unknown error";
 
             attempts.push({
@@ -395,7 +395,7 @@ export async function callAI({
     }
 
     const err = new Error(
-        "সব AI provider ব্যর্থ হয়েছে। একটু পরে আবার চেষ্টা করুন অথবা নতুন key যোগ করুন।"
+        "Every AI provider failed. Try again shortly, or add another key."
     );
     err.status = 502;
     err.attempts = attempts;

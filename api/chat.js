@@ -4,7 +4,7 @@ import { guard } from "./_auth.js";
 const SYSTEM = `You are Pocket AI — a personal AI assistant built for a content creator.
 You help with YouTube strategy, scripts, SEO, marketing copy, research and general questions.
 Be direct, practical and specific. Skip filler and disclaimers.
-If the user writes in Bangla, reply in natural Bangla.`;
+Always reply in the same language the user writes in.`;
 
 export default async function handler(req, res) {
     if (!guard(req, res)) return;
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
         const { messages, mode, provider, system } = req.body || {};
 
         if (!Array.isArray(messages) || !messages.length) {
-            return res.status(400).json({ error: "messages array প্রয়োজন।" });
+            return res.status(400).json({ error: "A messages array is required." });
         }
 
         // শেষ ২০টা টার্ন রাখি, যাতে context window না ভাঙে
@@ -68,7 +68,7 @@ export default async function handler(req, res) {
         console.error("Chat API Error:", error);
 
         return res.status(error?.status || 500).json({
-            error: error?.message || "Chat ব্যর্থ হয়েছে।",
+            error: error?.message || "The chat request failed.",
             attempts: error?.attempts || null
         });
     }

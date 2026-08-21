@@ -48,7 +48,7 @@ export default async function handler(req, res) {
     } catch (error) {
         console.error("TTS API Error:", error);
         return res.status(error?.status || 500).json({
-            error: error?.message || "ভয়েস তৈরি ব্যর্থ হয়েছে।"
+            error: error?.message || "The voice couldn't be created."
         });
     }
 }

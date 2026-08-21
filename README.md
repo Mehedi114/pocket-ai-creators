@@ -113,6 +113,22 @@ Vercel → Settings → Domains থেকে নতুন নাম দিন।
 
 ---
 
+## ✦ Interface
+
+The UI is English, deliberately minimal, and typographic rather than
+decorative — an editorial serif (Playfair Display) for headings, a script
+wordmark (Italianno) in the header and lock screen, Inter for everything
+functional, on near-black with a single champagne accent.
+
+- Three views instead of one long page: **Desk · Studio · Engine**
+- Icon rail on desktop, bottom tab bar on mobile
+- Hairline grid tiles, no shadows, no neon
+- Command palette on **⌘K / Ctrl+K** across all twenty tools
+
+AI replies always follow the language you write in — type Bangla, get Bangla.
+
+---
+
 ## ✦ PWA — ফোনে অ্যাপের মতো
 
 - ফোনে সাইট খুলে **"Add to Home screen"** চাপুন (বা হেডারের **⬇ Install**)

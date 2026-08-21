@@ -1,6 +1,6 @@
 /**
- * Creator Research — ইউটিউব চ্যানেল বিশ্লেষণ
- * index.html-এর ডিজাইন সিস্টেম ব্যবহার করে ফলাফল দেখায়।
+ * Creator Research — YouTube channel analysis.
+ * Renders into the design system defined in index.html.
  */
 
 async function researchCreator() {
@@ -17,15 +17,15 @@ async function researchCreator() {
 
     if (button) {
         button.disabled = true;
-        button.innerHTML = "Researching…";
+        button.innerHTML = "Researching\u2026";
     }
 
     const box = ensureResultBox(input);
 
     box.classList.add("show");
     box.innerHTML =
-        '<div style="color:var(--lime)"><span class="spin"></span>' +
-        'চ্যানেলটি বিশ্লেষণ করা হচ্ছে… এতে কিছুটা সময় লাগে</div>';
+        '<div style="color:var(--gold)"><span class="spin"></span>' +
+        "Reading the channel \u2014 this one takes a moment</div>";
 
     try {
         const response = await fetch("/api/research", {
@@ -37,33 +37,27 @@ async function researchCreator() {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.error || data.message || "Research failed");
+            throw new Error(data.error || data.message || "Research failed.");
         }
 
         const channel = data.channel || {};
 
-        const stat = (label, raw) => {
-            const number = Number(raw || 0);
-            return (
-                '<div style="flex:1;min-width:96px">' +
-                '<div style="font-family:\'Space Grotesk\';font-size:17px;font-weight:700;color:var(--lime)">' +
-                number.toLocaleString() +
-                "</div>" +
-                '<div style="font-size:10px;color:var(--dim);margin-top:2px">' +
-                label +
-                "</div></div>"
-            );
-        };
+        const stat = (label, raw) =>
+            '<div style="flex:1;min-width:104px">' +
+            '<div class="serif" style="font-size:22px;color:var(--gold)">' +
+            Number(raw || 0).toLocaleString() +
+            "</div>" +
+            '<div class="label" style="margin-top:5px">' + label + "</div>" +
+            "</div>";
 
         const header = channel.title
-            ? '<div style="display:flex;flex-wrap:wrap;gap:14px;padding-bottom:14px;' +
-              'margin-bottom:14px;border-bottom:1px solid var(--line)">' +
-              '<div style="width:100%;font-family:\'Space Grotesk\';font-size:15px;font-weight:600">' +
-              escapeResearch(channel.title) +
-              "</div>" +
-              stat("সাবস্ক্রাইবার", channel.subscribers) +
-              stat("মোট ভিউ", channel.totalViews) +
-              stat("ভিডিও", channel.totalVideos) +
+            ? '<div style="display:flex;flex-wrap:wrap;gap:18px;padding-bottom:20px;' +
+              'margin-bottom:20px;border-bottom:1px solid var(--hair)">' +
+              '<div class="serif" style="width:100%;font-size:19px;color:var(--bone)">' +
+              escapeResearch(channel.title) + "</div>" +
+              stat("Subscribers", channel.subscribers) +
+              stat("Total views", channel.totalViews) +
+              stat("Videos", channel.totalVideos) +
               "</div>"
             : "";
 
@@ -77,8 +71,8 @@ async function researchCreator() {
             '<div class="body-text" id="researchText">' +
             escapeResearch(data.result || "") +
             "</div>" +
-            '<div class="controls" style="margin-top:12px">' +
-            '<button class="mini" onclick="copyText(this,\'researchText\')">⧉ কপি</button>' +
+            '<div class="controls" style="margin-top:16px">' +
+            '<button class="mini" onclick="copyText(this,\'researchText\')">Copy</button>' +
             "</div>" +
             engine;
 
@@ -87,9 +81,7 @@ async function researchCreator() {
         console.error("Research error:", error);
 
         box.innerHTML =
-            '<div style="color:var(--coral)">✕ ' +
-            escapeResearch(error.message) +
-            "</div>";
+            '<div style="color:var(--rose)">' + escapeResearch(error.message) + "</div>";
 
         if (typeof toast === "function") toast(error.message, "err");
     } finally {

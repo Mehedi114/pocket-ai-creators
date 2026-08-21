@@ -90,7 +90,7 @@ await assert.rejects(
     () => callAI({ prompt: "x" }),
     err => {
         assert.equal(err.attempts.length, 2);
-        assert.match(err.message, /সব AI provider ব্যর্থ/);
+        assert.match(err.message, /Every AI provider failed/);
         return true;
     }
 );
@@ -117,7 +117,7 @@ process.env.AI_TIMEOUT_MS = "600";
 
 const afterTimeout = await callAI({ prompt: "y" });
 assert.equal(afterTimeout.provider, "gemini");
-assert.match(afterTimeout.attempts[0].error, /টাইমআউট/);
+assert.match(afterTimeout.attempts[0].error, /timed out/);
 console.log("✓ timeout হলে পরের প্রোভাইডারে চলে যায়");
 
 [a, b, c, d, h].forEach(s => s.close());
@@ -152,12 +152,12 @@ assert.equal(tools.IMAGE_PRESETS.short.height, 1280);
 console.log("✓ ইমেজ প্রিসেট ঠিক আছে");
 
 /* খারাপ URL ধরা পড়ে */
-await assert.rejects(() => tools.readUrl("not a url at all"), /সঠিক একটি URL/);
+await assert.rejects(() => tools.readUrl("not a url at all"), /valid URL/);
 console.log("✓ ভুল URL আগেই আটকে যায়");
 
 /* খালি টেক্সটে TTS আটকায় */
-await assert.rejects(() => tools.textToSpeech("   "), /কিছু টেক্সট দিন/);
-await assert.rejects(() => tools.textToSpeech("ক".repeat(4100)), /খুব বড়/);
+await assert.rejects(() => tools.textToSpeech("   "), /provide some text/);
+await assert.rejects(() => tools.textToSpeech("a".repeat(4100)), /too long/);
 console.log("✓ TTS ইনপুট ভ্যালিডেশন কাজ করে");
 
 /* TTS চাঙ্কিং — Google Translate-এর ২০০ অক্ষর সীমা */

@@ -47,7 +47,7 @@ export default async function handler(req, res) {
         } = req.body || {};
 
         if (!topic || !String(topic).trim()) {
-            return res.status(400).json({ error: "কী নিয়ে ডায়াগ্রাম চান লিখুন।" });
+            return res.status(400).json({ error: "Name the subject you want diagrammed." });
         }
 
         const subject = String(topic).trim();
@@ -73,7 +73,7 @@ export default async function handler(req, res) {
                 gathered = found.engine;
             } catch (error) {
                 // সার্চ ফেল করলেও ডায়াগ্রাম বানানো থামবে না
-                gathered = `সার্চ ব্যর্থ (${error.message}) — AI-এর জ্ঞান থেকে`;
+                gathered = `search failed (${error.message}) — AI-এর জ্ঞান থেকে`;
             }
         }
 
@@ -90,50 +90,51 @@ export default async function handler(req, res) {
             .join("\n\n");
 
         const prompt = `
-বিষয়: ${subject}
+Subject: ${subject}
 
-${context ? `--- রিসার্চ তথ্য ---\n${context}\n--- শেষ ---\n` : ""}
+${context ? `--- RESEARCH MATERIAL ---\n${context}\n--- END ---\n` : ""}
 
-এই বিষয়টি নিয়ে একটি ভিজ্যুয়াল রিসার্চ প্যাক বানাও।
+Build a visual research pack for this subject.
 
-শুধুমাত্র নিচের কাঠামোয় একটি JSON অবজেক্ট ফেরত দাও। কোনো ব্যাখ্যা, কোনো markdown fence নয়।
+Return ONLY a JSON object in exactly this shape. No explanation, no markdown fences.
 
 {
-  "title": "সংক্ষিপ্ত শিরোনাম",
-  "summary": "৩-৪ বাক্যে মূল কথা",
-  "insights": ["গুরুত্বপূর্ণ পয়েন্ট ১", "পয়েন্ট ২", "পয়েন্ট ৩", "পয়েন্ট ৪", "পয়েন্ট ৫"],
+  "title": "short title",
+  "summary": "the core of it in 3-4 sentences",
+  "insights": ["key point 1", "key point 2", "key point 3", "key point 4", "key point 5"],
   "diagrams": [
-    { "kind": "${chosen[0]}", "caption": "এই ডায়াগ্রাম কী দেখাচ্ছে", "code": "মারমেইড কোড" }
+    { "kind": "${chosen[0]}", "caption": "what this diagram shows", "code": "mermaid code" }
   ],
   "charts": [
-    { "type": "bar", "title": "চার্টের শিরোনাম", "labels": ["ক","খ","গ"],
-      "datasets": [{ "label": "সিরিজের নাম", "data": [10, 20, 30] }],
-      "note": "সংখ্যাগুলো কোথা থেকে এলো" }
+    { "type": "bar", "title": "chart title", "labels": ["a","b","c"],
+      "datasets": [{ "label": "series name", "data": [10, 20, 30] }],
+      "note": "where these numbers came from" }
   ]
 }
 
-ডায়াগ্রাম বানাও ঠিক এই ${chosen.length}টি ধরনের: ${chosen.join(", ")}
+Produce exactly these ${chosen.length} diagram kinds: ${chosen.join(", ")}
 
-মারমেইড সিনট্যাক্স (হুবহু এই ধরন মেনে চলো):
+Mermaid syntax to follow precisely:
 
 ${syntaxGuide}
 
-কঠোর নিয়ম:
-- মারমেইড কোড অবশ্যই বৈধ হতে হবে, নাহলে ছবি তৈরি হবে না।
-- node-এর লেখায় বন্ধনী ( ) [ ] { } কোলন : সেমিকোলন ; কমা , বা কোট " ব্যবহার করবে না।
-- প্রতিটি node-এর লেখা সর্বোচ্চ ৫ শব্দ।
-- mindmap-এ প্রতি স্তরে ঠিক ২ স্পেস করে ইনডেন্ট, ট্যাব নয়।
-- ডায়াগ্রামে ৮-১৫টি node রাখো — বেশি হলে পড়া যায় না।
-- বাংলা লেখা ব্যবহার করো (বিষয়টি ইংরেজি হলে ইংরেজি)।
+Strict rules:
+- The mermaid code must be valid, or no image can be rendered.
+- Never use ( ) [ ] { } : ; , or " inside node labels.
+- Maximum five words per node label.
+- In mindmaps, indent exactly two spaces per level. Never use tabs.
+- Keep each diagram to 8-15 nodes, or it becomes unreadable.
+- Write the labels in the same language as the subject. If the subject is
+  in Bangla, write natural Bangla labels.
 ${charts
-                ? `- charts অ্যারেতে ১-২টি চার্ট দাও শুধু তখনই যখন সত্যিকারের সংখ্যা আছে।
-- সংখ্যা বানাবে না। রিসার্চ তথ্যে সংখ্যা না থাকলে charts খালি অ্যারে [] রাখো।
-- চার্টের type হতে পারে: bar, line, pie, doughnut, radar`
-                : `- "charts" খালি অ্যারে [] রাখো।`}
-- JSON-এ কোনো ট্রেইলিং কমা রাখবে না।
-- মারমেইড কোডে নতুন লাইন \\n দিয়ে লেখো।
+                ? `- Include 1-2 charts ONLY when real numbers are present.
+- Never invent statistics. If the research material has no numbers, return "charts": [].
+- Chart type may be: bar, line, pie, doughnut, radar`
+                : `- Return "charts": [].`}
+- No trailing commas anywhere in the JSON.
+- Escape newlines inside mermaid code as \\n.
 
-শুধু JSON দাও।
+Return the JSON only.
 `;
 
         const outcome = await callAI({
@@ -150,7 +151,7 @@ ${charts
 
         if (!parsed) {
             return res.status(502).json({
-                error: "AI বৈধ ডায়াগ্রাম ডেটা দেয়নি। আবার চেষ্টা করুন অথবা বিষয়টি একটু সহজ করে লিখুন।",
+                error: "The model didn't return valid diagram data. Try again, or simplify the subject.",
                 raw: outcome.text.slice(0, 600)
             });
         }
@@ -180,7 +181,7 @@ ${charts
 
         if (!diagrams.length && !chartImages.length) {
             return res.status(502).json({
-                error: "ডায়াগ্রাম রেন্ডার করা যায়নি। আবার চেষ্টা করুন।",
+                error: "The diagram couldn't be rendered. Please try again.",
                 raw: outcome.text.slice(0, 600)
             });
         }
@@ -208,7 +209,7 @@ ${charts
     } catch (error) {
         console.error("Diagram API Error:", error);
         return res.status(error?.status || 500).json({
-            error: error?.message || "ডায়াগ্রাম তৈরি ব্যর্থ হয়েছে।"
+            error: error?.message || "The diagram couldn't be created."
         });
     }
 }
