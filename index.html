@@ -1803,8 +1803,9 @@ audio{
         <div class="studio-panel" id="sp-tts">
             <h3>🎙️ AI Voiceover</h3>
             <div class="desc">
-                স্ক্রিপ্ট পেস্ট করুন, ভয়েস বাছুন — mp3 তৈরি হবে, ডাউনলোড করে
-                সরাসরি ভিডিওতে বসিয়ে দিন। কোনো key লাগে না।
+                স্ক্রিপ্ট পেস্ট করুন, ভয়েস বাছুন — অডিও ফাইল তৈরি হবে, ডাউনলোড করে
+                সরাসরি ভিডিওতে বসিয়ে দিন। <b>বাংলা লেখা দিলে বাংলা কণ্ঠে পড়বে</b>
+                (key ছাড়াই)। ইংরেজিতে Groq PlayAI-এর ভালো মানের ভয়েস ব্যবহার হবে।
             </div>
 
             <textarea id="ttsText" style="min-height:100px"
@@ -1812,14 +1813,13 @@ audio{
 
             <div class="panel-controls">
                 <select class="engine-select" id="ttsVoice">
-                    <option value="nova">Nova — উষ্ণ, নারী</option>
-                    <option value="onyx">Onyx — গভীর, পুরুষ</option>
-                    <option value="alloy">Alloy — নিরপেক্ষ</option>
-                    <option value="echo">Echo — শান্ত, পুরুষ</option>
-                    <option value="fable">Fable — গল্পবলা</option>
-                    <option value="shimmer">Shimmer — উজ্জ্বল</option>
-                    <option value="coral">Coral — বন্ধুত্বপূর্ণ</option>
-                    <option value="sage">Sage — সংবাদপাঠ</option>
+                    <option value="auto">Auto — ভাষা দেখে বেছে নেবে</option>
+                    <option value="bn">বাংলা কণ্ঠ</option>
+                    <option value="hi">হিন্দি কণ্ঠ</option>
+                    <option value="Fritz-PlayAI">Fritz — পুরুষ, ইংরেজি</option>
+                    <option value="Celeste-PlayAI">Celeste — নারী, ইংরেজি</option>
+                    <option value="Atlas-PlayAI">Atlas — গভীর, বর্ণনামূলক</option>
+                    <option value="Quinn-PlayAI">Quinn — উজ্জ্বল, প্রাণবন্ত</option>
                 </select>
                 <button class="generate" onclick="runTts()">✦ Create voice</button>
             </div>
@@ -2573,18 +2573,22 @@ async function runTts(){
             throw new Error(data.error || "ভয়েস তৈরি ব্যর্থ");
         }
 
+        const engine = response.headers.get("X-Voice-Engine") || "TTS";
+        const lang = response.headers.get("X-Voice-Lang") || "";
+
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
+        const ext = blob.type.includes("wav") ? "wav" : "mp3";
 
         out.innerHTML = `
             <audio controls src="${url}"></audio>
             <div class="panel-controls" style="margin-top:10px">
                 <a class="copy-btn" style="text-decoration:none"
-                   href="${url}" download="voiceover.mp3">⬇ mp3 ডাউনলোড</a>
+                   href="${url}" download="voiceover.${ext}">⬇ ${ext.toUpperCase()} ডাউনলোড</a>
             </div>
             <div class="engine-badge">
-                Voiced by <b>Pollinations TTS</b>
-                <span class="tag">${escapeHtml(document.getElementById("ttsVoice").value)}</span>
+                Voiced by <b>${escapeHtml(engine)}</b>
+                ${lang ? `<span class="tag">${escapeHtml(lang)}</span>` : ""}
                 <span class="tag">${(blob.size/1024).toFixed(0)} KB</span>
             </div>
         `;

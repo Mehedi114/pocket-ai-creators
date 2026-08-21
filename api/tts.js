@@ -6,7 +6,9 @@ import { textToSpeech, VOICES } from "./_tools.js";
  */
 export default async function handler(req, res) {
     if (req.method === "GET") {
-        return res.status(200).json({ voices: VOICES });
+        return res.status(200).json({
+            voices: VOICES.map(v => ({ id: v.id, label: v.label }))
+        });
     }
 
     if (req.method !== "POST") {
@@ -14,7 +16,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { text, voice = "nova", format = "binary" } = req.body || {};
+        const { text, voice = "auto", format = "binary" } = req.body || {};
 
         const audio = await textToSpeech(text, { voice });
 
@@ -22,16 +24,22 @@ export default async function handler(req, res) {
             return res.status(200).json({
                 success: true,
                 voice,
+                lang: audio.lang,
                 contentType: audio.contentType,
                 base64: audio.buffer.toString("base64"),
-                provider: "Pollinations TTS"
+                provider: audio.engine
             });
         }
 
         res.statusCode = 200;
         res.setHeader("Content-Type", audio.contentType);
         res.setHeader("Content-Length", String(audio.buffer.byteLength));
-        res.setHeader("Content-Disposition", 'inline; filename="voiceover.mp3"');
+        res.setHeader("X-Voice-Engine", audio.engine);
+        res.setHeader("X-Voice-Lang", audio.lang || "");
+        res.setHeader(
+            "Content-Disposition",
+            `inline; filename="voiceover.${audio.contentType.includes("wav") ? "wav" : "mp3"}"`
+        );
         res.setHeader("Cache-Control", "no-store");
         return res.end(audio.buffer);
     } catch (error) {

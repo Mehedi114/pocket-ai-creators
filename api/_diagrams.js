@@ -121,7 +121,7 @@ export function sanitizeMermaid(raw) {
 }
 
 /** mermaid.live / mermaid.ink এর pako ফরম্যাট */
-function pakoEncode(code, theme = "dark") {
+function pakoEncode(code, theme = "default") {
     const state = {
         code,
         mermaid: JSON.stringify({ theme }),
@@ -136,7 +136,7 @@ function pakoEncode(code, theme = "dark") {
     return `pako:${b64url(deflated)}`;
 }
 
-export function renderMermaid(rawCode, { theme = "dark", bgColor = "0d0f12" } = {}) {
+export function renderMermaid(rawCode, { theme = "default", bgColor = "!white" } = {}) {
     const code = sanitizeMermaid(rawCode);
 
     if (!code) return null;

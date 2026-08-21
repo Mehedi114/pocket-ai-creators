@@ -160,6 +160,26 @@ await assert.rejects(() => tools.textToSpeech("   "), /কিছু টেক্
 await assert.rejects(() => tools.textToSpeech("ক".repeat(4100)), /খুব বড়/);
 console.log("✓ TTS ইনপুট ভ্যালিডেশন কাজ করে");
 
+/* TTS চাঙ্কিং — Google Translate-এর ২০০ অক্ষর সীমা */
+const bangla = "আজকের ভিডিওতে স্বাগতম। " .repeat(20);
+const pieces = tools.chunkText(bangla);
+assert.ok(pieces.length > 1, "বড় লেখা ভাগ হওয়া উচিত");
+assert.ok(pieces.every(p => p.length <= 190), "প্রতিটি অংশ ১৯০ অক্ষরের কম");
+assert.equal(pieces.join(" ").replace(/\s+/g, " ").trim(),
+             bangla.replace(/\s+/g, " ").trim(), "কোনো লেখা হারায়নি");
+
+const single = tools.chunkText("ছোট বাক্য।");
+assert.equal(single.length, 1);
+
+const huge = tools.chunkText("ক".repeat(500));
+assert.ok(huge.every(p => p.length <= 190), "বিশাল একক বাক্যও ভাগ হয়");
+console.log("✓ TTS চাঙ্কিং: লেখা ভাগ হয়, কিছুই হারায় না");
+
+/* ভয়েস তালিকা */
+assert.ok(tools.VOICES.some(v => v.id === "bn"), "বাংলা ভয়েস থাকতে হবে");
+assert.ok(tools.VOICES.find(v => v.id === "bn").forceGoogle, "বাংলা → Google TTS");
+console.log("✓ বাংলা ভয়েস সরাসরি Google TTS-এ যায়");
+
 /* সার্ভিস স্ট্যাটাস */
 const services = tools.describeServices();
 assert.equal(services.length, 5);
@@ -192,7 +212,7 @@ const inflated = JSON.parse(
     ).toString("utf8")
 );
 assert.equal(inflated.code, mermaidCode);
-assert.equal(JSON.parse(inflated.mermaid).theme, "dark");
+assert.equal(JSON.parse(inflated.mermaid).theme, "default");
 console.log("✓ mermaid.ink pako এনকোডিং round-trip সঠিক");
 
 /* sanitize — AI-এর কমন সিনট্যাক্স ভুল ঠিক হয় */

@@ -341,15 +341,220 @@ export function toSrt(segments) {
 }
 
 /* ======================================================
-   5. VOICEOVER — Pollinations TTS (key ছাড়া)
+   5. VOICEOVER — একাধিক ফ্রি TTS-এর চেইন
+   ------------------------------------------------------
+   Pollinations-এর openai-audio মডেল বন্ধ হয়ে গেছে (404),
+   তাই এখন তিন স্তরের fallback:
+
+     1. Groq PlayAI TTS   (GROQ_API_KEY থাকলে — সেরা মান, ইংরেজি)
+     2. Gemini TTS        (GEMINI_API_KEY থাকলে — ৩০টি ভয়েস)
+     3. Google Translate  (key ছাড়া, বাংলা সহ — সবসময় কাজ করে)
    ====================================================== */
 
 export const VOICES = [
-    "alloy", "echo", "fable", "onyx", "nova", "shimmer",
-    "coral", "verse", "ballad", "ash", "sage", "amuch", "dan"
+    { id: "auto", label: "Auto — যা পাওয়া যায়", lang: "auto" },
+    { id: "bn", label: "বাংলা কণ্ঠ", lang: "bn", forceGoogle: true },
+    { id: "hi", label: "হিন্দি কণ্ঠ", lang: "hi", forceGoogle: true },
+    { id: "Fritz-PlayAI", label: "Fritz — পুরুষ, ইংরেজি", groq: "Fritz-PlayAI", gemini: "Puck" },
+    { id: "Celeste-PlayAI", label: "Celeste — নারী, ইংরেজি", groq: "Celeste-PlayAI", gemini: "Kore" },
+    { id: "Atlas-PlayAI", label: "Atlas — গভীর, বর্ণনামূলক", groq: "Atlas-PlayAI", gemini: "Charon" },
+    { id: "Quinn-PlayAI", label: "Quinn — উজ্জ্বল, প্রাণবন্ত", groq: "Quinn-PlayAI", gemini: "Aoede" }
 ];
 
-export async function textToSpeech(text, { voice = "nova", timeoutMs = 90000 } = {}) {
+const BENGALI = /[\u0980-\u09FF]/;
+const DEVANAGARI = /[\u0900-\u097F]/;
+
+function detectLang(text) {
+    if (BENGALI.test(text)) return "bn";
+    if (DEVANAGARI.test(text)) return "hi";
+    return "en";
+}
+
+/** কাঁচা PCM-এ WAV হেডার বসানো (Gemini/Groq PCM দিলে দরকার) */
+function pcmToWav(pcm, { sampleRate = 24000, channels = 1, bits = 16 } = {}) {
+    const header = Buffer.alloc(44);
+    const byteRate = (sampleRate * channels * bits) / 8;
+
+    header.write("RIFF", 0);
+    header.writeUInt32LE(36 + pcm.length, 4);
+    header.write("WAVE", 8);
+    header.write("fmt ", 12);
+    header.writeUInt32LE(16, 16);
+    header.writeUInt16LE(1, 20);
+    header.writeUInt16LE(channels, 22);
+    header.writeUInt32LE(sampleRate, 24);
+    header.writeUInt32LE(byteRate, 28);
+    header.writeUInt16LE((channels * bits) / 8, 32);
+    header.writeUInt16LE(bits, 34);
+    header.write("data", 36);
+    header.writeUInt32LE(pcm.length, 40);
+
+    return Buffer.concat([header, pcm]);
+}
+
+/* ---------- ১. Groq PlayAI ---------- */
+
+async function groqTts(text, voice, timeoutMs) {
+    if (!process.env.GROQ_API_KEY) throw new Error("no groq key");
+
+    const response = await fetch("https://api.groq.com/openai/v1/audio/speech", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.GROQ_API_KEY}`
+        },
+        body: JSON.stringify({
+            model: process.env.GROQ_TTS_MODEL || "playai-tts",
+            input: text,
+            voice: voice?.groq || "Fritz-PlayAI",
+            response_format: "wav"
+        }),
+        signal: timeoutSignal(timeoutMs)
+    });
+
+    if (!response.ok) {
+        const detail = await response.text().catch(() => "");
+        throw new Error(`Groq TTS ${response.status}: ${detail.slice(0, 160)}`);
+    }
+
+    return {
+        buffer: Buffer.from(await response.arrayBuffer()),
+        contentType: "audio/wav",
+        engine: "Groq PlayAI TTS"
+    };
+}
+
+/* ---------- ২. Gemini TTS ---------- */
+
+async function geminiTts(text, voice, timeoutMs) {
+    if (!process.env.GEMINI_API_KEY) throw new Error("no gemini key");
+
+    const model = process.env.GEMINI_TTS_MODEL || "gemini-2.5-flash-preview-tts";
+
+    const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(process.env.GEMINI_API_KEY)}`,
+        {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text }] }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                        voiceConfig: {
+                            prebuiltVoiceConfig: { voiceName: voice?.gemini || "Kore" }
+                        }
+                    }
+                }
+            }),
+            signal: timeoutSignal(timeoutMs)
+        }
+    );
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        throw new Error(
+            `Gemini TTS ${response.status}: ${data?.error?.message || "failed"}`.slice(0, 200)
+        );
+    }
+
+    const inline = data?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData;
+
+    if (!inline?.data) throw new Error("Gemini TTS খালি উত্তর দিয়েছে");
+
+    const pcm = Buffer.from(inline.data, "base64");
+    const rate = Number(/rate=(\d+)/.exec(inline.mimeType || "")?.[1] || 24000);
+
+    return {
+        buffer: pcmToWav(pcm, { sampleRate: rate }),
+        contentType: "audio/wav",
+        engine: "Google Gemini TTS"
+    };
+}
+
+/* ---------- ৩. Google Translate TTS (key ছাড়া, বাংলা সহ) ---------- */
+
+/** ২০০ অক্ষরের সীমা — বাক্যের শেষে ভাগ করি */
+export function chunkText(text, size = 190) {
+    const parts = [];
+    let current = "";
+
+    for (const piece of text.split(/(?<=[।.!?\n])\s+/)) {
+        if ((current + " " + piece).trim().length <= size) {
+            current = (current + " " + piece).trim();
+            continue;
+        }
+
+        if (current) parts.push(current);
+
+        if (piece.length <= size) {
+            current = piece;
+        } else {
+            // একটাই বিশাল বাক্য — জোর করে ভাগ
+            for (let i = 0; i < piece.length; i += size) {
+                parts.push(piece.slice(i, i + size));
+            }
+            current = "";
+        }
+    }
+
+    if (current) parts.push(current);
+
+    return parts.filter(Boolean);
+}
+
+async function googleTts(text, lang, timeoutMs) {
+    const chunks = chunkText(text);
+
+    if (chunks.length > 25) {
+        const err = new Error("লেখাটি খুব বড়। ছোট ছোট অংশে ভাগ করে নিন।");
+        err.status = 413;
+        throw err;
+    }
+
+    const buffers = [];
+
+    for (let i = 0; i < chunks.length; i++) {
+        const params = new URLSearchParams({
+            ie: "UTF-8",
+            q: chunks[i],
+            tl: lang,
+            client: "tw-ob",
+            total: String(chunks.length),
+            idx: String(i),
+            textlen: String(chunks[i].length)
+        });
+
+        const response = await fetch(
+            `https://translate.google.com/translate_tts?${params}`,
+            {
+                headers: {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+                    Referer: "https://translate.google.com/"
+                },
+                signal: timeoutSignal(timeoutMs)
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Google TTS ${response.status}`);
+        }
+
+        buffers.push(Buffer.from(await response.arrayBuffer()));
+    }
+
+    return {
+        buffer: Buffer.concat(buffers),
+        contentType: "audio/mpeg",
+        engine: "Google Translate TTS",
+        chunks: chunks.length
+    };
+}
+
+/* ---------- মূল ফাংশন ---------- */
+
+export async function textToSpeech(text, { voice = "auto", timeoutMs = 60000 } = {}) {
     const clean = String(text || "").trim();
 
     if (!clean) {
@@ -364,43 +569,38 @@ export async function textToSpeech(text, { voice = "nova", timeoutMs = 90000 } =
         throw err;
     }
 
-    const params = new URLSearchParams({
-        model: "openai-audio",
-        voice: VOICES.includes(voice) ? voice : "nova",
-        referrer: "pocket-ai-creators"
-    });
+    const selected = VOICES.find(v => v.id === voice) || VOICES[0];
+    const lang = selected.lang && selected.lang !== "auto"
+        ? selected.lang
+        : detectLang(clean);
 
-    if (process.env.POLLINATIONS_TOKEN) {
-        params.set("token", process.env.POLLINATIONS_TOKEN);
+    const attempts = [];
+
+    // বাংলা/হিন্দি হলে সরাসরি Google — বাকিরা এসব ভাষা ভালো পারে না
+    const useGoogleFirst = selected.forceGoogle || lang === "bn" || lang === "hi";
+
+    const chain = useGoogleFirst
+        ? [["google", () => googleTts(clean, lang, timeoutMs)]]
+        : [
+            ["groq", () => groqTts(clean, selected, timeoutMs)],
+            ["gemini", () => geminiTts(clean, selected, timeoutMs)],
+            ["google", () => googleTts(clean, lang, timeoutMs)]
+        ];
+
+    for (const [id, fn] of chain) {
+        try {
+            const out = await fn();
+            return { ...out, lang, attempts };
+        } catch (error) {
+            attempts.push({ provider: id, error: error.message });
+            console.warn(`[pocket-ai] TTS ${id} ব্যর্থ:`, error.message);
+        }
     }
 
-    const response = await fetch(
-        `https://text.pollinations.ai/${encodeURIComponent(clean)}?${params}`,
-        { headers: { "User-Agent": UA }, signal: timeoutSignal(timeoutMs) }
-    );
-
-    if (!response.ok) {
-        const err = new Error(
-            response.status === 429
-                ? "ভয়েস সার্ভিস ব্যস্ত। ১৫ সেকেন্ড পরে আবার চেষ্টা করুন।"
-                : `ভয়েস তৈরি ব্যর্থ (HTTP ${response.status})।`
-        );
-        err.status = response.status;
-        throw err;
-    }
-
-    const type = response.headers.get("content-type") || "";
-
-    if (!type.startsWith("audio")) {
-        const err = new Error("ভয়েস সার্ভিস অডিও ফেরত দেয়নি। একটু পরে চেষ্টা করুন।");
-        err.status = 502;
-        throw err;
-    }
-
-    return {
-        buffer: Buffer.from(await response.arrayBuffer()),
-        contentType: type
-    };
+    const err = new Error("সব ভয়েস সার্ভিস ব্যর্থ হয়েছে। একটু পরে আবার চেষ্টা করুন।");
+    err.status = 502;
+    err.attempts = attempts;
+    throw err;
 }
 
 /* ======================================================
@@ -454,12 +654,14 @@ export function describeServices() {
         {
             id: "voice",
             label: "AI Voiceover",
-            provider: "Pollinations TTS",
+            provider: process.env.GROQ_API_KEY
+                ? "Groq PlayAI → Gemini → Google"
+                : "Google Translate TTS",
             ready: true,
-            keyEnv: "POLLINATIONS_TOKEN",
+            keyEnv: "GROQ_API_KEY",
             optional: true,
-            note: "১৩টি ভয়েস, key ছাড়াই চলে।",
-            keyUrl: "https://auth.pollinations.ai/"
+            note: "বাংলা/হিন্দি → Google (key ছাড়া)। ইংরেজি → Groq PlayAI, তারপর Gemini।",
+            keyUrl: "https://console.groq.com/keys"
         }
     ];
 }

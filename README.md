@@ -71,7 +71,7 @@ Creator Research এর জন্য আলাদা করে দরকার:
 | 🔗 **Read Any URL** | যেকোনো ব্লগ/নিউজ/PDF/প্রতিযোগীর পেজ পড়ে বিশ্লেষণ | Jina Reader | **না** |
 | 🌐 **Live Web Search** | আজকের তথ্য দিয়ে সূত্রসহ উত্তর | Tavily → Jina → DDG | ঐচ্ছিক |
 | 🎧 **Transcribe** | অডিও/ভিডিও → টেক্সট + SRT + চ্যাপ্টার + Shorts আইডিয়া | Groq Whisper v3 Turbo | Groq key-ই |
-| 🎙️ **AI Voiceover** | স্ক্রিপ্ট → mp3 ভয়েসওভার, ১৩টি ভয়েস | Pollinations TTS | **না** |
+| 🎙️ **AI Voiceover** | স্ক্রিপ্ট → অডিও, **বাংলা সহ** | Groq PlayAI → Gemini → Google | **না** |
 | 🧠 **Visual Research** | রিসার্চ → মাইন্ড ম্যাপ / ফ্লোচার্ট / চার্ট **ছবি** | mermaid.ink + QuickChart | **না** |
 
 ### ঐচ্ছিক boost key
@@ -213,3 +213,25 @@ api/providers.js      ইঞ্জিন + সার্ভিস স্ট্য
 dev-server.mjs        লোকাল dev সার্ভার (zero dependency)
 test/engine.test.mjs  failover টেস্ট
 ```
+
+
+---
+
+## ✦ লাইভ যাচাই (২১ আগস্ট ২০২৬)
+
+প্রতিটি বাইরের সার্ভিস আসল রিকোয়েস্ট পাঠিয়ে পরীক্ষা করা হয়েছে:
+
+| সার্ভিস | ফল |
+|---|---|
+| Pollinations image (Flux) | ✅ আসল ছবি ফেরত দেয় |
+| Jina Reader (`r.jina.ai`) | ✅ key ছাড়া কাজ করে |
+| mermaid.ink | ✅ কাজ করে (light theme-এ পড়া যায়) |
+| QuickChart | ✅ আসল চার্ট ছবি |
+| Google Translate TTS | ✅ mp3 ফেরত দেয়, বাংলা সহ |
+| ~~Pollinations `openai-audio`~~ | ❌ **404 — মডেল সরিয়ে ফেলা হয়েছে** |
+| ~~StreamElements TTS~~ | ❌ **401 — এখন key লাগে** |
+
+শেষ দুটো বাদ দিয়ে ভয়েসওভার তিন স্তরের fallback-এ সরানো হয়েছে।
+
+> ডায়াগ্রামের theme প্রথমে `dark` ছিল — রেন্ডার করে দেখা গেল কালো বাক্সে কালো লেখা,
+> পড়াই যায় না। তাই `default` (সাদা ব্যাকগ্রাউন্ড) করা হয়েছে।
