@@ -1,0 +1,15 @@
+{
+  "name": "pocket-ai-creators",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Pocket AI — Creator Intelligence. Multi-provider free LLM engine.",
+  "scripts": {
+    "dev": "node dev-server.mjs",
+    "start": "node dev-server.mjs",
+    "test": "node test/engine.test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

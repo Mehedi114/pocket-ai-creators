@@ -645,6 +645,212 @@ textarea:focus{
     display:block;
 }
 
+/* ================= ENGINE CONTROLS ================= */
+
+.panel-controls{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:10px;
+    margin-top:10px;
+}
+
+.power-toggle{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:9px 13px;
+    border:1px solid var(--line2);
+    background:#0b0d10;
+    border-radius:9px;
+    color:#8d949e;
+    font-size:11.5px;
+    font-weight:600;
+    user-select:none;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.power-toggle.on{
+    border-color:var(--lime);
+    color:var(--lime);
+    background:rgba(200,255,61,.07);
+}
+
+.power-toggle input{
+    accent-color:var(--lime);
+    cursor:pointer;
+}
+
+.engine-select{
+    background:#0b0d10;
+    color:#9aa1ab;
+    border:1px solid var(--line2);
+    border-radius:9px;
+    padding:9px 11px;
+    font-size:11.5px;
+    outline:none;
+    cursor:pointer;
+}
+
+.engine-badge{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:7px;
+    margin-top:13px;
+    padding-top:12px;
+    border-top:1px solid var(--line);
+    font-size:10.5px;
+    color:#5f6671;
+}
+
+.engine-badge b{
+    color:var(--lime);
+    font-weight:700;
+}
+
+.engine-badge .tag{
+    border:1px solid var(--line2);
+    border-radius:20px;
+    padding:3px 9px;
+    color:#79808a;
+}
+
+.engine-badge .tag.fail{
+    color:#8a5b66;
+    border-color:#3a2830;
+}
+
+/* ================= AI ENGINE PANEL ================= */
+
+.engine-panel{
+    max-width:950px;
+    margin:30px auto 0;
+    border:1px solid var(--line);
+    background:#0b0d0f;
+    border-radius:16px;
+    padding:22px;
+}
+
+.engine-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:6px;
+}
+
+.engine-head h2{
+    font-family:"Space Grotesk";
+    font-size:17px;
+}
+
+.engine-sub{
+    color:#626973;
+    font-size:11.5px;
+    line-height:1.6;
+    margin-bottom:16px;
+}
+
+.engine-count{
+    border:1px solid var(--line2);
+    border-radius:20px;
+    padding:5px 12px;
+    font-size:11px;
+    color:var(--lime);
+    background:rgba(200,255,61,.06);
+    white-space:nowrap;
+}
+
+.provider-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:9px;
+}
+
+.provider{
+    border:1px solid var(--line);
+    background:#0e1114;
+    border-radius:12px;
+    padding:13px 14px;
+    transition:.2s;
+}
+
+.provider.on{
+    border-color:#3d4a25;
+    background:#101409;
+}
+
+.provider-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+}
+
+.provider-name{
+    font-size:12.5px;
+    font-weight:600;
+    color:#dfe3e8;
+}
+
+.provider-dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#333941;
+    flex:none;
+}
+
+.provider.on .provider-dot{
+    background:var(--lime);
+    box-shadow:0 0 8px rgba(200,255,61,.6);
+}
+
+.provider-model{
+    margin-top:6px;
+    font-size:10px;
+    color:#5f6671;
+    font-family:"Space Grotesk";
+    word-break:break-all;
+}
+
+.provider-note{
+    margin-top:7px;
+    font-size:10.5px;
+    color:#565d67;
+    line-height:1.5;
+}
+
+.provider a{
+    display:inline-block;
+    margin-top:9px;
+    font-size:10.5px;
+    color:var(--lime2);
+    text-decoration:none;
+}
+
+.provider a:hover{
+    text-decoration:underline;
+}
+
+.provider-env{
+    margin-top:7px;
+    font-size:10px;
+    color:#4d535d;
+    font-family:"Space Grotesk";
+}
+
+@media(max-width:1050px){
+    .provider-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+@media(max-width:640px){
+    .provider-grid{grid-template-columns:1fr}
+}
+
 /* ================= MOBILE ================= */
 
 .mobile-menu{
@@ -828,6 +1034,11 @@ textarea:focus{
         <button onclick="navClick(this,'writing')">
             <span class="nav-icon">✎</span>
             Writing
+        </button>
+
+        <button onclick="navClick(this,'engine')">
+            <span class="nav-icon">⚙</span>
+            AI Engine
         </button>
 
     </nav>
@@ -1021,6 +1232,72 @@ textarea:focus{
                 <p>Build hooks, story flow and scripts made for attention.</p>
             </div>
 
+
+            <div class="tool youtube" onclick="openTool('Thumbnail Ideas')">
+                <span class="tool-number">09</span>
+                <span class="tool-arrow">↗</span>
+
+                <div class="tool-icon">◲</div>
+
+                <h3>Thumbnail Ideas</h3>
+                <p>Art-director level thumbnail concepts you can build today.</p>
+            </div>
+
+
+            <div class="tool youtube" onclick="openTool('Hook Generator')">
+                <span class="tool-number">10</span>
+                <span class="tool-arrow">↗</span>
+
+                <div class="tool-icon">⚡</div>
+
+                <h3>Hook Generator</h3>
+                <p>15 first-five-second openings that stop the scroll.</p>
+            </div>
+
+
+            <div class="tool social" onclick="openTool('Repurpose Content')">
+                <span class="tool-number">11</span>
+                <span class="tool-arrow">↗</span>
+
+                <div class="tool-icon">⇄</div>
+
+                <h3>Repurpose Pack</h3>
+                <p>One idea becomes a Short, post, thread and newsletter.</p>
+            </div>
+
+
+            <div class="tool marketing" onclick="openTool('Content Calendar')">
+                <span class="tool-number">12</span>
+                <span class="tool-arrow">↗</span>
+
+                <div class="tool-icon">▤</div>
+
+                <h3>30-Day Calendar</h3>
+                <p>A full month of content planned around your niche.</p>
+            </div>
+
+
+            <div class="tool marketing" onclick="openTool('Competitor Angle')">
+                <span class="tool-number">13</span>
+                <span class="tool-arrow">↗</span>
+
+                <div class="tool-icon">◈</div>
+
+                <h3>Competitor Angle</h3>
+                <p>Find the angles nobody in your niche is covering well.</p>
+            </div>
+
+
+            <div class="tool writing" onclick="openTool('Rewrite &amp; Improve')">
+                <span class="tool-number">14</span>
+                <span class="tool-arrow">↗</span>
+
+                <div class="tool-icon">✎</div>
+
+                <h3>Rewrite &amp; Improve</h3>
+                <p>Turn rough text into clean, human, publish-ready copy.</p>
+            </div>
+
         </div>
 
     </section>
@@ -1045,13 +1322,47 @@ textarea:focus{
             placeholder="Tell Pocket AI what you're creating..."
         ></textarea>
 
-        <button class="generate" onclick="demoGenerate()">
-            ✦ Generate
-        </button>
+        <div class="panel-controls">
+
+            <label class="power-toggle" id="powerToggle" title="একসাথে কয়েকটা AI-কে জিজ্ঞেস করে সেরা উত্তর তৈরি করে">
+                <input type="checkbox" id="powerMode" onchange="syncPowerToggle()">
+                ⚡ Power Mode
+            </label>
+
+            <select class="engine-select" id="engineSelect" title="নির্দিষ্ট AI provider বেছে নিন">
+                <option value="">Auto — best available</option>
+            </select>
+
+            <button class="generate" onclick="demoGenerate()">
+                ✦ Generate
+            </button>
+
+        </div>
 
         <div class="output" id="output">
             Your generated result will appear here.
         </div>
+
+    </section>
+
+
+    <!-- AI ENGINE STATUS -->
+
+    <section class="engine-panel" id="enginePanel">
+
+        <div class="engine-head">
+            <h2>⚙ AI Engine</h2>
+            <span class="engine-count" id="engineCount">checking…</span>
+        </div>
+
+        <div class="engine-sub">
+            Pocket AI একটি মাল্টি-প্রোভাইডার ইঞ্জিনে চলে। একটি প্রোভাইডারের
+            লিমিট শেষ হলে বা সার্ভার ডাউন হলে অটোমেটিক পরের ফ্রি প্রোভাইডারে
+            চলে যায় — কাজ কখনো থামে না। নতুন key যোগ করতে শুধু environment
+            variable বসান, কোড বদলানো লাগবে না।
+        </div>
+
+        <div class="provider-grid" id="providerGrid"></div>
 
     </section>
 
@@ -1122,6 +1433,14 @@ function navClick(button, section){
 
     }
 
+    if(section === "engine"){
+
+        document
+            .getElementById("enginePanel")
+            .scrollIntoView({behavior:"smooth", block:"start"});
+
+    }
+
 }
 
 
@@ -1169,11 +1488,48 @@ function closeTool(){
 }
 
 
+function syncPowerToggle(){
+
+    const box = document.getElementById("powerMode");
+    const label = document.getElementById("powerToggle");
+
+    label.classList.toggle("on", box.checked);
+
+    const select = document.getElementById("engineSelect");
+    select.disabled = box.checked;
+    select.style.opacity = box.checked ? .45 : 1;
+}
+
+
+function renderEngineBadge(engine){
+
+    if(!engine) return "";
+
+    const label = engine.providerLabel || engine.provider || "AI";
+
+    let head = engine.mode === "council"
+        ? `⚡ Power Mode — ${(engine.panel || []).length} AI merged by <b>${escapeHtml(label)}</b>`
+        : `Answered by <b>${escapeHtml(label)}</b>`;
+
+    let tags = `<span class="tag">${escapeHtml(engine.model || "")}</span>`;
+
+    (engine.attempts || []).forEach(a => {
+        if(!a.ok){
+            tags += `<span class="tag fail">${escapeHtml(a.provider)} skipped</span>`;
+        }
+    });
+
+    return `<div class="engine-badge">${head} ${tags}</div>`;
+}
+
+
 async function demoGenerate() {
 
     const input = document.getElementById("toolInput");
     const output = document.getElementById("output");
     const title = document.getElementById("panelTitle");
+    const power = document.getElementById("powerMode");
+    const engineSelect = document.getElementById("engineSelect");
 
     const text = input.value.trim();
 
@@ -1183,11 +1539,9 @@ async function demoGenerate() {
     }
 
     output.classList.add("show");
-    output.innerHTML = `
-        <div style="color:#c8ff3d">
-            ✦ Pocket AI is thinking...
-        </div>
-    `;
+    output.innerHTML = power.checked
+        ? `<div style="color:#c8ff3d">⚡ Power Mode — কয়েকটা AI একসাথে কাজ করছে...</div>`
+        : `<div style="color:#c8ff3d">✦ Pocket AI is thinking...</div>`;
 
     try {
 
@@ -1200,7 +1554,9 @@ async function demoGenerate() {
 
             body: JSON.stringify({
                 tool: title.textContent,
-                input: text
+                input: text,
+                mode: power.checked ? "power" : "single",
+                provider: engineSelect.value || undefined
             })
         });
 
@@ -1222,6 +1578,7 @@ async function demoGenerate() {
                 color:#dfe3e8;
                 line-height:1.8;
             ">${escapeHtml(data.result)}</div>
+            ${renderEngineBadge(data.engine)}
         `;
 
     } catch (error) {
@@ -1235,6 +1592,70 @@ async function demoGenerate() {
         `;
     }
 }
+
+
+async function loadProviders(){
+
+    const grid = document.getElementById("providerGrid");
+    const count = document.getElementById("engineCount");
+    const select = document.getElementById("engineSelect");
+
+    try {
+
+        const response = await fetch("/api/providers");
+        const data = await response.json();
+
+        if(!response.ok) throw new Error(data.error || "Status failed");
+
+        count.textContent = data.activeCount
+            ? `${data.activeCount} provider${data.activeCount > 1 ? "s" : ""} active`
+            : "no provider configured";
+
+        if(!data.activeCount){
+            count.style.color = "#ff6f91";
+        }
+
+        grid.innerHTML = data.providers.map(p => `
+            <div class="provider ${p.configured ? "on" : ""}">
+                <div class="provider-top">
+                    <span class="provider-name">
+                        ${p.configured && p.position ? `${p.position}. ` : ""}${escapeHtml(p.label)}
+                    </span>
+                    <span class="provider-dot"></span>
+                </div>
+                <div class="provider-model">${escapeHtml(p.model)}</div>
+                <div class="provider-note">${escapeHtml(p.note || "")}</div>
+                ${p.configured
+                    ? `<div class="provider-env">${escapeHtml(p.keyEnv)} ✓</div>`
+                    : `<a href="${p.keyUrl}" target="_blank" rel="noopener">Get free key →</a>
+                       <div class="provider-env">set ${escapeHtml(p.keyEnv)}</div>`}
+            </div>
+        `).join("");
+
+        select.innerHTML = `<option value="">Auto — best available</option>` +
+            data.providers
+                .filter(p => p.configured)
+                .map(p => `<option value="${p.id}">${escapeHtml(p.label)}</option>`)
+                .join("");
+
+    } catch (error) {
+
+        count.textContent = "engine offline";
+        count.style.color = "#ff6f91";
+
+        grid.innerHTML = `
+            <div class="provider" style="grid-column:1/-1">
+                <div class="provider-note">
+                    Provider status লোড করা যায়নি — লোকালি চালালে
+                    <b>npm run dev</b> ব্যবহার করুন, অথবা Vercel এ deploy করুন।
+                </div>
+            </div>
+        `;
+    }
+}
+
+
+document.addEventListener("DOMContentLoaded", loadProviders);
 
 
 function escapeHtml(text) {
