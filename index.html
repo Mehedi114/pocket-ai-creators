@@ -1026,6 +1026,77 @@ textarea:focus{
     text-decoration:none;
 }
 
+.diagram-card{
+    margin-top:14px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:#fbfbfd;
+    overflow:hidden;
+}
+
+.diagram-card img{
+    width:100%;
+    display:block;
+    min-height:120px;
+    background:#fbfbfd;
+}
+
+.diagram-bar{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:9px 12px;
+    background:#0e1114;
+    border-top:1px solid var(--line);
+}
+
+.diagram-bar .cap{
+    font-size:10.5px;
+    color:#8d949e;
+    flex:1;
+    min-width:140px;
+}
+
+.diagram-bar a, .diagram-bar button{
+    border:1px solid var(--line2);
+    background:transparent;
+    color:#8d949e;
+    border-radius:7px;
+    padding:5px 10px;
+    font-size:10px;
+    font-weight:600;
+    text-decoration:none;
+    font-family:inherit;
+}
+
+.diagram-bar a:hover, .diagram-bar button:hover{
+    border-color:#556033;
+    color:var(--lime);
+}
+
+.insight-list{
+    margin:12px 0 4px;
+    padding-left:17px;
+    color:#b8bec7;
+    font-size:12px;
+    line-height:1.85;
+}
+
+.chart-card{
+    margin-top:14px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    overflow:hidden;
+    background:#0d0f12;
+}
+
+.chart-card img{
+    width:100%;
+    display:block;
+}
+
 .source-list{
     margin-top:12px;
     padding-top:11px;
@@ -1621,6 +1692,13 @@ audio{
                 <small>টেক্সট → কণ্ঠস্বর</small>
             </button>
 
+            <button class="studio-card" data-studio="diagram" onclick="openStudio('diagram')">
+                <span class="free">NEW</span>
+                <div class="si">🧠</div>
+                <h4>Visual Research</h4>
+                <small>রিসার্চ → ডায়াগ্রাম</small>
+            </button>
+
         </div>
 
 
@@ -1747,6 +1825,47 @@ audio{
             </div>
 
             <div class="output" id="out-tts">অডিও প্লেয়ার এখানে আসবে।</div>
+        </div>
+
+        <!-- Visual Research -->
+        <div class="studio-panel" id="sp-diagram">
+            <h3>🧠 Visual Research</h3>
+            <div class="desc">
+                বিষয় লিখুন — AI লাইভ ওয়েবে রিসার্চ করে ফলাফলটা
+                <b>মাইন্ড ম্যাপ, ফ্লোচার্ট, টাইমলাইন বা ম্যাট্রিক্স</b> ছবি আকারে দেবে।
+                PNG ডাউনলোড করে সরাসরি ভিডিও বা প্রেজেন্টেশনে ব্যবহার করুন।
+            </div>
+
+            <div class="studio-row">
+                <input class="studio-input" id="diagTopic"
+                    placeholder="যেমন: ২০২৬ সালে বাংলাদেশে ইউটিউব মনিটাইজেশন কীভাবে কাজ করে">
+                <button class="generate" onclick="runDiagram()">✦ Visualize</button>
+            </div>
+
+            <div class="studio-row">
+                <input class="studio-input" id="diagUrl"
+                    placeholder="ঐচ্ছিক: কোনো নির্দিষ্ট পেজ থেকে বানাতে চাইলে লিংক দিন">
+            </div>
+
+            <div class="panel-controls" style="margin-top:4px">
+                <label class="power-toggle on" id="diagResearchToggle">
+                    <input type="checkbox" id="diagResearch" checked
+                        onchange="document.getElementById('diagResearchToggle').classList.toggle('on', this.checked)">
+                    🌐 Live research
+                </label>
+
+                <select class="engine-select" id="diagKinds">
+                    <option value="mindmap,flowchart,quadrant">Mind Map + Flowchart + Matrix</option>
+                    <option value="mindmap">শুধু Mind Map</option>
+                    <option value="flowchart">শুধু Flowchart</option>
+                    <option value="timeline,flowchart">Timeline + Flowchart</option>
+                    <option value="journey,mindmap">Audience Journey + Mind Map</option>
+                    <option value="quadrant,pie">Opportunity Matrix + Breakdown</option>
+                    <option value="mindmap,flowchart,timeline,quadrant">সবগুলো (ধীর)</option>
+                </select>
+            </div>
+
+            <div class="output" id="out-diagram">ডায়াগ্রাম এখানে আসবে।</div>
         </div>
 
     </section>
@@ -2341,6 +2460,90 @@ function copyText(button, id){
     navigator.clipboard.writeText(text).then(() => {
         const old = button.textContent;
         button.textContent = "✓ কপি হয়েছে";
+        setTimeout(() => { button.textContent = old; }, 1600);
+    });
+}
+
+
+/* ---------- Visual Research (diagrams) ---------- */
+
+async function runDiagram(){
+
+    const topic = document.getElementById("diagTopic").value.trim();
+    if(!topic) return document.getElementById("diagTopic").focus();
+
+    const url = document.getElementById("diagUrl").value.trim();
+    const research = document.getElementById("diagResearch").checked;
+
+    const out = busy("out-diagram",
+        url ? "পেজটি পড়ে ডায়াগ্রাম বানানো হচ্ছে..."
+            : research ? "ওয়েবে রিসার্চ করে ডায়াগ্রাম বানানো হচ্ছে..."
+            : "ডায়াগ্রাম বানানো হচ্ছে...");
+
+    try {
+        const data = await postJson("/api/diagram", {
+            topic,
+            url: url || undefined,
+            research,
+            kinds: document.getElementById("diagKinds").value.split(",")
+        });
+
+        const insights = data.insights?.length
+            ? `<ul class="insight-list">${data.insights.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul>`
+            : "";
+
+        const diagrams = data.diagrams.map((d, i) => `
+            <div class="diagram-card">
+                <img src="${d.svgUrl}" alt="${escapeHtml(d.label)}" loading="lazy"
+                     onerror="this.onerror=null;this.src='${d.altUrl}'">
+                <div class="diagram-bar">
+                    <span class="cap"><b style="color:#c8ff3d">${escapeHtml(d.label)}</b>
+                        ${d.caption ? " — " + escapeHtml(d.caption) : ""}</span>
+                    <a href="${d.pngUrl}" target="_blank" rel="noopener" download>⬇ PNG</a>
+                    <a href="${d.editUrl}" target="_blank" rel="noopener">✎ Edit</a>
+                    <button onclick="copyRaw(this, ${i})" data-code="${encodeURIComponent(d.code)}">⧉ Code</button>
+                </div>
+            </div>
+        `).join("");
+
+        const charts = data.charts.map(c => `
+            <div class="chart-card">
+                <img src="${c.url}" alt="${escapeHtml(c.title)}" loading="lazy">
+                ${c.note ? `<div class="diagram-bar"><span class="cap">${escapeHtml(c.note)}</span>
+                    <a href="${c.url}" target="_blank" rel="noopener" download>⬇ PNG</a></div>` : ""}
+            </div>
+        `).join("");
+
+        const sources = data.sources?.length ? `
+            <div class="source-list">
+                <div style="color:#5f6671;font-size:10px;margin-bottom:7px">
+                    ${data.sources.length}টি সূত্র · ${escapeHtml(data.gathered)}
+                </div>
+                ${data.sources.map((sc,i) =>
+                    `<a href="${sc.url}" target="_blank" rel="noopener">[${i+1}] ${escapeHtml(sc.title)}</a>`
+                ).join("")}
+            </div>` : "";
+
+        out.innerHTML = `
+            <div style="color:#e6e8eb;font-size:14px;font-weight:600">${escapeHtml(data.title)}</div>
+            ${data.summary ? `<div style="color:#8d949e;font-size:12px;line-height:1.75;margin-top:6px">${escapeHtml(data.summary)}</div>` : ""}
+            ${insights}
+            ${diagrams}
+            ${charts}
+            ${sources}
+            ${renderEngineBadge(data.engine)}
+        `;
+    } catch (error) {
+        fail("out-diagram", error.message);
+    }
+}
+
+
+function copyRaw(button){
+    const code = decodeURIComponent(button.dataset.code);
+    navigator.clipboard.writeText(code).then(() => {
+        const old = button.textContent;
+        button.textContent = "✓ কপি";
         setTimeout(() => { button.textContent = old; }, 1600);
     });
 }

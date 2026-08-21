@@ -27,6 +27,9 @@
     },
     "api/tts.js": {
       "maxDuration": 60
+    },
+    "api/diagram.js": {
+      "maxDuration": 60
     }
   }
 }

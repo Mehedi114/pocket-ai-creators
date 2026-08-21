@@ -72,6 +72,7 @@ Creator Research এর জন্য আলাদা করে দরকার:
 | 🌐 **Live Web Search** | আজকের তথ্য দিয়ে সূত্রসহ উত্তর | Tavily → Jina → DDG | ঐচ্ছিক |
 | 🎧 **Transcribe** | অডিও/ভিডিও → টেক্সট + SRT + চ্যাপ্টার + Shorts আইডিয়া | Groq Whisper v3 Turbo | Groq key-ই |
 | 🎙️ **AI Voiceover** | স্ক্রিপ্ট → mp3 ভয়েসওভার, ১৩টি ভয়েস | Pollinations TTS | **না** |
+| 🧠 **Visual Research** | রিসার্চ → মাইন্ড ম্যাপ / ফ্লোচার্ট / চার্ট **ছবি** | mermaid.ink + QuickChart | **না** |
 
 ### ঐচ্ছিক boost key
 
@@ -128,6 +129,7 @@ npm test
 | `/api/search` | POST | `{ query, intent? }` → লাইভ ওয়েব সার্চ + সূত্রসহ উত্তর |
 | `/api/transcribe` | POST | `{ url }` বা `{ base64, filename }` → ট্রান্সক্রিপ্ট + SRT + রিপারপাস |
 | `/api/tts` | POST | `{ text, voice? }` → mp3 ভয়েসওভার |
+| `/api/diagram` | POST | `{ topic, url?, research?, kinds? }` → ডায়াগ্রাম + চার্ট ছবি |
 
 `mode: "power"` দিলে Power Mode, `provider: "gemini"` দিলে নির্দিষ্ট প্রোভাইডার।
 
@@ -173,7 +175,17 @@ npm test
 **Social:** Facebook Caption · Repurpose Pack
 **Marketing:** Product Description · Ad Copy · 30-Day Calendar · Competitor Angle
 **Writing:** Blog Writer · Rewrite & Improve
-**Studio:** Thumbnail Maker · Read Any URL · Live Web Search · Transcribe · AI Voiceover
+**Studio:** Thumbnail Maker · Read Any URL · Live Web Search · Transcribe · AI Voiceover · Visual Research
+
+### Visual Research কীভাবে কাজ করে
+
+1. আপনি বিষয় লেখেন (ঐচ্ছিকভাবে একটা URL-ও দিতে পারেন)
+2. **Tavily** দিয়ে লাইভ ওয়েব রিসার্চ হয়
+3. AI ফলাফলকে বৈধ **Mermaid** কোড + **Chart.js** ডেটায় বদলায়
+4. `mermaid.ink` ও `quickchart.io` সেটাকে আসল ছবিতে রেন্ডার করে
+
+পাওয়া যায়: **Mind Map, Flowchart, Timeline, Audience Journey, Opportunity Matrix, Breakdown pie**
+প্রতিটি ডায়াগ্রামে **⬇ PNG** ডাউনলোড, **✎ Edit** (mermaid.live-এ খোলে), **⧉ Code** কপি বোতাম।
 
 নতুন টুল যোগ করতে `api/_prompts.js` এ একটা এন্ট্রি আর `index.html` এ একটা কার্ড — ব্যস।
 
@@ -195,6 +207,8 @@ api/read.js           যেকোনো URL বিশ্লেষণ
 api/search.js         লাইভ ওয়েব সার্চ
 api/transcribe.js     অডিও → টেক্সট + রিপারপাস
 api/tts.js            AI ভয়েসওভার
+api/_diagrams.js      mermaid.ink + QuickChart রেন্ডারার
+api/diagram.js        Visual Research — রিসার্চ → ডায়াগ্রাম
 api/providers.js      ইঞ্জিন + সার্ভিস স্ট্যাটাস endpoint
 dev-server.mjs        লোকাল dev সার্ভার (zero dependency)
 test/engine.test.mjs  failover টেস্ট

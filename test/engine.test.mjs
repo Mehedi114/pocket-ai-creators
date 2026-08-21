@@ -167,3 +167,110 @@ assert.ok(services.every(s => s.id && s.label && s.provider));
 console.log("✓ ৫টি Creator Service রিপোর্ট হচ্ছে");
 
 console.log("\nCreator Services টেস্টও পাস ✅\n");
+
+/* ================= Diagrams ================= */
+
+const dg = await import("../api/_diagrams.js");
+
+/* pako round-trip — mermaid.ink/mermaid.live যে ফরম্যাট চায় */
+const mermaidCode = `mindmap
+  root((বাংলা রান্না))
+    কনটেন্ট
+      রেসিপি
+    দর্শক
+      গৃহিণী`;
+
+const rendered = dg.renderMermaid(mermaidCode);
+assert.ok(rendered.svgUrl.startsWith("https://mermaid.ink/svg/pako:"));
+assert.ok(rendered.pngUrl.includes("type=png"));
+assert.ok(rendered.editUrl.startsWith("https://mermaid.live/edit#pako:"));
+
+const raw = rendered.svgUrl.split("/svg/")[1].split("?")[0].replace("pako:", "");
+const inflated = JSON.parse(
+    (await import("node:zlib")).inflateSync(
+        Buffer.from(raw.replace(/-/g, "+").replace(/_/g, "/"), "base64")
+    ).toString("utf8")
+);
+assert.equal(inflated.code, mermaidCode);
+assert.equal(JSON.parse(inflated.mermaid).theme, "dark");
+console.log("✓ mermaid.ink pako এনকোডিং round-trip সঠিক");
+
+/* sanitize — AI-এর কমন সিনট্যাক্স ভুল ঠিক হয় */
+const fixed = dg.sanitizeMermaid("```mermaid\nflowchart TD\n  A[শুরু (এখানে)] --> B{ঠিক?}\n```");
+assert.ok(!fixed.includes("```"));
+assert.match(fixed, /A\["শুরু \(এখানে\)"\]/);
+assert.match(fixed, /B\{"ঠিক\?"\}/);
+console.log("✓ mermaid sanitizer কোড ফেন্স ও বন্ধনী ঠিক করে");
+
+/* চার্ট */
+const chart = dg.renderChart({
+    type: "bar",
+    title: "মাসিক ভিউ",
+    labels: ["জান", "ফেব", "মার্চ"],
+    datasets: [{ label: "ভিউ", data: [100, 250, 400] }]
+});
+assert.equal(new URL(chart.url).hostname, "quickchart.io");
+assert.equal(chart.config.data.datasets[0].data.length, 3);
+assert.equal(dg.renderChart({ type: "bar", labels: ["a"] }), null);
+console.log("✓ QuickChart URL তৈরি ও খারাপ ইনপুট বাতিল হয়");
+
+/* JSON পার্সার — মডেল আজেবাজে কথা বললেও JSON বের করে */
+assert.deepEqual(dg.parseJsonLoose('```json\n{"a":1}\n```'), { a: 1 });
+assert.deepEqual(dg.parseJsonLoose('এই নিন: {"a":2} ধন্যবাদ'), { a: 2 });
+assert.equal(dg.parseJsonLoose("কোনো json নেই"), null);
+console.log("✓ loose JSON পার্সার মডেলের বাড়তি কথা সামলায়");
+
+/* পুরো /api/diagram endpoint — mock AI দিয়ে */
+const diagramMock = await mock("diagram");
+process.env.AI_PROVIDER_ORDER = "groq";
+process.env.GROQ_BASE_URL = url(diagramMock);
+process.env.GROQ_API_KEY = "test";
+process.env.AI_TIMEOUT_MS = "5000";
+
+// mock server টা model নাম echo করে, তাই আসল JSON দিতে আলাদা সার্ভার লাগবে
+const jsonServer = await new Promise(resolve => {
+    const srv = http.createServer((rq, rs) => {
+        rs.setHeader("Content-Type", "application/json");
+        rs.end(JSON.stringify({
+            choices: [{ message: { content: JSON.stringify({
+                title: "টেস্ট রিসার্চ",
+                summary: "সারসংক্ষেপ",
+                insights: ["পয়েন্ট এক", "পয়েন্ট দুই"],
+                diagrams: [{ kind: "mindmap", caption: "মূল ম্যাপ",
+                    code: "mindmap\n  root((বিষয়))\n    শাখা" }],
+                charts: [{ type: "pie", title: "ভাগ", labels: ["ক", "খ"],
+                    datasets: [{ label: "শতাংশ", data: [60, 40] }], note: "উৎস: টেস্ট" }]
+            }) } }]
+        }));
+    });
+    srv.listen(0, "127.0.0.1", () => resolve(srv));
+});
+
+process.env.GROQ_BASE_URL = url(jsonServer);
+
+const diagramHandler = (await import("../api/diagram.js")).default;
+
+const fakeRes = {
+    statusCode: 200,
+    payload: null,
+    status(c) { this.statusCode = c; return this; },
+    json(p) { this.payload = p; return this; }
+};
+
+await diagramHandler(
+    { method: "POST", body: { topic: "বাংলা ইউটিউব", research: false } },
+    fakeRes
+);
+
+assert.equal(fakeRes.statusCode, 200);
+assert.equal(fakeRes.payload.title, "টেস্ট রিসার্চ");
+assert.equal(fakeRes.payload.diagrams.length, 1);
+assert.ok(fakeRes.payload.diagrams[0].svgUrl.includes("mermaid.ink"));
+assert.equal(fakeRes.payload.charts.length, 1);
+assert.ok(fakeRes.payload.charts[0].url.includes("quickchart.io"));
+assert.equal(fakeRes.payload.insights.length, 2);
+console.log("✓ /api/diagram সম্পূর্ণ পাইপলাইন কাজ করে (AI JSON → ছবি URL)");
+
+[diagramMock, jsonServer].forEach(s => s.close());
+
+console.log("\nVisual Research টেস্টও পাস ✅\n");
