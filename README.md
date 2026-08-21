@@ -104,9 +104,27 @@ ACCESS_CODES = POCKET2026,FBTEST
 - **কোড বদলালে আগের সব সেশন সাথে সাথে বাতিল** হয়ে যায়
 - ৮ বার ভুল কোড দিলে ১০ মিনিট ব্লক
 
-**টেস্ট শেষে প্রাইভেট করতে:** `ACCESS_CODES` variable-টা **মুছে দিন** →
-গেট বন্ধ হয়ে যাবে, শুধু URL জানলেই ঢোকা যাবে। আর URL বদলাতে
-Vercel → Settings → Domains থেকে নতুন নাম দিন।
+### Locking it down permanently after the test
+
+Do **not** delete `ACCESS_CODES` — that switches the gate *off* and lets
+anyone with the URL walk in. Instead, rotate it:
+
+```
+ACCESS_CODES    = <a long random string only you know>
+ACCESS_TTL_DAYS = 3650
+SESSION_SECRET  = <any long random string>
+```
+
+Then **Redeploy**. The moment the deploy goes live:
+
+1. Every token issued under the old code is rejected — everyone who used
+   the Facebook code is signed out instantly, on every device.
+2. `SESSION_SECRET` changing invalidates the signatures too, as a second lock.
+3. `ACCESS_TTL_DAYS=3650` means you enter your private code once and stay
+   signed in for ten years.
+
+Optionally rename the deployment under **Settings → Domains** so the old
+URL stops resolving as well.
 
 > টোকেন HMAC-SHA256 দিয়ে সই করা, তাই জাল করা যায় না।
 > কোনো ডেটাবেস লাগে না।
@@ -124,6 +142,8 @@ functional, on near-black with a single champagne accent.
 - Icon rail on desktop, bottom tab bar on mobile
 - Hairline grid tiles, no shadows, no neon
 - Command palette on **⌘K / Ctrl+K** across all twenty tools
+- **Home** is always one tap away: the topbar button, the rail, the mobile
+  tab bar, a floating button once you scroll, and **⌘H / Ctrl+H**
 
 AI replies always follow the language you write in — type Bangla, get Bangla.
 
