@@ -61,6 +61,32 @@ Creator Research এর জন্য আলাদা করে দরকার:
 
 ---
 
+## ✦ Creator Services — LLM-এর বাইরের ফ্রি API
+
+শুধু টেক্সট নয়। এই সার্ভিসগুলো Pocket AI-কে পুরো স্টুডিও বানায়:
+
+| সার্ভিস | কী করে | প্রোভাইডার | Key লাগে? |
+|---|---|---|---|
+| 🎨 **Thumbnail Maker** | বাংলা আইডিয়া → AI প্রম্পট → ৪টি থাম্বনেইল | Pollinations (Flux) | **না** |
+| 🔗 **Read Any URL** | যেকোনো ব্লগ/নিউজ/PDF/প্রতিযোগীর পেজ পড়ে বিশ্লেষণ | Jina Reader | **না** |
+| 🌐 **Live Web Search** | আজকের তথ্য দিয়ে সূত্রসহ উত্তর | Tavily → Jina → DDG | ঐচ্ছিক |
+| 🎧 **Transcribe** | অডিও/ভিডিও → টেক্সট + SRT + চ্যাপ্টার + Shorts আইডিয়া | Groq Whisper v3 Turbo | Groq key-ই |
+| 🎙️ **AI Voiceover** | স্ক্রিপ্ট → mp3 ভয়েসওভার, ১৩টি ভয়েস | Pollinations TTS | **না** |
+
+### ঐচ্ছিক boost key
+
+| Variable | পেলে যা হয় | লিংক |
+|---|---|---|
+| `TAVILY_API_KEY` | ভালো ওয়েব সার্চ, ১০০০/মাস ফ্রি | [app.tavily.com](https://app.tavily.com/home) |
+| `JINA_API_KEY` | Reader 20 → 500 RPM, ১০M ফ্রি টোকেন | [jina.ai](https://jina.ai/api-dashboard/) |
+| `POLLINATIONS_TOKEN` | ইমেজ থেকে watermark ওঠে, লিমিট বাড়ে | [auth.pollinations.ai](https://auth.pollinations.ai/) |
+
+একটাও না দিলেও সব কাজ করবে — শুধু লিমিট কম থাকবে।
+
+**Groq Whisper ফ্রি লিমিট:** দিনে ২,০০০ রিকোয়েস্ট, ২৮,৮০০ অডিও-সেকেন্ড (~৮ ঘণ্টা), ফাইল সর্বোচ্চ ২৪MB।
+
+---
+
 ## ✦ Vercel এ সেটআপ
 
 1. Vercel → আপনার প্রজেক্ট → **Settings → Environment Variables**
@@ -97,6 +123,11 @@ npm test
 | `/api/generate` | POST | `{ tool, input, mode?, provider? }` → টুলের আউটপুট |
 | `/api/research` | POST | `{ url }` → YouTube চ্যানেল রিসার্চ রিপোর্ট |
 | `/api/chat` | POST | `{ messages, mode?, provider? }` → ফ্রি-ফর্ম চ্যাট |
+| `/api/image` | POST | `{ idea, preset?, count?, raw? }` → থাম্বনেইল/ইমেজ URL |
+| `/api/read` | POST | `{ url, mode?, question? }` → যেকোনো পেজের বিশ্লেষণ |
+| `/api/search` | POST | `{ query, intent? }` → লাইভ ওয়েব সার্চ + সূত্রসহ উত্তর |
+| `/api/transcribe` | POST | `{ url }` বা `{ base64, filename }` → ট্রান্সক্রিপ্ট + SRT + রিপারপাস |
+| `/api/tts` | POST | `{ text, voice? }` → mp3 ভয়েসওভার |
 
 `mode: "power"` দিলে Power Mode, `provider: "gemini"` দিলে নির্দিষ্ট প্রোভাইডার।
 
@@ -142,6 +173,7 @@ npm test
 **Social:** Facebook Caption · Repurpose Pack
 **Marketing:** Product Description · Ad Copy · 30-Day Calendar · Competitor Angle
 **Writing:** Blog Writer · Rewrite & Improve
+**Studio:** Thumbnail Maker · Read Any URL · Live Web Search · Transcribe · AI Voiceover
 
 নতুন টুল যোগ করতে `api/_prompts.js` এ একটা এন্ট্রি আর `index.html` এ একটা কার্ড — ব্যস।
 
@@ -154,10 +186,16 @@ index.html            UI (একক ফাইল, dark theme)
 research.js           ক্লায়েন্ট-সাইড creator research
 api/_providers.js     ⭐ মাল্টি-প্রোভাইডার ইঞ্জিন + failover + Power Mode
 api/_prompts.js       ১৪টি টুলের প্রম্পট লাইব্রেরি
+api/_tools.js         ⭐ ইমেজ / রিডার / সার্চ / Whisper / TTS
 api/generate.js       টুল জেনারেশন endpoint
 api/research.js       YouTube রিসার্চ endpoint
 api/chat.js           ফ্রি-ফর্ম চ্যাট endpoint
-api/providers.js      ইঞ্জিন স্ট্যাটাস endpoint
+api/image.js          থাম্বনেইল জেনারেটর
+api/read.js           যেকোনো URL বিশ্লেষণ
+api/search.js         লাইভ ওয়েব সার্চ
+api/transcribe.js     অডিও → টেক্সট + রিপারপাস
+api/tts.js            AI ভয়েসওভার
+api/providers.js      ইঞ্জিন + সার্ভিস স্ট্যাটাস endpoint
 dev-server.mjs        লোকাল dev সার্ভার (zero dependency)
 test/engine.test.mjs  failover টেস্ট
 ```

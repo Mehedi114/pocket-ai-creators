@@ -851,6 +851,231 @@ textarea:focus{
     .provider-grid{grid-template-columns:1fr}
 }
 
+/* ================= CREATOR STUDIO ================= */
+
+.studio{
+    max-width:950px;
+    margin:30px auto 0;
+}
+
+.studio-grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:10px;
+}
+
+.studio-card{
+    position:relative;
+    padding:17px 15px;
+    background:#0d0f12;
+    border:1px solid var(--line);
+    border-radius:14px;
+    cursor:pointer;
+    transition:.22s;
+    text-align:left;
+    color:inherit;
+    font-family:inherit;
+}
+
+.studio-card:hover{
+    border-color:#3d4a25;
+    background:#111509;
+    transform:translateY(-3px);
+}
+
+.studio-card.active{
+    border-color:var(--lime);
+    background:#121707;
+}
+
+.studio-card .si{
+    font-size:19px;
+    line-height:1;
+}
+
+.studio-card h4{
+    margin-top:11px;
+    font-size:12.5px;
+    font-weight:600;
+    color:#e6e8eb;
+}
+
+.studio-card small{
+    display:block;
+    margin-top:4px;
+    font-size:10.5px;
+    color:#5f6671;
+    line-height:1.45;
+}
+
+.studio-card .free{
+    position:absolute;
+    top:12px;
+    right:12px;
+    font-size:8.5px;
+    font-weight:700;
+    letter-spacing:.06em;
+    color:#6e7d3a;
+    border:1px solid #2d3520;
+    border-radius:20px;
+    padding:2px 6px;
+}
+
+.studio-panel{
+    display:none;
+    margin-top:14px;
+    border:1px solid var(--line2);
+    background:#0d0f12;
+    border-radius:16px;
+    padding:22px;
+}
+
+.studio-panel.show{
+    display:block;
+    animation:panelIn .25s ease;
+}
+
+.studio-panel h3{
+    font-family:"Space Grotesk";
+    font-size:17px;
+    margin-bottom:4px;
+}
+
+.studio-panel .desc{
+    font-size:11.5px;
+    color:#626973;
+    line-height:1.6;
+    margin-bottom:15px;
+}
+
+.studio-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:9px;
+    margin-bottom:10px;
+}
+
+.studio-input{
+    flex:1;
+    min-width:200px;
+    background:#080a0c;
+    color:#e8eaed;
+    border:1px solid #272c33;
+    border-radius:10px;
+    padding:12px 13px;
+    outline:none;
+    font-size:12.5px;
+    font-family:inherit;
+}
+
+.studio-input:focus{
+    border-color:#505a3a;
+}
+
+.file-drop{
+    width:100%;
+    border:1px dashed #333a44;
+    border-radius:10px;
+    padding:18px;
+    text-align:center;
+    color:#626973;
+    font-size:11.5px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.file-drop:hover{
+    border-color:#556033;
+    color:#8d949e;
+}
+
+.image-results{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+    margin-top:14px;
+}
+
+.image-results figure{
+    border:1px solid var(--line);
+    border-radius:12px;
+    overflow:hidden;
+    background:#080a0c;
+}
+
+.image-results img{
+    width:100%;
+    display:block;
+    aspect-ratio:16/9;
+    object-fit:cover;
+    background:
+        repeating-linear-gradient(45deg,#0e1114,#0e1114 10px,#111418 10px,#111418 20px);
+}
+
+.image-results figcaption{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:8px 11px;
+    font-size:10px;
+    color:#5f6671;
+}
+
+.image-results a{
+    color:var(--lime2);
+    text-decoration:none;
+}
+
+.source-list{
+    margin-top:12px;
+    padding-top:11px;
+    border-top:1px solid var(--line);
+}
+
+.source-list a{
+    display:block;
+    color:#7c9cff;
+    font-size:10.5px;
+    text-decoration:none;
+    margin-bottom:5px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.source-list a:hover{
+    text-decoration:underline;
+}
+
+audio{
+    width:100%;
+    margin-top:13px;
+}
+
+.copy-btn{
+    border:1px solid var(--line2);
+    background:transparent;
+    color:#8d949e;
+    border-radius:8px;
+    padding:6px 11px;
+    font-size:10.5px;
+    font-weight:600;
+}
+
+.copy-btn:hover{
+    border-color:#556033;
+    color:var(--lime);
+}
+
+@media(max-width:1050px){
+    .studio-grid{grid-template-columns:repeat(3,1fr)}
+}
+
+@media(max-width:640px){
+    .studio-grid{grid-template-columns:repeat(2,1fr)}
+    .image-results{grid-template-columns:1fr}
+}
+
 /* ================= MOBILE ================= */
 
 .mobile-menu{
@@ -1034,6 +1259,11 @@ textarea:focus{
         <button onclick="navClick(this,'writing')">
             <span class="nav-icon">✎</span>
             Writing
+        </button>
+
+        <button onclick="navClick(this,'studio')">
+            <span class="nav-icon">✧</span>
+            Creator Studio
         </button>
 
         <button onclick="navClick(this,'engine')">
@@ -1346,6 +1576,182 @@ textarea:focus{
     </section>
 
 
+    <!-- CREATOR STUDIO -->
+
+    <div class="section-divider">
+        <span>Creator Studio</span>
+    </div>
+
+    <section class="studio" id="studio">
+
+        <div class="studio-grid">
+
+            <button class="studio-card" data-studio="image" onclick="openStudio('image')">
+                <span class="free">FREE</span>
+                <div class="si">🎨</div>
+                <h4>Thumbnail Maker</h4>
+                <small>আইডিয়া → AI ছবি</small>
+            </button>
+
+            <button class="studio-card" data-studio="read" onclick="openStudio('read')">
+                <span class="free">FREE</span>
+                <div class="si">🔗</div>
+                <h4>Read Any URL</h4>
+                <small>যেকোনো পেজ বিশ্লেষণ</small>
+            </button>
+
+            <button class="studio-card" data-studio="search" onclick="openStudio('search')">
+                <span class="free">FREE</span>
+                <div class="si">🌐</div>
+                <h4>Live Web Search</h4>
+                <small>আজকের তথ্য দিয়ে উত্তর</small>
+            </button>
+
+            <button class="studio-card" data-studio="transcribe" onclick="openStudio('transcribe')">
+                <span class="free">FREE</span>
+                <div class="si">🎧</div>
+                <h4>Transcribe</h4>
+                <small>অডিও → টেক্সট + SRT</small>
+            </button>
+
+            <button class="studio-card" data-studio="tts" onclick="openStudio('tts')">
+                <span class="free">FREE</span>
+                <div class="si">🎙️</div>
+                <h4>AI Voiceover</h4>
+                <small>টেক্সট → কণ্ঠস্বর</small>
+            </button>
+
+        </div>
+
+
+        <!-- Thumbnail Maker -->
+        <div class="studio-panel" id="sp-image">
+            <h3>🎨 Thumbnail Maker</h3>
+            <div class="desc">
+                বাংলায় আইডিয়া লিখুন — AI সেটাকে প্রফেশনাল ইমেজ প্রম্পটে বদলে
+                Flux দিয়ে ৪টা ভ্যারিয়েশন বানাবে। কোনো key লাগে না।
+            </div>
+
+            <div class="studio-row">
+                <input class="studio-input" id="imgIdea"
+                    placeholder="যেমন: শীতের পিঠা বানানোর ভিডিওর থাম্বনেইল, খুশি মুখ, ধোঁয়া ওঠা পিঠা">
+                <select class="engine-select" id="imgPreset">
+                    <option value="thumbnail">YouTube 16:9</option>
+                    <option value="short">Shorts 9:16</option>
+                    <option value="square">Square 1:1</option>
+                    <option value="banner">Banner</option>
+                    <option value="wide">Blog Header</option>
+                </select>
+                <button class="generate" onclick="runImage()">✦ Generate</button>
+            </div>
+
+            <div class="output" id="out-image">ছবি এখানে আসবে।</div>
+        </div>
+
+
+        <!-- Read any URL -->
+        <div class="studio-panel" id="sp-read">
+            <h3>🔗 Read Any URL</h3>
+            <div class="desc">
+                যেকোনো ব্লগ, নিউজ, প্রতিযোগীর পেজ বা PDF — লিংক দিন, AI পড়ে
+                বিশ্লেষণ করে দেবে। YouTube Research এর মতো, কিন্তু পুরো ইন্টারনেটের জন্য।
+            </div>
+
+            <div class="studio-row">
+                <input class="studio-input" id="readUrl" placeholder="https://example.com/article">
+                <select class="engine-select" id="readMode">
+                    <option value="summary">Summary</option>
+                    <option value="content">Content Ideas</option>
+                    <option value="competitor">Competitor Teardown</option>
+                    <option value="rewrite">Rewrite for me</option>
+                    <option value="facts">Fact Extract</option>
+                </select>
+                <button class="generate" onclick="runRead()">✦ Analyze</button>
+            </div>
+
+            <div class="output" id="out-read">বিশ্লেষণ এখানে আসবে।</div>
+        </div>
+
+
+        <!-- Live web search -->
+        <div class="studio-panel" id="sp-search">
+            <h3>🌐 Live Web Search</h3>
+            <div class="desc">
+                AI-এর পুরোনো জ্ঞানের সমস্যা শেষ। এটা আগে ওয়েবে খুঁজে, তারপর
+                সূত্রসহ উত্তর দেয় — ট্রেন্ড, নিউজ, দাম সব আজকের।
+            </div>
+
+            <div class="studio-row">
+                <input class="studio-input" id="searchQuery"
+                    placeholder="যেমন: বাংলাদেশে এখন কোন ইউটিউব নিশ দ্রুত বাড়ছে">
+                <select class="engine-select" id="searchIntent">
+                    <option value="answer">Answer</option>
+                    <option value="trend">Trend report</option>
+                    <option value="research">Deep research</option>
+                    <option value="news">Latest news</option>
+                </select>
+                <button class="generate" onclick="runSearch()">✦ Search</button>
+            </div>
+
+            <div class="output" id="out-search">ফলাফল এখানে আসবে।</div>
+        </div>
+
+
+        <!-- Transcribe -->
+        <div class="studio-panel" id="sp-transcribe">
+            <h3>🎧 Transcribe + Repurpose</h3>
+            <div class="desc">
+                অডিও/ভিডিও ফাইল দিন — Groq Whisper দিয়ে টেক্সট, তারপর AI দিয়ে
+                চ্যাপ্টার, টাইটেল, ট্যাগ, Shorts আইডিয়া, ব্লগ আউটলাইন। SRT সাবটাইটেলও পাবেন।
+            </div>
+
+            <label class="file-drop" for="audioFile" id="audioLabel">
+                📁 ফাইল বাছুন (mp3, m4a, wav, mp4 — সর্বোচ্চ ২৪MB)
+            </label>
+            <input type="file" id="audioFile" accept="audio/*,video/mp4,video/webm"
+                style="display:none" onchange="pickAudio()">
+
+            <div class="studio-row" style="margin-top:10px">
+                <input class="studio-input" id="audioUrl"
+                    placeholder="…অথবা সরাসরি অডিও ফাইলের লিংক দিন">
+                <button class="generate" onclick="runTranscribe()">✦ Transcribe</button>
+            </div>
+
+            <div class="output" id="out-transcribe">ট্রান্সক্রিপ্ট এখানে আসবে।</div>
+        </div>
+
+
+        <!-- Voiceover -->
+        <div class="studio-panel" id="sp-tts">
+            <h3>🎙️ AI Voiceover</h3>
+            <div class="desc">
+                স্ক্রিপ্ট পেস্ট করুন, ভয়েস বাছুন — mp3 তৈরি হবে, ডাউনলোড করে
+                সরাসরি ভিডিওতে বসিয়ে দিন। কোনো key লাগে না।
+            </div>
+
+            <textarea id="ttsText" style="min-height:100px"
+                placeholder="যে লেখাটা পড়ে শোনাতে চান..."></textarea>
+
+            <div class="panel-controls">
+                <select class="engine-select" id="ttsVoice">
+                    <option value="nova">Nova — উষ্ণ, নারী</option>
+                    <option value="onyx">Onyx — গভীর, পুরুষ</option>
+                    <option value="alloy">Alloy — নিরপেক্ষ</option>
+                    <option value="echo">Echo — শান্ত, পুরুষ</option>
+                    <option value="fable">Fable — গল্পবলা</option>
+                    <option value="shimmer">Shimmer — উজ্জ্বল</option>
+                    <option value="coral">Coral — বন্ধুত্বপূর্ণ</option>
+                    <option value="sage">Sage — সংবাদপাঠ</option>
+                </select>
+                <button class="generate" onclick="runTts()">✦ Create voice</button>
+            </div>
+
+            <div class="output" id="out-tts">অডিও প্লেয়ার এখানে আসবে।</div>
+        </div>
+
+    </section>
+
+
     <!-- AI ENGINE STATUS -->
 
     <section class="engine-panel" id="enginePanel">
@@ -1363,6 +1769,17 @@ textarea:focus{
         </div>
 
         <div class="provider-grid" id="providerGrid"></div>
+
+        <div class="engine-head" style="margin:26px 0 6px">
+            <h2>✧ Creator Services</h2>
+        </div>
+
+        <div class="engine-sub">
+            LLM-এর বাইরের ফ্রি সার্ভিস — ইমেজ, ওয়েব রিডার, লাইভ সার্চ,
+            ট্রান্সক্রিপশন আর ভয়েস। বেশিরভাগেরই কোনো key লাগে না।
+        </div>
+
+        <div class="provider-grid" id="serviceGrid"></div>
 
     </section>
 
@@ -1430,6 +1847,14 @@ function navClick(button, section){
             top:300,
             behavior:"smooth"
         });
+
+    }
+
+    if(section === "studio"){
+
+        document
+            .getElementById("studio")
+            .scrollIntoView({behavior:"smooth", block:"start"});
 
     }
 
@@ -1632,6 +2057,23 @@ async function loadProviders(){
             </div>
         `).join("");
 
+        const serviceGrid = document.getElementById("serviceGrid");
+
+        serviceGrid.innerHTML = (data.services || []).map(sv => `
+            <div class="provider ${sv.ready ? "on" : ""}">
+                <div class="provider-top">
+                    <span class="provider-name">${escapeHtml(sv.label)}</span>
+                    <span class="provider-dot"></span>
+                </div>
+                <div class="provider-model">${escapeHtml(sv.provider)}</div>
+                <div class="provider-note">${escapeHtml(sv.note || "")}</div>
+                ${sv.optional
+                    ? `<a href="${sv.keyUrl}" target="_blank" rel="noopener">Boost with free key →</a>
+                       <div class="provider-env">optional: ${escapeHtml(sv.keyEnv)}</div>`
+                    : `<div class="provider-env">${escapeHtml(sv.keyEnv)} ${sv.ready ? "✓" : "✕ প্রয়োজন"}</div>`}
+            </div>
+        `).join("");
+
         select.innerHTML = `<option value="">Auto — best available</option>` +
             data.providers
                 .filter(p => p.configured)
@@ -1656,6 +2098,297 @@ async function loadProviders(){
 
 
 document.addEventListener("DOMContentLoaded", loadProviders);
+
+
+/* ==================== CREATOR STUDIO ==================== */
+
+let audioPayload = null;
+
+function openStudio(id){
+
+    document.querySelectorAll(".studio-panel")
+        .forEach(el => el.classList.remove("show"));
+
+    document.querySelectorAll(".studio-card")
+        .forEach(el => el.classList.remove("active"));
+
+    const panel = document.getElementById("sp-" + id);
+    panel.classList.add("show");
+
+    document.querySelector(`.studio-card[data-studio="${id}"]`)
+        .classList.add("active");
+
+    panel.scrollIntoView({behavior:"smooth", block:"center"});
+}
+
+
+function busy(id, message){
+    const el = document.getElementById(id);
+    el.classList.add("show");
+    el.innerHTML = `<div style="color:#c8ff3d">✦ ${escapeHtml(message)}</div>`;
+    return el;
+}
+
+
+function fail(id, message){
+    document.getElementById(id).innerHTML =
+        `<div style="color:#ff6f91">✕ ${escapeHtml(message)}</div>`;
+}
+
+
+function textBlock(text){
+    return `<div style="white-space:pre-wrap;color:#dfe3e8;line-height:1.8">${escapeHtml(text)}</div>`;
+}
+
+
+async function postJson(url, body){
+    const response = await fetch(url, {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify(body)
+    });
+
+    const data = await response.json();
+
+    if(!response.ok) throw new Error(data.error || "রিকোয়েস্ট ব্যর্থ হয়েছে");
+
+    return data;
+}
+
+
+/* ---------- Thumbnail Maker ---------- */
+
+async function runImage(){
+
+    const idea = document.getElementById("imgIdea").value.trim();
+    if(!idea) return document.getElementById("imgIdea").focus();
+
+    const out = busy("out-image", "প্রম্পট লেখা হচ্ছে, তারপর ছবি আঁকা হবে...");
+
+    try {
+        const data = await postJson("/api/image", {
+            idea,
+            preset: document.getElementById("imgPreset").value
+        });
+
+        out.innerHTML = `
+            <div style="color:#8d949e;font-size:11px;line-height:1.6">
+                <b style="color:#c8ff3d">AI prompt:</b> ${escapeHtml(data.prompt)}
+            </div>
+            <div class="image-results">
+                ${data.images.map((img, i) => `
+                    <figure>
+                        <img src="${img.url}" alt="variation ${i+1}" loading="lazy">
+                        <figcaption>
+                            <span>${data.size.width}×${data.size.height} · seed ${img.seed}</span>
+                            <a href="${img.url}" target="_blank" rel="noopener" download>Download ↓</a>
+                        </figcaption>
+                    </figure>
+                `).join("")}
+            </div>
+            ${renderEngineBadge(data.engine)}
+        `;
+    } catch (error) {
+        fail("out-image", error.message);
+    }
+}
+
+
+/* ---------- Read any URL ---------- */
+
+async function runRead(){
+
+    const url = document.getElementById("readUrl").value.trim();
+    if(!url) return document.getElementById("readUrl").focus();
+
+    const out = busy("out-read", "পেজটি পড়া হচ্ছে...");
+
+    try {
+        const data = await postJson("/api/read", {
+            url,
+            mode: document.getElementById("readMode").value
+        });
+
+        out.innerHTML = `
+            <div style="color:#8d949e;font-size:11px;margin-bottom:10px">
+                📄 <b style="color:#dfe3e8">${escapeHtml(data.page.title)}</b>
+                — ${data.page.chars.toLocaleString()} অক্ষর পড়া হয়েছে
+                ${data.page.truncated ? " (শুরুর অংশ)" : ""}
+            </div>
+            ${textBlock(data.result)}
+            ${renderEngineBadge(data.engine)}
+        `;
+    } catch (error) {
+        fail("out-read", error.message);
+    }
+}
+
+
+/* ---------- Live web search ---------- */
+
+async function runSearch(){
+
+    const query = document.getElementById("searchQuery").value.trim();
+    if(!query) return document.getElementById("searchQuery").focus();
+
+    const out = busy("out-search", "ওয়েবে খোঁজা হচ্ছে...");
+
+    try {
+        const data = await postJson("/api/search", {
+            query,
+            intent: document.getElementById("searchIntent").value
+        });
+
+        out.innerHTML = `
+            ${textBlock(data.result)}
+            <div class="source-list">
+                <div style="color:#5f6671;font-size:10px;margin-bottom:7px">
+                    ${data.sources.length}টি সূত্র · ${escapeHtml(data.searchEngine)}
+                </div>
+                ${data.sources.map((s,i) =>
+                    `<a href="${s.url}" target="_blank" rel="noopener">[${i+1}] ${escapeHtml(s.title)}</a>`
+                ).join("")}
+            </div>
+            ${renderEngineBadge(data.engine)}
+        `;
+    } catch (error) {
+        fail("out-search", error.message);
+    }
+}
+
+
+/* ---------- Transcribe ---------- */
+
+function pickAudio(){
+
+    const input = document.getElementById("audioFile");
+    const label = document.getElementById("audioLabel");
+    const file = input.files?.[0];
+
+    if(!file){
+        audioPayload = null;
+        return;
+    }
+
+    if(file.size > 24 * 1024 * 1024){
+        label.textContent = `✕ ফাইলটি খুব বড় (${(file.size/1048576).toFixed(1)}MB) — সর্বোচ্চ ২৪MB`;
+        audioPayload = null;
+        return;
+    }
+
+    label.textContent = `✓ ${file.name} (${(file.size/1048576).toFixed(1)}MB)`;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+        audioPayload = { base64: reader.result, filename: file.name };
+    };
+    reader.readAsDataURL(file);
+}
+
+
+async function runTranscribe(){
+
+    const url = document.getElementById("audioUrl").value.trim();
+
+    if(!audioPayload && !url){
+        return fail("out-transcribe", "একটি ফাইল বাছুন অথবা লিংক দিন।");
+    }
+
+    const out = busy("out-transcribe", "অডিও শোনা হচ্ছে... বড় ফাইলে এক মিনিট লাগতে পারে");
+
+    try {
+        const data = await postJson("/api/transcribe",
+            audioPayload ? audioPayload : { url });
+
+        const srtLink = data.srt
+            ? `<a class="copy-btn" style="text-decoration:none"
+                 href="data:text/plain;charset=utf-8,${encodeURIComponent(data.srt)}"
+                 download="subtitles.srt">⬇ SRT সাবটাইটেল</a>`
+            : "";
+
+        out.innerHTML = `
+            <div style="color:#8d949e;font-size:11px;margin-bottom:10px">
+                🎧 ${escapeHtml(data.filename)} ·
+                ${data.duration ? Math.round(data.duration) + " সেকেন্ড · " : ""}
+                ${data.words} শব্দ ·
+                ভাষা: ${escapeHtml(data.language || "auto")}
+            </div>
+
+            <div class="panel-controls" style="margin:0 0 12px">
+                <button class="copy-btn" onclick="copyText(this,'transcriptText')">⧉ ট্রান্সক্রিপ্ট কপি</button>
+                ${srtLink}
+            </div>
+
+            <details style="margin-bottom:12px">
+                <summary style="cursor:pointer;color:#8d949e;font-size:11.5px">
+                    সম্পূর্ণ ট্রান্সক্রিপ্ট দেখুন
+                </summary>
+                <div id="transcriptText" style="white-space:pre-wrap;color:#9aa1ab;
+                     line-height:1.8;margin-top:9px;max-height:260px;overflow:auto">${escapeHtml(data.transcript)}</div>
+            </details>
+
+            ${data.analysis ? textBlock(data.analysis) : ""}
+            ${renderEngineBadge(data.engine)}
+        `;
+    } catch (error) {
+        fail("out-transcribe", error.message);
+    }
+}
+
+
+function copyText(button, id){
+    const text = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        const old = button.textContent;
+        button.textContent = "✓ কপি হয়েছে";
+        setTimeout(() => { button.textContent = old; }, 1600);
+    });
+}
+
+
+/* ---------- Voiceover ---------- */
+
+async function runTts(){
+
+    const text = document.getElementById("ttsText").value.trim();
+    if(!text) return document.getElementById("ttsText").focus();
+
+    const out = busy("out-tts", "ভয়েস তৈরি হচ্ছে...");
+
+    try {
+        const response = await fetch("/api/tts", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({
+                text,
+                voice: document.getElementById("ttsVoice").value
+            })
+        });
+
+        if(!response.ok){
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.error || "ভয়েস তৈরি ব্যর্থ");
+        }
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+
+        out.innerHTML = `
+            <audio controls src="${url}"></audio>
+            <div class="panel-controls" style="margin-top:10px">
+                <a class="copy-btn" style="text-decoration:none"
+                   href="${url}" download="voiceover.mp3">⬇ mp3 ডাউনলোড</a>
+            </div>
+            <div class="engine-badge">
+                Voiced by <b>Pollinations TTS</b>
+                <span class="tag">${escapeHtml(document.getElementById("ttsVoice").value)}</span>
+                <span class="tag">${(blob.size/1024).toFixed(0)} KB</span>
+            </div>
+        `;
+    } catch (error) {
+        fail("out-tts", error.message);
+    }
+}
 
 
 function escapeHtml(text) {

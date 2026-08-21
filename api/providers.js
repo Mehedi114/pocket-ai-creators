@@ -1,5 +1,6 @@
 import { describeProviders } from "./_providers.js";
 import { TOOL_NAMES } from "./_prompts.js";
+import { describeServices, searchAvailable } from "./_tools.js";
 
 export default async function handler(req, res) {
     try {
@@ -9,6 +10,8 @@ export default async function handler(req, res) {
             success: true,
             ...info,
             tools: TOOL_NAMES,
+            services: describeServices(),
+            search: searchAvailable(),
             youtube: Boolean(process.env.YOUTUBE_API_KEY),
             councilSize: Number(process.env.AI_COUNCIL_SIZE || 3)
         });

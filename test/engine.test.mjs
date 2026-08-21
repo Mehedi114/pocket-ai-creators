@@ -123,3 +123,47 @@ console.log("✓ timeout হলে পরের প্রোভাইডার�
 [a, b, c, d, h].forEach(s => s.close());
 
 console.log("\nসব টেস্ট পাস ✅\n");
+
+/* ================= Creator Services ================= */
+
+const tools = await import("../api/_tools.js");
+
+/* SRT জেনারেশন */
+const srt = tools.toSrt([
+    { start: 0, end: 2.5, text: "প্রথম লাইন" },
+    { start: 2.5, end: 5.25, text: "দ্বিতীয় লাইন" }
+]);
+assert.match(srt, /^1\n00:00:00,000 --> 00:00:02,500\nপ্রথম লাইন/);
+assert.match(srt, /2\n00:00:02,500 --> 00:00:05,250/);
+console.log("✓ SRT সাবটাইটেল সঠিকভাবে তৈরি হয়");
+
+/* ইমেজ URL */
+const imgUrl = tools.buildImageUrl("a cat on a bike", { width: 1280, height: 720, seed: 7 });
+assert.match(imgUrl, /^https:\/\/image\.pollinations\.ai\/prompt\/a%20cat%20on%20a%20bike\?/);
+assert.match(imgUrl, /width=1280/);
+assert.match(imgUrl, /height=720/);
+assert.match(imgUrl, /seed=7/);
+assert.match(imgUrl, /nologo=true/);
+console.log("✓ Pollinations ইমেজ URL সঠিক");
+
+/* প্রিসেট */
+assert.equal(tools.IMAGE_PRESETS.thumbnail.width, 1280);
+assert.equal(tools.IMAGE_PRESETS.short.height, 1280);
+console.log("✓ ইমেজ প্রিসেট ঠিক আছে");
+
+/* খারাপ URL ধরা পড়ে */
+await assert.rejects(() => tools.readUrl("not a url at all"), /সঠিক একটি URL/);
+console.log("✓ ভুল URL আগেই আটকে যায়");
+
+/* খালি টেক্সটে TTS আটকায় */
+await assert.rejects(() => tools.textToSpeech("   "), /কিছু টেক্সট দিন/);
+await assert.rejects(() => tools.textToSpeech("ক".repeat(4100)), /খুব বড়/);
+console.log("✓ TTS ইনপুট ভ্যালিডেশন কাজ করে");
+
+/* সার্ভিস স্ট্যাটাস */
+const services = tools.describeServices();
+assert.equal(services.length, 5);
+assert.ok(services.every(s => s.id && s.label && s.provider));
+console.log("✓ ৫টি Creator Service রিপোর্ট হচ্ছে");
+
+console.log("\nCreator Services টেস্টও পাস ✅\n");
