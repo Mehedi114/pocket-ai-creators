@@ -162,6 +162,27 @@ a{color:inherit;text-decoration:none}
     [data-reveal]{opacity:1;transform:none}
 }
 
+/* ================= BOOT ================= */
+
+.boot{
+    position:fixed;inset:0;z-index:1100;
+    display:grid;place-items:center;
+    background:var(--void);
+    transition:opacity .6s var(--ease),visibility .6s var(--ease);
+}
+
+.boot.gone{opacity:0;visibility:hidden}
+
+.boot .script{
+    font-size:64px;
+    background:linear-gradient(180deg,#fffdf8 25%,#b7ab90 100%);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:bootPulse 1.8s var(--ease) infinite;
+}
+
+@keyframes bootPulse{0%,100%{opacity:.55}50%{opacity:1}}
+
 /* ================= LOCK ================= */
 
 .lock{
@@ -830,6 +851,11 @@ details summary{cursor:pointer;color:var(--muted);font-size:12px;padding:6px 0;f
 <div class="vignette"></div>
 
 
+<!-- ============ BOOT ============ -->
+
+<div class="boot" id="boot"><span class="script">Pocket AI</span></div>
+
+
 <!-- ============ LOCK ============ -->
 
 <div class="lock" id="lockScreen">
@@ -1323,6 +1349,15 @@ window.fetch = function(input, init = {}){
 };
 
 
+const bootAt = Date.now();
+
+/** Hold the splash for a beat so it reads as intentional, never as a flicker */
+function dismissBoot(){
+    const wait = Math.max(0, 420 - (Date.now() - bootAt));
+    setTimeout(() => document.getElementById("boot").classList.add("gone"), wait);
+}
+
+
 async function checkAccess(){
     try {
         const response = await fetch("/api/access", {
@@ -1331,8 +1366,14 @@ async function checkAccess(){
 
         const data = await response.json();
 
+        if(data.required){
+            document.getElementById("signOutBtn").style.display = "inline-block";
+        }
+
         if(!data.required || data.valid){ unlock(); return; }
     } catch {
+        // Offline: a stored token is enough to show the shell.
+        // With the gate off there is nothing to check anyway.
         if(getToken()){ unlock(); return; }
     }
 
@@ -1344,6 +1385,7 @@ function lockUp(message){
     document.getElementById("app").classList.remove("show");
     document.getElementById("lockScreen").classList.add("show");
     if(message) document.getElementById("lockMsg").textContent = message;
+    dismissBoot();
     setTimeout(() => document.getElementById("codeInput")?.focus(), 260);
 }
 
@@ -1351,6 +1393,7 @@ function lockUp(message){
 function unlock(){
     document.getElementById("lockScreen").classList.remove("show");
     document.getElementById("app").classList.add("show");
+    dismissBoot();
     loadProviders();
     handleDeepLink();
 }
@@ -2186,13 +2229,6 @@ if("serviceWorker" in navigator){
 
 buildGrids();
 syncPowerToggle();
-
-fetch("/api/access")
-    .then(r => r.json())
-    .then(d => {
-        if(d.required) document.getElementById("signOutBtn").style.display = "inline-block";
-    })
-    .catch(() => {});
 
 checkAccess();
 </script>
