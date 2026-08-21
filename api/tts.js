@@ -1,10 +1,13 @@
 import { textToSpeech, VOICES } from "./_tools.js";
+import { guard } from "./_auth.js";
 
 /**
  * AI ভয়েসওভার — টেক্সট থেকে কথা।
  * Pollinations TTS, key ছাড়াই চলে। সরাসরি mp3 ফেরত দেয়।
  */
 export default async function handler(req, res) {
+    if (!guard(req, res)) return;
+
     if (req.method === "GET") {
         return res.status(200).json({
             voices: VOICES.map(v => ({ id: v.id, label: v.label }))

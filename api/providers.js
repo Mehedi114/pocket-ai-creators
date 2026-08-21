@@ -1,8 +1,11 @@
 import { describeProviders } from "./_providers.js";
 import { TOOL_NAMES } from "./_prompts.js";
 import { describeServices, searchAvailable } from "./_tools.js";
+import { guard } from "./_auth.js";
 
 export default async function handler(req, res) {
+    if (!guard(req, res)) return;
+
     try {
         const info = describeProviders();
 

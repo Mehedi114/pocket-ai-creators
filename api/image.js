@@ -1,5 +1,6 @@
 import { callAI } from "./_providers.js";
 import { buildImageUrl, IMAGE_PRESETS } from "./_tools.js";
+import { guard } from "./_auth.js";
 
 /**
  * থাম্বনেইল / ইমেজ জেনারেটর
@@ -7,6 +8,8 @@ import { buildImageUrl, IMAGE_PRESETS } from "./_tools.js";
  * Pollinations Flux দিয়ে ৪টা ভ্যারিয়েশন।
  */
 export default async function handler(req, res) {
+    if (!guard(req, res)) return;
+
     if (req.method !== "POST") {
         return res.status(405).json({ error: "Method not allowed" });
     }

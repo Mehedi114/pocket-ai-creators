@@ -1,5 +1,6 @@
 import { callAI } from "./_providers.js";
 import { webSearch } from "./_tools.js";
+import { guard } from "./_auth.js";
 
 /**
  * লাইভ ওয়েব সার্চ + AI উত্তর।
@@ -7,6 +8,8 @@ import { webSearch } from "./_tools.js";
  * ট্রেন্ড, নিউজ, দাম, নতুন টুল সব যাচাই করা যাবে।
  */
 export default async function handler(req, res) {
+    if (!guard(req, res)) return;
+
     if (req.method !== "POST") {
         return res.status(405).json({ error: "Method not allowed" });
     }

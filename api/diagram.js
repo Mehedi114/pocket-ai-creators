@@ -1,4 +1,5 @@
 import { callAI } from "./_providers.js";
+import { guard } from "./_auth.js";
 import { readUrl, webSearch } from "./_tools.js";
 import {
     DIAGRAM_KINDS,
@@ -20,6 +21,8 @@ import {
 const DEFAULT_KINDS = ["mindmap", "flowchart", "quadrant"];
 
 export default async function handler(req, res) {
+    if (!guard(req, res)) return;
+
     if (req.method === "GET") {
         return res.status(200).json({
             kinds: Object.entries(DIAGRAM_KINDS).map(([id, k]) => ({

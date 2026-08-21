@@ -1,5 +1,6 @@
 import { callAI } from "./_providers.js";
 import { readUrl } from "./_tools.js";
+import { guard } from "./_auth.js";
 
 /**
  * যেকোনো URL পড়ে বিশ্লেষণ — ব্লগ, নিউজ, প্রতিযোগীর পেজ, প্রোডাক্ট পেজ, PDF।
@@ -60,6 +61,8 @@ const MODES = {
 };
 
 export default async function handler(req, res) {
+    if (!guard(req, res)) return;
+
     if (req.method !== "POST") {
         return res.status(405).json({ error: "Method not allowed" });
     }

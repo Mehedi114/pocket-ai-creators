@@ -294,3 +294,107 @@ console.log("✓ /api/diagram সম্পূর্ণ পাইপলাইন 
 [diagramMock, jsonServer].forEach(s => s.close());
 
 console.log("\nVisual Research টেস্টও পাস ✅\n");
+
+/* ================= Access gate ================= */
+
+process.env.ACCESS_CODES = "POCKET2026, FBTEST ";
+delete process.env.SESSION_SECRET;
+
+const auth = await import("../api/_auth.js");
+
+assert.equal(auth.gateEnabled(), true);
+console.log("✓ ACCESS_CODES থাকলে গেট চালু হয়");
+
+/* কোড মেলানো — বড়/ছোট হাতের অক্ষর, বাড়তি স্পেস */
+assert.ok(auth.matchCode("POCKET2026"));
+assert.ok(auth.matchCode("pocket2026"), "ছোট হাতের অক্ষরও চলবে");
+assert.ok(auth.matchCode("  FBTEST  "), "বাড়তি স্পেস উপেক্ষা হয়");
+assert.equal(auth.matchCode("WRONG"), null);
+assert.equal(auth.matchCode(""), null);
+assert.equal(auth.matchCode(null), null);
+console.log("✓ কোড মেলানো ঠিক আছে (case/space insensitive)");
+
+/* টোকেন ইস্যু ও যাচাই */
+const goodToken = auth.issueToken("POCKET2026");
+assert.ok(auth.verifyToken(goodToken));
+console.log("✓ বৈধ টোকেন গ্রহণ করা হয়");
+
+/* জাল টোকেন */
+assert.equal(auth.verifyToken("garbage"), false);
+assert.equal(auth.verifyToken(""), false);
+assert.equal(auth.verifyToken(null), false);
+
+const [body] = goodToken.split(".");
+assert.equal(auth.verifyToken(`${body}.wrongsignature`), false, "সই না মিললে বাতিল");
+
+const tamperedBody = Buffer.from(
+    JSON.stringify({ c: "deadbeefdeadbeef", exp: Date.now() + 99999 })
+).toString("base64url");
+assert.equal(auth.verifyToken(`${tamperedBody}.${goodToken.split(".")[1]}`), false);
+console.log("✓ জাল বা বদলানো টোকেন বাতিল হয়");
+
+/* কোড বদলালে পুরোনো টোকেন আপনা-আপনি অচল */
+process.env.ACCESS_CODES = "NEWCODE";
+assert.equal(auth.verifyToken(goodToken), false, "কোড বদলালে পুরোনো টোকেন বাতিল");
+process.env.ACCESS_CODES = "POCKET2026,FBTEST";
+assert.equal(auth.verifyToken(goodToken), true, "কোড ফিরে এলে আবার বৈধ");
+console.log("✓ কোড বদলালে সব পুরোনো সেশন বাতিল হয়ে যায়");
+
+/* মেয়াদ শেষ */
+process.env.ACCESS_TTL_DAYS = "0";
+const freshAuth = await import("../api/_auth.js?expired=1");
+const expired = freshAuth.issueToken("POCKET2026");
+await new Promise(r => setTimeout(r, 20));
+assert.equal(freshAuth.verifyToken(expired), false, "মেয়াদ শেষ হলে বাতিল");
+delete process.env.ACCESS_TTL_DAYS;
+console.log("✓ মেয়াদোত্তীর্ণ টোকেন বাতিল হয়");
+
+/* guard() — endpoint রক্ষা করে */
+function fakeRes2() {
+    return {
+        statusCode: 200, payload: null,
+        status(c) { this.statusCode = c; return this; },
+        json(p) { this.payload = p; return this; }
+    };
+}
+
+const denied = fakeRes2();
+assert.equal(auth.guard({ headers: {} }, denied), false);
+assert.equal(denied.statusCode, 401);
+assert.equal(denied.payload.code, "ACCESS_REQUIRED");
+
+const allowed = fakeRes2();
+assert.equal(
+    auth.guard({ headers: { "x-access-token": auth.issueToken("FBTEST") } }, allowed),
+    true
+);
+
+const viaCookie = fakeRes2();
+assert.equal(
+    auth.guard(
+        { headers: { cookie: `a=1; pocket_access=${encodeURIComponent(auth.issueToken("FBTEST"))}; b=2` } },
+        viaCookie
+    ),
+    true,
+    "কুকি দিয়েও ঢোকা যায়"
+);
+console.log("✓ guard(): হেডার ও কুকি দুটোই কাজ করে, নাহলে 401");
+
+/* ব্রুট-ফোর্স সীমা */
+const ip = "1.2.3.4";
+assert.equal(auth.tooManyAttempts(ip), false);
+for (let i = 0; i < 8; i++) auth.noteFailure(ip);
+assert.equal(auth.tooManyAttempts(ip), true, "৮ বার ভুলের পর আটকে যায়");
+auth.clearAttempts(ip);
+assert.equal(auth.tooManyAttempts(ip), false, "সফল হলে কাউন্টার রিসেট");
+console.log("✓ ব্রুট-ফোর্স সীমা কাজ করে (৮ চেষ্টা / ১০ মিনিট)");
+
+/* গেট বন্ধ করলে সব খুলে যায় */
+delete process.env.ACCESS_CODES;
+delete process.env.ACCESS_CODE;
+assert.equal(auth.gateEnabled(), false);
+const open = fakeRes2();
+assert.equal(auth.guard({ headers: {} }, open), true, "কোড মুছলে গেট খুলে যায়");
+console.log("✓ ACCESS_CODES মুছলে গেট বন্ধ — শুধু URL জানলেই ঢোকা যায়");
+
+console.log("\nAccess gate টেস্টও পাস ✅\n");

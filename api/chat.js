@@ -1,4 +1,5 @@
 import { callAI, callAICouncil } from "./_providers.js";
+import { guard } from "./_auth.js";
 
 const SYSTEM = `You are Pocket AI — a personal AI assistant built for a content creator.
 You help with YouTube strategy, scripts, SEO, marketing copy, research and general questions.
@@ -6,6 +7,8 @@ Be direct, practical and specific. Skip filler and disclaimers.
 If the user writes in Bangla, reply in natural Bangla.`;
 
 export default async function handler(req, res) {
+    if (!guard(req, res)) return;
+
     if (req.method !== "POST") {
         return res.status(405).json({ error: "Method not allowed" });
     }

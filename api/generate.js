@@ -1,7 +1,10 @@
 import { callAI, callAICouncil } from "./_providers.js";
 import { SYSTEM_PROMPT, buildPrompt } from "./_prompts.js";
+import { guard } from "./_auth.js";
 
 export default async function handler(req, res) {
+    if (!guard(req, res)) return;
+
     if (req.method !== "POST") {
         return res.status(405).json({ error: "Method not allowed" });
     }
