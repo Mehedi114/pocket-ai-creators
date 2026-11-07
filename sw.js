@@ -7,13 +7,17 @@
  * /api/* কখনো ক্যাশ হয় না — AI-এর উত্তর সবসময় তাজা থাকবে।
  */
 
-const VERSION = "pocket-ai-v3";
+const VERSION = "pocket-ai-v5";
 const SHELL = `${VERSION}-shell`;
 
 const SHELL_FILES = [
     "/",
     "/index.html",
     "/research.js",
+    "/studio.html",
+    "/site.css",
+    "/site.js",
+    "/site-config.js",
     "/manifest.webmanifest",
     "/assets/icon-192.png",
     "/assets/icon-512.png",
@@ -54,7 +58,7 @@ self.addEventListener("fetch", event => {
     if (url.origin !== self.location.origin) return;
 
     // API কখনো ক্যাশ নয়
-    if (url.pathname.startsWith("/api/")) return;
+    if (url.pathname.startsWith("/api/") || url.pathname === "/adsterra-banner.html") return;
 
     // পেজ নেভিগেশন: আগে নেটওয়ার্ক, না পেলে ক্যাশ থেকে
     if (request.mode === "navigate") {
@@ -62,10 +66,10 @@ self.addEventListener("fetch", event => {
             fetch(request)
                 .then(response => {
                     const copy = response.clone();
-                    caches.open(SHELL).then(c => c.put("/index.html", copy));
+                    caches.open(SHELL).then(c => c.put(url.pathname, copy));
                     return response;
                 })
-                .catch(() => caches.match("/index.html").then(r => r || fetch(request)))
+                .catch(() => caches.match(url.pathname).then(r => r || fetch(request)))
         );
         return;
     }

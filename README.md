@@ -310,3 +310,48 @@ test/engine.test.mjs  failover টেস্ট
 
 > ডায়াগ্রামের theme প্রথমে `dark` ছিল — রেন্ডার করে দেখা গেল কালো বাক্সে কালো লেখা,
 > পড়াই যায় না। তাই `default` (সাদা ব্যাকগ্রাউন্ড) করা হয়েছে।
+
+## Public marketing website (redesign)
+
+The root `/` is now a public, indexable marketing page. The original gated creator
+workspace remains at `/studio.html`; existing API routes and access controls are
+unchanged. The landing page has 14 searchable/filterable tools, generation via
+`/api/generate`, downloadable results, service inquiries, creator guides, and
+privacy/advertising preferences. Fonts are self-hosted (licenses in `assets/fonts`).
+
+### Launch checklist
+
+1. Edit **`site-config.js`** and set `contactEmail` to your real business address.
+   The inquiry form opens the visitor's email application; it is not a backend
+   lead database. With no address configured, it only downloads a project brief
+   and explicitly says it has not been submitted.
+2. Configure AI provider credentials in your deployment environment using
+   `.env.example`. Never put secrets in `site-config.js`. Existing `ACCESS_CODES`
+   still protects generation; visitors can authenticate in Creator Studio.
+   Add deployment-level abuse protection/rate limits before opening costly APIs
+   to unrestricted public traffic.
+3. For Adsterra, obtain approval for your domain and a **banner** placement.
+   Open **`adsterra-banner.html`** in the repository root and paste the complete
+   banner embed (including script tags) between the `PASTE YOUR FULL BANNER CODE`
+   and `END OF BANNER CODE` comments. Save and commit to your hosting-connected
+   branch, then wait for its deployment to succeed (or redeploy manually).
+   Editing a local file alone does not update production. No other config edit
+   is needed. Standard `atOptions` width/height are detected automatically;
+   the default is 728×90. The older `site-config.js` key/URL setup remains a
+   fallback if the HTML file has no script or iframe. No publisher IDs are invented.
+   No advertising script loads before the user explicitly allows advertising
+   in Ad preferences. Test your real banner on the deployed domain: its script
+   runs in a sandboxed frame, and some formats may not support that isolation.
+   Popunders and forced redirects are intentionally not integrated.
+4. Review the Privacy and Terms dialogs against your actual business, providers,
+   jurisdiction and retention practices. Add real contact details before launch.
+   Current service imagery is clearly labeled illustrative, not client work.
+5. Advertising income is not guaranteed; it depends on approval, legitimate
+   traffic, geography, fill rates and provider terms. Never encourage ad clicks.
+6. Run `npm install` and `npm test`. `npm run dev` serves on `0.0.0.0:3000`.
+   Deploy the repository to Vercel for the existing serverless API routes.
+
+The marketing interaction tests use JSDOM with mocked AI responses; they do not
+prove a live provider or Adsterra placement is available. The service worker now
+caches navigation by pathname so the homepage and studio cannot replace each
+other's offline cache entry.
