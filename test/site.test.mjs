@@ -28,7 +28,7 @@ click('.menu-toggle');assert.equal(d.querySelector('.menu-toggle').getAttribute(
 // Empty template does not replace the supporter placeholder.
 await new Promise(resolve=>setTimeout(resolve,0));
 let bannerFetches=0;
-w.fetch=async()=>{bannerFetches++;return {ok:true,text:async()=>readFileSync(new URL('../adsterra-banner.html',import.meta.url),'utf8')}};
+w.fetch=async()=>{bannerFetches++;return {ok:true,text:async()=>'<html><body><!-- Empty banner slot --></body></html>'}};
 click('#accept-ads');await new Promise(resolve=>setTimeout(resolve,0));
 assert.equal(d.querySelector('#ad-slot iframe'),null);
 click('#reject-ads');
@@ -40,6 +40,15 @@ const frame=d.querySelector('#ad-slot iframe');assert.ok(frame);
 assert.equal(frame.width,'320');assert.equal(frame.height,'50');
 assert.ok(!frame.getAttribute('sandbox').includes('allow-same-origin'));
 assert.equal(w.publisherRan,undefined);
+click('#reject-ads');assert.equal(d.querySelector('#ad-slot iframe'),null);
+// Verify the actual publisher embed without requesting third-party ads.
+const bannerHtml=readFileSync(new URL('../adsterra-banner.html',import.meta.url),'utf8');
+w.fetch=async()=>({ok:true,text:async()=>bannerHtml});
+click('#accept-ads');await new Promise(resolve=>setTimeout(resolve,0));
+const publisherFrame=d.querySelector('#ad-slot iframe');
+assert.equal(publisherFrame.width,'300');assert.equal(publisherFrame.height,'250');
+assert.ok(publisherFrame.srcdoc.includes('https://bauval.org/22/92f6b3f120fee257d6a5c63958ed5ca9'));
+assert.equal(d.querySelector('script[src^="https://bauval.org"]'),null);
 click('#reject-ads');assert.equal(d.querySelector('#ad-slot iframe'),null);
 // Withdrawing consent while the file is loading must not mount a late ad.
 let finish;
