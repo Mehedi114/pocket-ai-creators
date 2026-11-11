@@ -342,7 +342,13 @@ privacy/advertising preferences. Fonts are self-hosted (licenses in `assets/font
    No advertising script loads before the user explicitly allows advertising
    in Ad preferences. Test your real banner on the deployed domain: its script
    runs in a sandboxed frame, and some formats may not support that isolation.
-   Popunders and forced redirects are intentionally not integrated.
+   An optional popunder is configured in `site-config.js` as `popunderScriptUrl`.
+   It loads only when visitors separately opt into popunders AND allow advertising.
+   Existing banner consent alone does not enable it. Unlike the sandboxed banner,
+   this third-party script runs in the page and may open new tabs/windows after
+   interaction. Withdrawing its consent reloads the page to clear vendor handlers.
+   Browser popup blockers and provider policies may prevent delivery. Live delivery
+   must be tested on the approved domain; automated tests do not execute vendor code.
 4. Review the Privacy and Terms dialogs against your actual business, providers,
    jurisdiction and retention practices. Add real contact details before launch.
    Current service imagery is clearly labeled illustrative, not client work.
@@ -355,3 +361,75 @@ The marketing interaction tests use JSDOM with mocked AI responses; they do not
 prove a live provider or Adsterra placement is available. The service worker now
 caches navigation by pathname so the homepage and studio cannot replace each
 other's offline cache entry.
+
+### Optional Social Bar
+
+The supplied Social Bar URL is configured as `socialBarScriptUrl` in
+`site-config.js`. It is loaded in the page only when advertising is accepted
+and the visitor separately checks **Also allow Social Bar ads**. Existing banner
+consent does not opt visitors into this format. Social Bar may show floating ads
+or overlays. Withdrawing this permission reloads the page to clear vendor code
+and UI. Set the URL to an empty string to disable future loads. Tests check the
+exact script URL, consent, single insertion, and withdrawal without executing
+third-party scripts; real delivery still requires testing on the approved domain.
+
+## Everyday Tools
+
+Open `/everyday-tools.html`, linked from the homepage navigation and promo section.
+Nine utilities run client-side without an API key: QR codes (PNG/SVG), passwords,
+word/character counts and text cleanup, metric/US unit conversion, percentages,
+UTM links, JSON formatting, UTF-8 Base64 and URL-component encoding.
+
+- Direct links use stable fragments, e.g. `/everyday-tools.html#qr` or `#units`.
+- `tools/utility-core.js` contains shared testable logic; `tools/everyday.js`
+  handles the UI. `npm run build:tools` bundles the QR library and UI into
+  `assets/everyday-tools.bundle.js`. Rebuild after changing these source files.
+- The bundle is checked in for the no-build local server; `npm run build` rebuilds
+  it on hosting services. The QR library license is in `assets/licenses/`.
+- This page intentionally does not load homepage ads or analytics: third-party
+  in-page scripts should not have access to password or developer-tool inputs.
+  Hosting access logs are separate; no claim of anonymous hosting is made.
+- Passwords use Web Crypto with rejection sampling, guarantee selected character
+  classes, and are not saved. Copying uses the system clipboard; use a password
+  manager to store passwords. QR codes encode the original URL without a redirect.
+- Tests include independent QR decoding, Unicode round trips, conversion edge
+  cases, password character rules, and browser-DOM interaction tests. These do
+  not replace a real-device scan test before printing a QR code.
+
+## Extended creator, finance and file tools
+
+The tool directory now links to `/creator-tools.html#<tool>` for 14 additional
+workflows (23 directory entries total). Thumbnails, tags, readability, prompt
+building, freelance rate/tax estimates, mortgage/loan/compound interest, SaaS or
+store margins, image conversion and PDF operations are available there.
+
+- Tags and prompts default to clearly labeled rule/template-based local mode.
+  AI mode calls the existing protected `/api/generate` endpoint. It requires a
+  working provider and may incur that provider's usage costs.
+- Financial results are estimates; tax reserves use a user-provided flat rate,
+  not national tax brackets or filing rules. Loan rates are nominal annual rates
+  divided by 12. Compound interest adds contributions at each month end.
+- AVIF is encoded by a single-threaded WebAssembly worker with the self-hosted
+  codec at `assets/codecs/avif_enc.wasm`. WebP uses canvas, with actual output MIME
+  checked to prevent accidentally downloading a PNG labeled as WebP.
+- PDFs are processed locally with pdf-lib. Merge order is editable; split accepts
+  page ranges. Compression is best-effort structural optimization and returns
+  the original if rewriting does not reduce size. Keep original signed/form PDFs.
+- Image size limits: 15 MB input, 16 MP decoded, 2048 px max output dimension.
+  PDF limits: 20 MB total input, 10 files, 500 pages per source/output.
+- Thumbnail loading contacts YouTube. CORS can prevent direct download; open-image
+  fallback is provided. No availability or copyright permission is inferred.
+- The `Check provider configuration` button reports configuration, not live health.
+  Only a successful actual generation demonstrates provider connectivity.
+- `npm test` includes real PDF merge/extraction and actual AVIF WASM encoding, but
+  no live YouTube/provider/browser image-download test is possible in restricted
+  environments. Browser-specific behavior still needs live-device validation.
+
+## Tool-specific search pages
+
+Run `npm run build` after editing tool content. It now generates 36 tool guides
+and the guide hub, updates sitemap.xml, builds browser assets, then refreshes
+crawlable homepage/directory card markup. Content lives in `tools/seo-content.json`
+and `tools/ai-seo-content.json`. See `SEO-LAUNCH.md` for claims, indexing and launch
+requirements. The guide pages have canonical URLs and unique content, with direct
+launch links to their tools; the duplicated YouTube tag entry shares one guide.

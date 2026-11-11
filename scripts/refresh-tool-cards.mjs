@@ -1,0 +1,23 @@
+// Keep first-response HTML cards crawlable and in sync with the interactive UI.
+import fs from 'node:fs';
+import {JSDOM} from 'jsdom';
+let html=fs.readFileSync('everyday-tools.html','utf8');
+let dom=new JSDOM(html,{url:'https://pocket-ai-creators.vercel.app/everyday-tools.html',runScripts:'outside-only'});
+dom.window.matchMedia=()=>({matches:true});
+dom.window.eval(fs.readFileSync('assets/everyday-tools.bundle.js','utf8'));
+let start=html.indexOf('<div class="tool-grid" id="utilities-grid">');
+let end=html.indexOf('</div><div id="utility-empty"',start)+6;
+if(start<0||end<6)throw new Error('Cannot find utility cards');
+html=html.slice(0,start)+dom.window.document.querySelector('#utilities-grid').outerHTML+html.slice(end);
+fs.writeFileSync('everyday-tools.html',html);dom.window.close();
+html=fs.readFileSync('index.html','utf8');
+dom=new JSDOM(html,{url:'https://pocket-ai-creators.vercel.app/',runScripts:'outside-only'});
+dom.window.eval(fs.readFileSync('site-config.js','utf8'));
+dom.window.eval(fs.readFileSync('assets/seo-links.js','utf8'));
+dom.window.eval(fs.readFileSync('site.js','utf8'));
+start=html.indexOf('<div id="tool-grid" class="tool-grid">');
+end=html.indexOf('<noscript>',start);
+if(start<0||end<0)throw new Error('Cannot find homepage cards');
+html=html.slice(0,start)+dom.window.document.querySelector('#tool-grid').outerHTML+html.slice(end);
+fs.writeFileSync('index.html',html);dom.window.close();
+console.log('Refreshed homepage and directory cards, including crawlable tool-guide links.');

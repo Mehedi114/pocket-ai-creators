@@ -46,6 +46,9 @@ export default async function handler(req, res) {
 
         return res.status(error?.status || 500).json({
             error: error?.message || "Something went wrong on the server.",
+            publicMessage: error?.noProviders
+                ? "No AI provider is configured. The site owner must add a provider API key in the deployment environment."
+                : "AI providers could not complete this request. Check provider credentials, quota, model access and network connectivity. Local tools remain available.",
             attempts: error?.attempts || null
         });
     }

@@ -209,6 +209,8 @@ export function describeProviders() {
 
     return {
         activeCount: active.length,
+        credentialedCount: active.filter(p => Boolean(process.env[p.keyEnv])).length,
+        connectivityVerified: false,
         chain: active.map(p => p.id),
         providers: PROVIDERS.map(p => ({
             id: p.id,
@@ -220,6 +222,7 @@ export function describeProviders() {
             note: p.note,
             optionalKey: Boolean(p.optionalKey),
             configured: activeIds.has(p.id),
+            keyConfigured: Boolean(process.env[p.keyEnv]),
             position: activeIds.has(p.id)
                 ? active.findIndex(a => a.id === p.id) + 1
                 : null
