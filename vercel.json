@@ -57,6 +57,27 @@
           "value": "noindex, nofollow"
         }
       ]
+    },
+    {
+      "source": "/sw.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/privacy-controls.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, max-age=0, must-revalidate"
+        }
+      ]
     }
-  ]
+  ],
+  "buildCommand": "npm run build",
+  "outputDirectory": "public",
+  "installCommand": "npm ci --include=dev"
 }
