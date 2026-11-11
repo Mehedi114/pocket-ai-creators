@@ -8,6 +8,10 @@ export const SYSTEM_PROMPT =
     "Always reply in the same language the user writes in.";
 
 export const TOOLS = {
+    "AI Prompt Refiner": input => `Improve the following task description into a clear, reusable prompt. Preserve the user's intent, specify audience, context, constraints, and output format. Do not execute the task itself. Ask clarifying questions where essential information is missing. Do not invent facts. Return the improved prompt and a short list of improvements.
+
+${input}`,
+
     "YouTube Title Generator": input => `
 You are Pocket AI, an expert YouTube strategist and viral content consultant.
 

@@ -7,7 +7,7 @@
   <title>Sponsored banner</title>
   <style>
     html, body { margin: 0; padding: 0; background: transparent; }
-    body { display: flex; justify-content: center; align-items: center; min-height: 90px; }
+    body { display: flex; justify-content: center; align-items: center; min-height: 250px; }
   </style>
 </head>
 <body>
@@ -17,7 +17,7 @@
   Adsterra থেকে পাওয়া পুরো Banner embed code নিচের খালি জায়গায়
   paste করুন। Code-এর script tags-সহ সবটুকু রাখুন।
   উপরে/নিচের HTML মুছবেন না। শুধু Banner code ব্যবহার করুন,
-  Popunder / Direct Link / Social Bar নয়। 728x90 banner recommended.
+  Popunder / Direct Link / Social Bar নয়। বর্তমান Banner size: 300x250.
 
   Save + commit করুন। Hosting-এ auto-deploy connected থাকলে
   deploy শেষ হওয়ার পর live site update হবে। না থাকলে redeploy করুন।
@@ -26,8 +26,16 @@
   ============================================================ -->
 
   <!-- PASTE YOUR FULL BANNER CODE BELOW THIS LINE -->
-
-
+  <script>
+    atOptions = {
+      'key' : '92f6b3f120fee257d6a5c63958ed5ca9',
+      'format' : 'iframe',
+      'height' : 250,
+      'width' : 300,
+      'params' : {}
+    };
+  </script>
+  <script src="https://bauval.org/22/92f6b3f120fee257d6a5c63958ed5ca9"></script>
 
   <!-- END OF BANNER CODE -->
 </body>

@@ -1,0 +1,5 @@
+import {PDFDocument} from 'pdf-lib';
+import {pageIndices} from './advanced-core.js';
+export async function mergePDFs(inputs){const out=await PDFDocument.create();for(const bytes of inputs){const doc=await PDFDocument.load(bytes);if(doc.getPageCount()>500)throw new Error('Each document must have at most 500 pages.');const pages=await out.copyPages(doc,doc.getPageIndices());pages.forEach(p=>out.addPage(p));if(out.getPageCount()>500)throw new Error('Use 500 total pages or fewer.');}return out.save({useObjectStreams:true})}
+export async function extractPDF(bytes,spec){const doc=await PDFDocument.load(bytes);if(doc.getPageCount()>500)throw new Error("Use a PDF with at most 500 pages.");const out=await PDFDocument.create();const pages=await out.copyPages(doc,pageIndices(spec,doc.getPageCount()));pages.forEach(p=>out.addPage(p));return out.save({useObjectStreams:true})}
+export async function optimizePDF(bytes){const doc=await PDFDocument.load(bytes);if(doc.getPageCount()>500)throw new Error("Use a PDF with at most 500 pages.");return doc.save({useObjectStreams:true,addDefaultPage:false})}

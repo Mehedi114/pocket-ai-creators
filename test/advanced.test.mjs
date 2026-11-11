@@ -1,0 +1,43 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {PDFDocument} from 'pdf-lib';
+import {JSDOM} from 'jsdom';
+import createEncoder from '@jsquash/avif/codec/enc/avif_enc.js';
+import {defaultOptions} from '@jsquash/avif/meta.js';
+import {hourlyRate,taxEstimate,loan,compound,margin,videoID,tags,readability,promptTemplate,pageIndices} from '../tools/advanced-core.js';
+import {mergePDFs,extractPDF,optimizePDF} from '../tools/pdf-tools.js';
+assert.equal(hourlyRate(60000,10000,50,30,25),60);
+assert.equal(taxEstimate(10000,2000,25).net,6000);
+assert.throws(()=>taxEstimate(100,200,20));
+assert.equal(loan(1200,0,1).monthly,100);
+assert.ok(Math.abs(loan(100000,6,30).monthly-599.5505)<.001);
+assert.equal(compound(1000,100,0,1).balance,2200);
+assert.equal(margin(100,60).margin,40);
+assert.equal(margin(100,0).markup,null);
+assert.throws(()=>loan(-1,6,30));assert.throws(()=>hourlyRate(1000,0,52,20,100));
+const id='dQw4w9WgXcQ';for(const url of [id,`https://www.youtube.com/watch?v=${id}`,`https://youtu.be/${id}?t=2`,`https://youtube.com/shorts/${id}`])assert.equal(videoID(url),id);
+assert.throws(()=>videoID(`https://youtube.com.evil.test/watch?v=${id}`));assert.throws(()=>videoID('not a video'));
+assert.ok(tags('Home office productivity').includes('home office productivity'));
+assert.ok(readability('This is a short sentence. This is another sentence.').ease>50);
+assert.throws(()=>readability(''));assert.match(promptTemplate('Write a sales email','','Friendly','Email',''),/Task\nWrite/);
+assert.deepEqual(pageIndices('1-3, 5, 3',5),[0,1,2,4]);assert.throws(()=>pageIndices('0,2',5));assert.throws(()=>pageIndices('5-2',5));
+const first=await PDFDocument.create();first.addPage([300,400]);const second=await PDFDocument.create();second.addPage([500,600]);second.addPage([700,800]);
+const a=await first.save(),b=await second.save();const merged=await mergePDFs([a,b]);const doc=await PDFDocument.load(merged);assert.equal(doc.getPageCount(),3);assert.equal(doc.getPage(1).getWidth(),500);
+const extracted=await PDFDocument.load(await extractPDF(merged,'3, 1'));assert.equal(extracted.getPageCount(),2);assert.equal(extracted.getPage(0).getWidth(),700);
+assert.equal((await PDFDocument.load(await optimizePDF(merged))).getPageCount(),3);
+await assert.rejects(()=>mergePDFs([new Uint8Array([1,2,3])]));
+// Run the actual shipped AVIF WASM encoder, without network access.
+const encoder=await createEncoder({wasmBinary:readFileSync('assets/codecs/avif_enc.wasm')});
+const pixels=new Uint8Array(16*16*4);for(let i=0;i<pixels.length;i+=4){pixels[i]=230;pixels[i+1]=90;pixels[i+2]=50;pixels[i+3]=255;}
+const avif=encoder.encode(pixels,16,16,{...defaultOptions,quality:70,speed:8});assert.ok(avif.length>30);assert.match(Buffer.from(avif.slice(0,32)).toString('ascii'),/ftypavif/);
+const w=new JSDOM(readFileSync('creator-tools.html','utf8'),{url:'https://example.com/creator-tools.html#loan',runScripts:'outside-only'}).window;const d=w.document;
+w.URL.createObjectURL=()=> 'blob:local-test';w.URL.revokeObjectURL=()=>{};
+w.eval(readFileSync('assets/advanced-tools.bundle.js','utf8'));
+const open=id=>{w.location.hash=id;w.dispatchEvent(new w.HashChangeEvent('hashchange'))};const submit=()=>d.querySelector('#advanced-form').onsubmit({preventDefault(){}});
+await submit();assert.match(d.querySelector('#advanced-output').textContent,/Monthly principal/);
+open('readability');d.querySelector('#prose').value='A simple sentence. Another simple sentence.';await submit();assert.match(d.querySelector('#advanced-output').textContent,/Flesch/);
+open('tags');d.querySelector('#topic').value='Home office productivity';await submit();assert.match(d.querySelector('#advanced-output').textContent,/LOCAL KEYWORD/);
+open('prompt');d.querySelector('#task').value='Write a newsletter';await submit();assert.match(d.querySelector('#advanced-output').textContent,/LOCAL PROMPT TEMPLATE/);
+for(const id of ['hourly','tax','mortgage','compound','margin']){open(id);await submit();assert.equal(d.querySelector('#advanced-status').textContent,'Ready. Review the result before using it.');}
+open('tags');d.querySelector('#topic').value='Desk setup';d.querySelector('#ai-mode').value='ai';w.fetch=async()=>({ok:false,status:502,json:async()=>({publicMessage:'Configure a provider first.'})});await submit();assert.match(d.querySelector('#advanced-status').textContent,/Configure a provider/);
+w.close();console.log('✓ Advanced tools: finance formulas, video validation, local tags/prompts, readability, actual PDF operations, AVIF WASM encoding, UI and AI errors');

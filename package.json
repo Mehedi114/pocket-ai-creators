@@ -7,12 +7,22 @@
   "scripts": {
     "dev": "node dev-server.mjs",
     "start": "node dev-server.mjs",
-    "test": "node test/engine.test.mjs && node test/site.test.mjs"
+    "test": "node test/engine.test.mjs && node test/site.test.mjs && node test/seo.test.mjs && node test/utilities.test.mjs && node test/advanced.test.mjs",
+    "build:tools": "esbuild tools/everyday.js --bundle --minify --legal-comments=eof --outfile=assets/everyday-tools.bundle.js && esbuild tools/advanced.js --bundle --minify --legal-comments=eof --outfile=assets/advanced-tools.bundle.js && esbuild tools/avif-worker.js --bundle --format=esm --minify --legal-comments=eof --outfile=assets/avif-worker.js",
+    "build": "npm run build:seo && npm run build:tools && node scripts/refresh-tool-cards.mjs",
+    "build:seo": "node scripts/build-tool-seo.mjs"
   },
   "engines": {
     "node": ">=18"
   },
   "devDependencies": {
-    "jsdom": "^26.1.0"
+    "esbuild": "^0.28.2",
+    "jsdom": "^26.1.0",
+    "jsqr": "^1.4.0"
+  },
+  "dependencies": {
+    "@jsquash/avif": "^2.1.1",
+    "pdf-lib": "^1.17.1",
+    "qrcode": "^1.5.4"
   }
 }

@@ -1,5 +1,9 @@
 // Public settings only. NEVER put provider API keys or secrets here.
 window.POCKET_SITE = {
+  // Optional popunder: requires separate visitor opt-in as well as ad consent.
+  popunderScriptUrl: 'https://abscloud.org/1/f8e269e4589d8040ab08f8af9e90d75c',
+  // Optional floating Social Bar, loaded only after its separate opt-in.
+  socialBarScriptUrl: 'https://bauval.org/14/32a8a1cbedf9018981bcc56ef9bed636',
   contactEmail: '', // Set your real business email to enable email handoff.
   // EASIEST: paste the full Banner embed into /adsterra-banner.html instead.
   // Legacy alternative: set your banner key and HTTPS invoke.js URL here.

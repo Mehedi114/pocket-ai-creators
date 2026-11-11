@@ -2043,11 +2043,11 @@ async function loadProviders(){
 
         if(!response.ok) throw new Error(data.error || "Status unavailable");
 
-        count.textContent = `${data.activeCount} active`;
+        count.textContent = `${data.activeCount} configured · connectivity not tested`;
 
-        statusPill.className = "pill " + (data.activeCount ? "live" : "warn");
+        statusPill.className = "pill " + (data.credentialedCount ? "live" : "warn");
         statusText.textContent = data.activeCount
-            ? `${data.activeCount} models ready`
+            ? data.credentialedCount ? `${data.activeCount} configured · unverified` : "keyless fallback · unverified"
             : "no key set";
 
         grid.innerHTML = data.providers.map(p => `
@@ -2059,7 +2059,7 @@ async function loadProviders(){
                 <div class="card-model">${escapeHtml(p.model)}</div>
                 <div class="card-note">${escapeHtml(p.note || "")}</div>
                 ${p.configured
-                    ? `<div class="card-env">${escapeHtml(p.keyEnv)} ✓</div>`
+                    ? `<div class="card-env">${p.keyConfigured ? escapeHtml(p.keyEnv) + " configured (not verified)" : "Keyless fallback — no credential configured"}</div>`
                     : `<a href="${p.keyUrl}" target="_blank" rel="noopener">Get a free key →</a>
                        <div class="card-env">set ${escapeHtml(p.keyEnv)}</div>`}
             </div>
@@ -2072,7 +2072,7 @@ async function loadProviders(){
                     <span class="card-dot"></span>
                 </div>
                 <div class="card-model">${escapeHtml(sv.provider)}</div>
-                <div class="card-note">${escapeHtml(sv.note || "")}</div>
+                <div class="card-note">${escapeHtml(sv.note || "")} Availability is configuration-based; live service connectivity has not been verified.</div>
                 ${sv.optional
                     ? `<a href="${sv.keyUrl}" target="_blank" rel="noopener">Boost with a free key →</a>
                        <div class="card-env">optional · ${escapeHtml(sv.keyEnv)}</div>`
