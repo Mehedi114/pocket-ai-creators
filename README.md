@@ -433,3 +433,56 @@ crawlable homepage/directory card markup. Content lives in `tools/seo-content.js
 and `tools/ai-seo-content.json`. See `SEO-LAUNCH.md` for claims, indexing and launch
 requirements. The guide pages have canonical URLs and unique content, with direct
 launch links to their tools; the duplicated YouTube tag entry shares one guide.
+
+## Advertising visibility and first-visit consent
+
+The homepage now loads `privacy-controls.js` independently of tool UI code.
+A first-time visitor with no saved choice sees a visible consent panel. They can
+allow banner ads, choose essential-only, or open settings to separately opt into
+popunder and Social Bar. Returning visitors keep their choice; the persistent
+**Privacy & ads** button reopens settings. Private-input utility pages deliberately
+remain ad-free. Choices still apply for the current page when localStorage is
+unavailable, but in that case they cannot persist across visits.
+
+The homepage's **Advertisement → Check ad loading status** reports whether the
+banner configuration was read and publisher scripts loaded, failed or gave no
+response. **A loaded script is not verified ad delivery or an impression.** Real
+ads still depend on domain approval, provider inventory, browser restrictions and
+compatibility with the sandboxed banner frame. No provider code or publisher IDs
+were changed in this fix. Ads never auto-enable without consent.
+
+The service-worker cache version is bumped; current consent/config/UI assets use
+network-first fetching and versioned homepage URLs to avoid stale pre-fix scripts.
+Vercel is told not to cache sw.js or privacy-controls.js without revalidation.
+Deployment must succeed on the actual production domain for these changes to show.
+
+Tests: `test/consent.test.mjs` covers storage, opt-in, diagnostics and withdrawal.
+The optional `test/browser-consent.mjs` uses real Chromium and mocked/blocked
+vendor scripts to verify actual iframe rendering, first-visit mobile visibility,
+independent initialization, and persistent choices. It does not claim live
+Adsterra inventory was shown. Run with Playwright Core and an installed Chromium:
+
+```sh
+CHROMIUM_PATH=/path/to/chromium AUDIT_BASE_URL=http://localhost:3000 node test/browser-consent.mjs
+```
+
+## Vercel deployment output fix
+
+The production deployment of commit `0c5d0a0` completed its build but then failed
+with `STATIC_BUILD_NO_OUT_DIR`: Vercel expected `public/`, while the build generated
+pages and bundles only in the source tree. This is confirmed from the deployment
+build log, not inferred from the browser cache.
+
+`npm run build` now ends with `scripts/export-static.mjs`, which publishes an
+explicit allowlist of browser files to ignored `public/`. `vercel.json` explicitly
+sets that output directory, runs `npm ci --include=dev` (build tools are required),
+and runs the build. API files remain outside public and are handled as functions.
+Node is pinned to the tested `22.x` runtime instead of automatically jumping to
+newer major releases through `>=18`.
+
+Run `npm run build && npm run test:deployment` to verify every sitemap page and
+linked asset exists in public, that the AVIF codec and consent code are included,
+and that API sources, environment files, tests and build scripts are NOT public.
+The Vercel project does contain sensitive provider environment-variable entries;
+the earlier zero-credential report was specific to the local sandbox, not proof
+that production variables were absent. No sensitive values were decrypted.

@@ -8,6 +8,7 @@ w.HTMLDialogElement.prototype.close=function(){this.removeAttribute('open')};
 w.eval(readFileSync(new URL('../site-config.js',import.meta.url),'utf8'));
 w.eval(readFileSync(new URL('../assets/seo-links.js',import.meta.url),'utf8'));
 w.eval(readFileSync(new URL('../site.js',import.meta.url),'utf8'));
+w.eval(readFileSync(new URL('../privacy-controls.js',import.meta.url),'utf8'));
 const click=s=>d.querySelector(s).click();
 assert.equal(d.querySelectorAll('.tool-card').length,6);
 click('#show-tools');assert.equal(d.querySelectorAll('.tool-card').length,14);
@@ -34,7 +35,7 @@ w.fetch=async()=>{bannerFetches++;return {ok:true,text:async()=>'<html><body><!-
 click('#accept-ads');await new Promise(resolve=>setTimeout(resolve,0));
 assert.equal(d.querySelector('#ad-slot iframe'),null);
 click('#reject-ads');
-const before=bannerFetches;await w.loadAd();assert.equal(bannerFetches,before);
+const before=bannerFetches;await w.PocketAds.loadBanner();assert.equal(bannerFetches,before);
 // Pasted embed is isolated, with dimensions from atOptions and no parent script execution.
 w.fetch=async()=>({ok:true,text:async()=>`<script>atOptions={'width':320,'height':50};window.publisherRan=true;</script><script src="https://example.com/invoke.js"></script>`});
 click('#accept-ads');await new Promise(resolve=>setTimeout(resolve,0));
@@ -79,7 +80,7 @@ click('#accept-ads');assert.equal(d.querySelectorAll('#adsterra-popunder').lengt
 assert.equal(d.querySelectorAll('#adsterra-social-bar').length,1);
 click('#footer-ad-preferences');
 assert.equal(d.querySelector('#allow-social-bar').checked,true);
-let reloads=0;w.reloadForAdWithdrawal=()=>{reloads++};
+let reloads=0;w.PocketAds.reload=()=>{reloads++};
 click('#reject-ads');
 assert.equal(w.localStorage.getItem('pocket_popunder_consent'),'rejected');
 assert.equal(d.querySelector('#adsterra-popunder'),null);assert.equal(reloads,1);
