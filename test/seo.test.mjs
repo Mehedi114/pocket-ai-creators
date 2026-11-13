@@ -13,6 +13,10 @@ for(const url of urls){
  const path=new URL(url).pathname;
  const dom=new JSDOM(readFileSync(path==='/'?'index.html':path.slice(1),'utf8'));
  const d=dom.window.document;
+ if(path==='/'){
+  assert.equal(d.head.querySelectorAll('meta[name="google-site-verification"]').length,1);
+  assert.equal(d.head.querySelector('meta[name="google-site-verification"]').content,'qtv0x8CzDsHnDQVbHB2YM59e1xNsolbZ77xIezpAovw');
+ }
  assert.equal(d.querySelectorAll('h1').length,1);
  assert.equal(d.querySelectorAll('title').length,1);
  assert.equal(d.querySelectorAll('meta[name="description"]').length,1);
