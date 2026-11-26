@@ -1,18 +1,25 @@
 {
-  "name": "Pocket AI — Creator Intelligence",
-  "short_name": "Pocket AI",
-  "description": "একজন ক্রিয়েটরের ব্যক্তিগত AI স্টুডিও — রিসার্চ, স্ক্রিপ্ট, থাম্বনেইল, ভয়েস আর ডায়াগ্রাম, সব এক জায়গায়।",
+  "name": "Pocket Helper — Everyday Tools",
+  "short_name": "Pocket Helper",
+  "description": "Everyday calculators, documents, images and optional AI helpers, in one friendly home.",
   "id": "/",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
   "orientation": "portrait-primary",
-  "background_color": "#0a0a0d",
-  "theme_color": "#0a0a0d",
-  "lang": "bn",
+  "background_color": "#f7f8f4",
+  "theme_color": "#24745a",
+  "lang": "en",
   "dir": "ltr",
-  "categories": ["productivity", "utilities"],
+  "categories": [
+    "productivity",
+    "utilities"
+  ],
   "icons": [
     {
       "src": "/assets/icon-192.png",
@@ -38,19 +45,34 @@
       "name": "Creator Research",
       "short_name": "Research",
       "url": "/?go=research",
-      "icons": [{ "src": "/assets/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/assets/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "Thumbnail Maker",
       "short_name": "Thumbnail",
       "url": "/?go=image",
-      "icons": [{ "src": "/assets/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/assets/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "Visual Research",
       "short_name": "Diagram",
       "url": "/?go=diagram",
-      "icons": [{ "src": "/assets/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/assets/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

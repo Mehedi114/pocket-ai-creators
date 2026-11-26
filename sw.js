@@ -7,7 +7,7 @@
  * /api/* কখনো ক্যাশ হয় না — AI-এর উত্তর সবসময় তাজা থাকবে।
  */
 
-const VERSION = "pocket-ai-v6-consent";
+const VERSION = "pocket-helper-v9-cms";
 const SHELL = `${VERSION}-shell`;
 
 const SHELL_FILES = [
@@ -59,6 +59,8 @@ self.addEventListener("fetch", event => {
     if (url.origin !== self.location.origin) return;
 
     // API কখনো ক্যাশ নয়
+    if (["/admin.html", "/assets/admin.bundle.js", "/assets/public-content.bundle.js", "/assets/listen.js"].includes(url.pathname)) return;
+
     if (url.pathname.startsWith("/api/") || url.pathname === "/adsterra-banner.html") return;
 
     // Consent/config/UI code must not lag behind the live HTML after deployment.

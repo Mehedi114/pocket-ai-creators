@@ -1,12 +1,12 @@
 import { readFileSync } from 'node:fs';
 import { JSDOM } from 'jsdom';
 import assert from 'node:assert/strict';
-const origin='https://pocket-ai-creators.vercel.app';
+const origin='https://pocket-helper.vercel.app';
 const sitemap=new JSDOM(readFileSync('sitemap.xml','utf8'),{contentType:'text/xml'});
 const urls=[...sitemap.window.document.querySelectorAll('loc')].map(el=>el.textContent);
 const local=JSON.parse(readFileSync('tools/seo-content.json','utf8'));
 const ai=JSON.parse(readFileSync('tools/ai-seo-content.json','utf8'));
-assert.equal(urls.length,7+local.length+ai.length);
+assert.equal(urls.length,9+local.length+ai.length);
 assert.equal(new Set(urls).size,urls.length);
 const titles=new Set(),descriptions=new Set();
 for(const url of urls){

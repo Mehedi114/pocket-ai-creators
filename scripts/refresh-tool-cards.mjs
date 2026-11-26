@@ -2,7 +2,7 @@
 import fs from 'node:fs';
 import {JSDOM} from 'jsdom';
 let html=fs.readFileSync('everyday-tools.html','utf8');
-let dom=new JSDOM(html,{url:'https://pocket-ai-creators.vercel.app/everyday-tools.html',runScripts:'outside-only'});
+let dom=new JSDOM(html,{url:'https://pocket-helper.vercel.app/everyday-tools.html',runScripts:'outside-only'});
 dom.window.matchMedia=()=>({matches:true});
 dom.window.eval(fs.readFileSync('assets/everyday-tools.bundle.js','utf8'));
 let start=html.indexOf('<div class="tool-grid" id="utilities-grid">');
@@ -11,7 +11,7 @@ if(start<0||end<6)throw new Error('Cannot find utility cards');
 html=html.slice(0,start)+dom.window.document.querySelector('#utilities-grid').outerHTML+html.slice(end);
 fs.writeFileSync('everyday-tools.html',html);dom.window.close();
 html=fs.readFileSync('index.html','utf8');
-dom=new JSDOM(html,{url:'https://pocket-ai-creators.vercel.app/',runScripts:'outside-only'});
+dom=new JSDOM(html,{url:'https://pocket-helper.vercel.app/',runScripts:'outside-only'});
 dom.window.eval(fs.readFileSync('site-config.js','utf8'));
 dom.window.eval(fs.readFileSync('assets/seo-links.js','utf8'));
 dom.window.eval(fs.readFileSync('site.js','utf8'));

@@ -6,7 +6,7 @@ import {fileURLToPath} from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const output=path.join(root,'public');
 const files=[
- 'index.html','studio.html','everyday-tools.html','creator-tools.html',
+ 'index.html','admin.html','blog.html','listen.html','studio.html','everyday-tools.html','creator-tools.html',
  'adsterra-banner.html','site.css','site.js','site-config.js','privacy-controls.js',
  'research.js','sw.js','manifest.webmanifest','robots.txt','sitemap.xml',
  'tools/everyday.css','tools/seo.css'

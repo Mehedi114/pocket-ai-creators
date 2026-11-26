@@ -7,11 +7,12 @@
   "scripts": {
     "dev": "node dev-server.mjs",
     "start": "node dev-server.mjs",
-    "test": "node test/engine.test.mjs && node test/site.test.mjs && node test/seo.test.mjs && node test/utilities.test.mjs && node test/advanced.test.mjs && node test/consent.test.mjs",
+    "test": "node test/engine.test.mjs && node test/site.test.mjs && node test/seo.test.mjs && node test/utilities.test.mjs && node test/advanced.test.mjs && node test/consent.test.mjs && node test/helper-home.test.mjs && node test/listen.test.mjs && node test/intro.test.mjs && node test/admin.test.mjs",
     "build:tools": "esbuild tools/everyday.js --bundle --minify --legal-comments=eof --outfile=assets/everyday-tools.bundle.js && esbuild tools/advanced.js --bundle --minify --legal-comments=eof --outfile=assets/advanced-tools.bundle.js && esbuild tools/avif-worker.js --bundle --format=esm --minify --legal-comments=eof --outfile=assets/avif-worker.js",
-    "build": "npm run build:seo && npm run build:tools && node scripts/refresh-tool-cards.mjs && node scripts/export-static.mjs",
+    "build": "npm run build:seo && npm run build:tools && npm run build:cms && node scripts/refresh-tool-cards.mjs && node scripts/export-static.mjs",
     "build:seo": "node scripts/build-tool-seo.mjs",
-    "test:deployment": "node test/deployment.test.mjs"
+    "test:deployment": "node test/deployment.test.mjs",
+    "build:cms": "esbuild tools/admin.js --bundle --minify --outfile=assets/admin.bundle.js && esbuild tools/public-content.js --bundle --minify --outfile=assets/public-content.bundle.js"
   },
   "engines": {
     "node": "22.x"
@@ -23,6 +24,9 @@
   },
   "dependencies": {
     "@jsquash/avif": "^2.1.1",
+    "@supabase/supabase-js": "^2.119.2",
+    "dompurify": "^3.5.0",
+    "marked": "^18.3.0",
     "pdf-lib": "^1.17.1",
     "qrcode": "^1.5.4"
   }

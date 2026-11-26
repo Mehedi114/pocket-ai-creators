@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Pocket AI — Creator Studio</title>
+<title>Pocket Helper — Creator Studio</title>
 
 <meta name="description" content="A private AI studio for one creator.">
 <meta name="theme-color" content="#08080a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Pocket AI">
+<meta name="apple-mobile-web-app-title" content="Pocket Helper">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="robots" content="noindex, nofollow">
 
@@ -843,7 +843,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:12px;padding:6px 0;f
 </style>
 </head>
 <body>
-<a href="/" style="position:fixed;bottom:85px;right:20px;z-index:9999;padding:9px 14px;background:#ee653c;color:white;border-radius:20px;font:12px sans-serif;text-decoration:none">← Pocket AI home</a>
+<a href="/" style="position:fixed;bottom:85px;right:20px;z-index:9999;padding:9px 14px;background:#ee653c;color:white;border-radius:20px;font:12px sans-serif;text-decoration:none">← Pocket Helper home</a>
 
 <div class="sky">
     <div class="aurora one"></div>
@@ -854,7 +854,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:12px;padding:6px 0;f
 
 <!-- ============ BOOT ============ -->
 
-<div class="boot" id="boot"><span class="script">Pocket AI</span></div>
+<div class="boot" id="boot"><span class="script">Pocket Helper</span></div>
 
 
 <!-- ============ LOCK ============ -->
@@ -862,7 +862,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:12px;padding:6px 0;f
 <div class="lock" id="lockScreen">
     <div class="lock-card">
 
-        <div class="script" data-reveal style="--d:80ms">Pocket AI</div>
+        <div class="script" data-reveal style="--d:80ms">Pocket Helper</div>
         <div class="lock-rule"></div>
 
         <p data-reveal style="--d:340ms">
@@ -987,7 +987,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:12px;padding:6px 0;f
                     <button class="icon-btn" onclick="closeTool()" aria-label="Close">×</button>
                 </div>
 
-                <textarea id="toolInput" placeholder="Tell Pocket AI what you're making…"></textarea>
+                <textarea id="toolInput" placeholder="Tell Pocket Helper what you're making…"></textarea>
 
                 <div class="controls">
                     <label class="toggle" id="powerToggle"
@@ -1007,7 +1007,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:12px;padding:6px 0;f
             </div>
 
             <div class="sig">
-                <span class="script">Pocket AI</span>
+                <span class="script">Pocket Helper</span>
                 <span>Private edition</span>
             </div>
 
@@ -1033,7 +1033,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:12px;padding:6px 0;f
                     <button class="icon-btn" onclick="closeStudio()" aria-label="Close">×</button>
                 </div>
                 <div class="desc">
-                    Write the idea in plain words. Pocket AI turns it into a proper
+                    Write the idea in plain words. Pocket Helper turns it into a proper
                     image prompt and renders <b>four variations</b>. No key required.
                 </div>
 
@@ -1063,7 +1063,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:12px;padding:6px 0;f
                 </div>
                 <div class="desc">
                     Any blog, news piece, competitor page or PDF. Drop the link and
-                    Pocket AI reads it, then analyses it the way you ask.
+                    Pocket Helper reads it, then analyses it the way you ask.
                 </div>
 
                 <div class="row">
@@ -1175,7 +1175,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:12px;padding:6px 0;f
                     <button class="icon-btn" onclick="closeStudio()" aria-label="Close">×</button>
                 </div>
                 <div class="desc">
-                    Name a subject. Pocket AI researches it live and returns a
+                    Name a subject. Pocket Helper researches it live and returns a
                     <b>mind map, flowchart or matrix</b> as a real image —
                     download the PNG straight into your video.
                 </div>
@@ -1212,7 +1212,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:12px;padding:6px 0;f
             </div>
 
             <div class="sig">
-                <span class="script">Pocket AI</span>
+                <span class="script">Pocket Helper</span>
                 <span>Studio</span>
             </div>
 
@@ -1230,7 +1230,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:12px;padding:6px 0;f
             </div>
 
             <div class="desc">
-                Pocket AI runs on a chain of free providers. When one hits its
+                Pocket Helper runs on a chain of free providers. When one hits its
                 limit or goes down, the next one picks up automatically —
                 the work never stops.
             </div>
@@ -1257,7 +1257,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:12px;padding:6px 0;f
             </div>
 
             <div class="sig">
-                <span class="script">Pocket AI</span>
+                <span class="script">Pocket Helper</span>
                 <span>Engine</span>
             </div>
 
@@ -2215,7 +2215,7 @@ async function installApp(){
     document.getElementById("installBtn").style.display = "none";
 }
 
-window.addEventListener("appinstalled", () => toast("Pocket AI installed", "ok"));
+window.addEventListener("appinstalled", () => toast("Pocket Helper installed", "ok"));
 
 if("serviceWorker" in navigator){
     window.addEventListener("load", () => {

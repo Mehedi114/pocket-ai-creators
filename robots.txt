@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://pocket-ai-creators.vercel.app/sitemap.xml
+Sitemap: https://pocket-helper.vercel.app/sitemap.xml
