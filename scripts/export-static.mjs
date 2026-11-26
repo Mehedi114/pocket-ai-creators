@@ -35,7 +35,7 @@ for(const file of files){const dest=path.join(output,file);await mkdir(path.dirn
 for(const file of files.filter(f=>f.endsWith('.html')&&!['admin.html','offline.html','adsterra-banner.html','index.html'].includes(f))){
  const target=path.join(output,file);let html=await readFile(target,'utf8');
  if(!html.includes('rel="manifest"'))html=html.replace('</head>','<link rel="manifest" href="/manifest.webmanifest"></head>');
- html=html.replace('</head>','<link rel="stylesheet" href="/assets/pwa-install.css"><script src="/assets/pwa-install.js" defer></script><link rel="stylesheet" href="/assets/language.css?v=2-bengali-script"><script src="/assets/language-data.js?v=4-discovery" defer></script><script src="/assets/language.js?v=2-bengali-script" defer></script><script src="/assets/ui-motion.js?v=1" defer></script></head>');
+ html=html.replace('</head>','<link rel="stylesheet" href="/assets/pwa-install.css?v=2-reminder"><script src="/assets/pwa-install.js?v=2-reminder" defer></script><link rel="stylesheet" href="/assets/language.css?v=2-bengali-script"><script src="/assets/language-data.js?v=4-discovery" defer></script><script src="/assets/language.js?v=2-bengali-script" defer></script><script src="/assets/ui-motion.js?v=1" defer></script></head>');
  await writeFile(target,html);
 }
 // Ship the homepage's complete styling with its HTML. A failed secondary CSS

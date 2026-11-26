@@ -1,6 +1,10 @@
-/* Installation is explicit and browser-controlled; never auto-prompt. */
+/* A one-per-session reminder; native installation still requires a user click. */
 (() => {
- let deferred=null;
+ let deferred=null,timer,reminder;
+ const seenKey='ph-install-reminder-seen';
+ function markSeen(){try{sessionStorage.setItem(seenKey,'1');}catch{}}
+ function dismiss(){clearTimeout(timer);reminder?.remove();markSeen();}
+ function knownInstalled(){try{return localStorage.getItem('ph-pwa-installed')==='1';}catch{return false;}}
  const standalone=()=>window.matchMedia?.('(display-mode: standalone)').matches||navigator.standalone===true;
  const button=document.createElement('button');button.type='button';button.className='pwa-install-button';button.textContent='Install Pocket Helper';button.hidden=standalone();
  const host=document.querySelector('footer')||document.querySelector('header');if(!host)return;host.prepend(button);
@@ -9,9 +13,20 @@
  document.body.append(dialog);const install=dialog.querySelector('#pwa-confirm'),info=dialog.querySelector('#pwa-instructions'),message=dialog.querySelector('#pwa-message');
  function explain(){const ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);info.textContent=deferred?'Install চাপলে browser-এর confirmation আসবে।':ios?'Safari-তে website খোলো → Share → Add to Home Screen → Add।':'Chrome বা Edge-এ website খুলে browser menu থেকে Install app / Add to Home screen দেখো। In-app browser বা embedded preview হলে নতুন browser tab-এ খোলো।';install.hidden=!deferred;}
  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;explain();});
- window.addEventListener('appinstalled',()=>{deferred=null;button.hidden=true;message.textContent='Installed. Home screen থেকে Pocket Helper খুলো।';install.hidden=true;});
- button.onclick=()=>{explain();message.textContent='';if(typeof dialog.showModal==='function')dialog.showModal();else alert(info.textContent);};
+ window.addEventListener('appinstalled',()=>{dismiss();try{localStorage.setItem('ph-pwa-installed','1');}catch{}deferred=null;button.hidden=true;message.textContent='Installed. Home screen থেকে Pocket Helper খুলো।';install.hidden=true;});
+ button.onclick=()=>{dismiss();explain();message.textContent='';if(typeof dialog.showModal==='function')dialog.showModal();else alert(info.textContent);};
  dialog.querySelector('#pwa-close').onclick=()=>dialog.close();dialog.addEventListener('close',()=>button.focus());
  install.onclick=async()=>{if(!deferred)return;const prompt=deferred;deferred=null;install.disabled=true;try{await prompt.prompt();const choice=await prompt.userChoice;message.textContent=choice.outcome==='accepted'?'Install request accepted. Browser installation শেষ হতে দাও।':'Install বাতিল করা হয়েছে। পরে browser menu থেকে করতে পারবে।';}catch{message.textContent='Browser menu থেকে install চেষ্টা করো।';}finally{install.disabled=false;explain();}};
+ function remind(){
+  if(standalone()||knownInstalled())return;
+  try{if(sessionStorage.getItem(seenKey))return;}catch{return;}
+  // Do not compete with consent, an open dialog or typing in a tool.
+  if(document.visibilityState==='hidden'||document.querySelector('dialog[open],#privacy-notice:not([hidden])')||document.activeElement?.matches('input,textarea,select,[contenteditable="true"]')){timer=setTimeout(remind,4000);return;}
+  markSeen();reminder=document.createElement('aside');reminder.className='pwa-install-reminder';reminder.setAttribute('aria-label','Install Pocket Helper');
+  reminder.innerHTML='<div><strong>Pocket Helper, এক tap দূরে।</strong><p>Home screen-এ রাখো, app-এর মতো খোলো।</p></div><div class="pwa-reminder-actions"><button type="button" data-install>Install App</button><button type="button" data-dismiss>পরে করব</button></div>';
+  reminder.querySelector('[data-install]').onclick=()=>button.click();reminder.querySelector('[data-dismiss]').onclick=dismiss;document.body.append(reminder);
+ }
+ timer=setTimeout(remind,12000);
+ window.addEventListener('pagehide',()=>{clearTimeout(timer);reminder?.remove();});
  if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
 })();

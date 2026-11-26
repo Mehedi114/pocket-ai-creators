@@ -7,3 +7,8 @@ const dom=new JSDOM('<footer></footer>',{url:'https://pocket-helper.vercel.app',
 const handlers={};vm.runInNewContext(readFileSync('sw.js','utf8'),{self:{location:{origin:'https://pocket-helper.vercel.app'},addEventListener:(name,fn)=>handlers[name]=fn},URL});
 for(const path of ['/api/chat','/admin.html','/studio.html','/adsterra-banner.html']){let intercepted=false;handlers.fetch({request:{method:'GET',url:'https://pocket-helper.vercel.app'+path},respondWith(){intercepted=true;}});assert.equal(intercepted,false,path);}
 assert.match(readFileSync('public/index.html','utf8'),/assets\/pwa-install.js/);assert.ok(existsSync('public/offline.html'));console.log('✓ PWA: explicit prompt, cancellation, installed state, icons, offline page and private/API cache exclusions');
+// Reminder is delayed, dismissible, session-limited and never steals focus.
+const reminderDOM=new JSDOM('<footer></footer>',{url:'https://pocket-helper.vercel.app',runScripts:'outside-only',pretendToBeVisual:true}),rw=reminderDOM.window;
+let delayed;rw.setTimeout=(fn,ms)=>{if(ms===12000)delayed=fn;return 1;};rw.clearTimeout=()=>{};rw.matchMedia=()=>({matches:false});rw.eval(readFileSync('assets/pwa-install.js','utf8'));
+assert.equal(rw.document.querySelector('.pwa-install-reminder'),null);delayed();assert.ok(rw.document.querySelector('.pwa-install-reminder'));assert.equal(rw.sessionStorage.getItem('ph-install-reminder-seen'),'1');rw.document.querySelector('[data-dismiss]').click();assert.equal(rw.document.querySelector('.pwa-install-reminder'),null);delayed();assert.equal(rw.document.querySelector('.pwa-install-reminder'),null);rw.close();
+console.log('✓ Install reminder: 12-second delay, dismissal and once-per-session guard');

@@ -7,3 +7,5 @@
 - Private admin/studio pages, API calls, ad frame and external requests bypass the service worker cache. User images/form inputs are not saved by this worker.
 - No APK, Play Store release, push notifications or background synchronization. Installation does not bypass ISP restrictions.
 - Automated prompt and cache-boundary tests pass. Physical Android/iOS installation still needs device testing after the preview deployment.
+
+- After 12 seconds, a non-modal install reminder appears once per tab session, unless already installed, storage is blocked, consent/dialog is open, or an input is focused. It can be dismissed; it never opens the browser install prompt automatically.
