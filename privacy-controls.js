@@ -21,6 +21,11 @@
  function status(kind,message) {
   state[kind]=message;
   const el=$('#ad-status-'+kind);if(el)el.textContent=message;
+  if(kind==='banner') {
+   const failure=/blocked|unreachable|No script response|Could not read|execution failed|No banner embed/.test(message);
+   $('#ad-load-feedback').hidden=!failure;
+   $('#ad-load-feedback-text').textContent=failure?message:'';
+  }
  }
  function refreshChoice() {
   const consent=preference('banner');
@@ -57,7 +62,7 @@
   // Only report resource events, not ad impressions. Vendor code stays isolated.
   const doc=new DOMParser().parseFromString(html,'text/html');
   const observer=doc.createElement('script');
-  observer.textContent=`(() => {const token=${JSON.stringify(frameToken)};const notify=state=>parent.postMessage({type:'pocket-banner-resource',token,state},'*');for(const type of ['load','error'])document.addEventListener(type,e=>{if(e.target?.tagName==='SCRIPT'&&e.target.src)notify(type);},true);})();`;
+  observer.textContent=`(() => {const token=${JSON.stringify(frameToken)};const notify=(state,src='')=>parent.postMessage({type:'pocket-banner-resource',token,state,src},'*');for(const type of ['load','error'])document.addEventListener(type,e=>{if(e.target?.tagName==='SCRIPT'&&e.target.src)notify(type,e.target.src);},true);window.addEventListener('error',e=>{if(e.target===window)notify('runtime-error',e.filename||'');});})();`;
   doc.head.prepend(observer);
   frame.srcdoc='<!doctype html>'+doc.documentElement.outerHTML;
   $('#ad-slot').replaceChildren(frame);mounted=true;
@@ -66,8 +71,11 @@
  }
  window.addEventListener('message',event=>{
   if(!frame||event.source!==frame.contentWindow||event.data?.type!=='pocket-banner-resource'||event.data.token!==frameToken||preference('banner')!=='accepted')return;
-  if(event.data.state==='error') {clearTimeout(bannerTimer);status('banner','Banner script blocked or unreachable. Ad delivery is not confirmed.');}
-  else if(event.data.state==='load'&&!state.banner.includes('blocked')) {clearTimeout(bannerTimer);status('banner','Banner script loaded. Ad delivery/impressions are not verified.');}
+  // Strip query strings/fragments; never show vendor error payloads or HTML.
+  let resource='';try{const url=new URL(event.data.src);if(url.protocol==='https:')resource=' Resource: '+url.origin+url.pathname.slice(0,250);}catch{}
+  if(event.data.state==='runtime-error') {clearTimeout(bannerTimer);status('banner','Banner execution failed inside the isolated ad frame. Check browser Console for details.'+resource);}
+  else if(event.data.state==='error') {clearTimeout(bannerTimer);status('banner','Banner script blocked or unreachable. Ad delivery is not confirmed.'+resource);}
+  else if(event.data.state==='load'&&!/blocked|execution failed/.test(state.banner)) {clearTimeout(bannerTimer);status('banner','Banner script loaded. Ad delivery/impressions are not verified.');}
  });
  function fallbackBanner() {
   const ad=config.adsterra;let url;
@@ -112,7 +120,8 @@
   script.onload=()=>{clearTimeout(vendorTimers.get(kind));if(preference(kind)==='accepted')status(kind,'Script loaded. Display depends on the provider and browser; impressions unverified.');};
   script.onerror=()=>{clearTimeout(vendorTimers.get(kind));if(preference('banner')==='accepted'&&preference(kind)==='accepted')status(kind,'Script blocked or unreachable. Ad delivery is not confirmed.');};
   vendorTimers.set(kind,setTimeout(()=>{if(state[kind]==='Loading publisher script…')status(kind,'No script response confirmed. It may be blocked or unavailable.');},15000));
-  document.body.appendChild(script);
+  // Match publisher instructions: popunder in head, Social Bar at body end.
+  (kind==='popunder'?document.head:document.body).appendChild(script);
  }
  function loadAll() {
   void loadBanner();loadVendor('popunder',config.popunderScriptUrl,'adsterra-popunder');loadVendor('social',config.socialBarScriptUrl,'adsterra-social-bar');
@@ -133,6 +142,7 @@
   if(!social)status('social','Off — separate permission required.');
   if(value==='accepted')loadAll();
  }
+ $('#retry-banner').onclick=()=>{if(preference('banner')!=='accepted'||loading)return;revision++;clearBanner();void loadBanner();};
  window.PocketAds={loadBanner,openPreferences,reload:()=>window.location.reload()};
  ['#ad-preferences','#footer-ad-preferences','#floating-ad-preferences','#privacy-customize'].forEach(selector=>$(selector)?.addEventListener('click',openPreferences));
  $('#consent-dialog .dialog-close').onclick=()=>$('#consent-dialog').close();

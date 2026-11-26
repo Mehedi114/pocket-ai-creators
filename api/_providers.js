@@ -82,7 +82,7 @@ export const PROVIDERS = [
         model: "deepseek/deepseek-chat-v3-0324:free",
         keyUrl: "https://openrouter.ai/keys",
         extraHeaders: {
-            "HTTP-Referer": "https://pocket-ai-creators.vercel.app",
+            "HTTP-Referer": "https://pocket-helper.vercel.app",
             "X-Title": "Pocket AI Creators"
         },
         note: "One key, 27+ free models."

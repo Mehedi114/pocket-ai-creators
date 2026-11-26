@@ -5,7 +5,7 @@ import {JSDOM} from 'jsdom';
 const config=JSON.parse(readFileSync('vercel.json','utf8'));
 assert.equal(config.outputDirectory,'public');assert.equal(config.buildCommand,'npm run build');
 assert.ok(existsSync('public/index.html'),'Run npm run build before this test.');
-for(const file of ['api','scripts','test','.env','.env.example','package.json','README.md','tools/advanced-core.js','tools/seo-content.json'])assert.ok(!existsSync('public/'+file),'Private/build source leaked: '+file);
+for(const file of ['api','supabase','scripts','test','.env','.env.example','package.json','README.md','tools/advanced-core.js','tools/seo-content.json'])assert.ok(!existsSync('public/'+file),'Private/build source leaked: '+file);
 const map=new JSDOM(readFileSync('public/sitemap.xml','utf8'),{contentType:'text/xml'});
 for(const loc of map.window.document.querySelectorAll('loc')){const route=new URL(loc.textContent).pathname;assert.ok(existsSync('public'+(route==='/'?'/index.html':route)),'Missing sitemap page '+route);}
 map.window.close();

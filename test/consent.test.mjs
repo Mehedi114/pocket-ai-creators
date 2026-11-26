@@ -34,7 +34,21 @@ function setup({saved=null,storageBlocked=false}={}){
  w.dispatchEvent(new w.MessageEvent('message',{source:w,data}));assert.match(d.querySelector('#ad-status-banner').textContent,/Loading/);
  w.dispatchEvent(new w.MessageEvent('message',{source:frame.contentWindow,data}));assert.match(d.querySelector('#ad-status-banner').textContent,/impressions are not verified/);
  w.dispatchEvent(new w.MessageEvent('message',{source:frame.contentWindow,data:{...data,state:'error'}}));assert.match(d.querySelector('#ad-status-banner').textContent,/blocked or unreachable/);
+ assert.equal(d.querySelector('#ad-load-feedback').hidden,false);
+ w.dispatchEvent(new w.MessageEvent('message',{source:frame.contentWindow,data:{...data,state:'error',src:'https://example.net/ad.js?private=value#fragment'}}));
+ assert.match(d.querySelector('#ad-status-banner').textContent,/https:\/\/example.net\/ad.js/);
+ assert.ok(!d.querySelector('#ad-status-banner').textContent.includes('private=value'));
+ click('#retry-banner');await tick();assert.equal(calls.length,2);
+ assert.notEqual(d.querySelector('#ad-slot iframe'),frame);
+ assert.equal(d.querySelector('#ad-load-feedback').hidden,true);
+ const current=d.querySelector('#ad-slot iframe');
+ const currentToken=JSON.parse(current.srcdoc.match(/const token=("[^"]+")/)[1]);
+ w.dispatchEvent(new w.MessageEvent('message',{source:current.contentWindow,data:{type:'pocket-banner-resource',token:currentToken,state:'runtime-error'}}));
+ assert.match(d.querySelector('#ad-status-banner').textContent,/execution failed/);
+ w.dispatchEvent(new w.MessageEvent('message',{source:current.contentWindow,data:{type:'pocket-banner-resource',token:currentToken,state:'load'}}));
+ assert.match(d.querySelector('#ad-status-banner').textContent,/execution failed/);
  click('#floating-ad-preferences');click('#reject-ads');assert.equal(d.querySelector('#ad-slot iframe'),null);
+ click('#retry-banner');await tick();assert.equal(calls.length,2);
  assert.equal(w.localStorage.getItem('pocket_ad_consent'),'rejected');
  w.close();
 }
@@ -49,6 +63,8 @@ function setup({saved=null,storageBlocked=false}={}){
 }
 {
  const {w,d,click}=setup();click('#privacy-customize');d.querySelector('#allow-popunder').checked=true;d.querySelector('#allow-social-bar').checked=true;click('#accept-ads');await tick();
+ assert.equal(d.querySelector('#adsterra-popunder').parentNode,d.head);
+ assert.equal(d.querySelector('#adsterra-social-bar').parentNode,d.body);
  d.querySelector('#adsterra-social-bar').dispatchEvent(new w.Event('error'));assert.match(d.querySelector('#ad-status-social').textContent,/blocked or unreachable/);
  d.querySelector('#adsterra-popunder').dispatchEvent(new w.Event('load'));assert.match(d.querySelector('#ad-status-popunder').textContent,/impressions unverified/);
  let reload=0;w.PocketAds.reload=()=>reload++;click('#floating-ad-preferences');click('#reject-ads');assert.equal(reload,1);assert.equal(d.querySelector('#adsterra-popunder'),null);assert.equal(d.querySelector('#adsterra-social-bar'),null);w.close();
