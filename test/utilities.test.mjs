@@ -43,8 +43,8 @@ console.log('✓ Utilities: Unicode codecs, secure password rules, text stats, U
 const dom=new JSDOM(readFileSync('everyday-tools.html','utf8'),{url:'https://example.com/everyday-tools.html',runScripts:'outside-only'});
 const w=dom.window,d=w.document;w.matchMedia=()=>({matches:true});w.TextEncoder=TextEncoder;w.TextDecoder=TextDecoder;w.fetch=()=>{throw new Error('Utilities must not call an API')};
 w.eval(readFileSync('assets/everyday-tools.bundle.js','utf8'));
-assert.equal(d.querySelectorAll('#utilities-grid .tool-card').length,23);
-assert.equal(d.querySelectorAll('#utilities-grid .tool-guide-link').length,23);
+assert.equal(d.querySelectorAll('#utilities-grid .tool-card').length,41);
+assert.equal(d.querySelectorAll('#utilities-grid .tool-guide-link').length,27);
 assert.equal(d.querySelector('#utilities-grid a.tool-card[href="/creator-tools.html#image"]').textContent.includes('WebP'),true);
 const open=id=>{w.location.hash=id;w.dispatchEvent(new w.HashChangeEvent('hashchange'))};
 const submit=()=>d.querySelector('#utility-form').onsubmit({preventDefault(){}});
@@ -65,8 +65,8 @@ assert.equal(d.querySelector('#utilities-grid .tool-card').getAttribute('href'),
 d.querySelector('#utility-search').value='no-such-task';d.querySelector('#utility-search').dispatchEvent(new w.Event('input'));
 assert.equal(d.querySelector('#utility-empty').hidden,false);
 d.querySelector('#reset-tool-filters').click();
-assert.equal(d.querySelectorAll('#utilities-grid .tool-card').length,23);
-assert.equal(d.querySelectorAll('.tool-group').length,7);
+assert.equal(d.querySelectorAll('#utilities-grid .tool-card').length,41);
+assert.equal(d.querySelectorAll('.tool-group').length,10);
 d.querySelector('[data-category="Developer"]').click();
 assert.equal(d.querySelectorAll('#utilities-grid .tool-card').length,3);
 assert.equal(d.querySelector('[data-category="Developer"]').getAttribute('aria-pressed'),'true');

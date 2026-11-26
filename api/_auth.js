@@ -1,5 +1,5 @@
 /**
- * Pocket AI — Access Gate
+ * Pocket Helper — Access Gate
  * -----------------------
  * ফেসবুকে পোস্ট করা কোড দিয়ে ঢোকার ব্যবস্থা।
  *

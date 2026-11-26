@@ -1,5 +1,5 @@
 /**
- * Pocket AI — Multi-Provider Free LLM Engine
+ * Pocket Helper — Multi-Provider Free LLM Engine
  * ------------------------------------------
  * এক Groq-এর উপর নির্ভর না করে অনেকগুলো ফ্রি AI প্রোভাইডার
  * চেইন করে রাখা হয়েছে। একটা ফেল করলে (rate limit / down / bad key)
@@ -83,7 +83,7 @@ export const PROVIDERS = [
         keyUrl: "https://openrouter.ai/keys",
         extraHeaders: {
             "HTTP-Referer": "https://pocket-helper.vercel.app",
-            "X-Title": "Pocket AI Creators"
+            "X-Title": "Pocket Helper Creators"
         },
         note: "One key, 27+ free models."
     },

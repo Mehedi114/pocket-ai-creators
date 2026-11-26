@@ -22,3 +22,16 @@ for(const file of walk('public').filter(p=>p.endsWith('.html'))){
 for(const file of ['privacy-controls.js','site-config.js','site.js','sw.js','assets/codecs/avif_enc.wasm','assets/avif-worker.js','adsterra-banner.html'])assert.deepEqual(readFileSync('public/'+file),readFileSync(file));
 assert.ok(Object.keys(config.functions).every(file=>existsSync(file)), 'API sources remain available for Vercel functions');
 console.log('✓ Vercel output: sitemap pages, browser assets, codec, consent and API sources accounted for; private/build files excluded');
+
+// No external stylesheet requests are needed to render the deployed home layout.
+const home=new JSDOM(readFileSync('public/index.html','utf8'));
+assert.equal(home.window.document.querySelectorAll('link[rel="stylesheet"]').length,0);
+for(const file of ['site.css','assets/helper-home.css','assets/helper-intro.css','assets/language.css','assets/pwa-install.css']){
+ const style=[...home.window.document.querySelectorAll('style[data-home-style]')].find(el=>el.dataset.homeStyle===file);
+ assert.ok(style,'Missing inline style '+file);
+ assert.equal(style.textContent,readFileSync(file,'utf8'));
+}
+assert.equal(home.window.getComputedStyle(home.window.document.querySelector('.header')).display,'flex');
+assert.equal(home.window.getComputedStyle(home.window.document.querySelector('.helper-grid')).display,'grid');
+home.window.close();
+console.log('✓ Homepage styling is embedded and renders without fetching external stylesheets');

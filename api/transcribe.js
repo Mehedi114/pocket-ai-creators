@@ -60,7 +60,7 @@ export default async function handler(req, res) {
 
         const outcome = await callAI({
             system:
-                "You are Pocket AI for Creators. Work only from the transcript given. " +
+                "You are Pocket Helper for Creators. Work only from the transcript given. " +
                 "Reply in the same language as the transcript.",
             prompt: `
 Below is the transcript of a video or audio recording.

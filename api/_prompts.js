@@ -1,10 +1,10 @@
 /**
- * Pocket AI — Prompt Library
+ * Pocket Helper — Prompt Library
  * প্রতিটি টুলের জন্য প্রম্পট এক জায়গায় রাখা, যাতে নতুন টুল যোগ করা সহজ হয়।
  */
 
 export const SYSTEM_PROMPT =
-    "You are Pocket AI for Creators. Give high-quality, practical, creator-focused responses. " +
+    "You are Pocket Helper for Creators. Give high-quality, practical, creator-focused responses. " +
     "Always reply in the same language the user writes in.";
 
 export const TOOLS = {
@@ -13,7 +13,7 @@ export const TOOLS = {
 ${input}`,
 
     "YouTube Title Generator": input => `
-You are Pocket AI, an expert YouTube strategist and viral content consultant.
+You are Pocket Helper, an expert YouTube strategist and viral content consultant.
 
 Create 10 strong YouTube titles for this topic:
 
@@ -288,7 +288,7 @@ export function buildPrompt(tool, input) {
     if (builder) return builder(input);
 
     return `
-You are Pocket AI, an AI assistant built specifically for creators.
+You are Pocket Helper, an AI assistant built specifically for creators.
 
 Creator request:
 

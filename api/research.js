@@ -293,7 +293,7 @@ export default async function handler(req, res) {
         // --------------------------------
 
         const prompt = `
-You are Pocket AI, an expert YouTube creator strategist.
+You are Pocket Helper, an expert YouTube creator strategist.
 
 Analyze this YouTube channel using the data below.
 
@@ -328,7 +328,7 @@ Important:
 `;
 
         const outcome = await callAI({
-            system: "You are Pocket AI for Creators. Give accurate, practical YouTube strategy analysis.",
+            system: "You are Pocket Helper for Creators. Give accurate, practical YouTube strategy analysis.",
             prompt,
             temperature: 0.7,
             maxTokens: 4096

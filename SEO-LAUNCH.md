@@ -1,4 +1,4 @@
-# Pocket AI — SEO launch checklist
+# Pocket Helper — SEO launch checklist
 
 ## Implemented
 - Production canonical URLs use https://pocket-ai-creators.vercel.app/.
@@ -29,9 +29,9 @@
 ## Sustainable growth
 - Publish helpful, original guides and examples of actual work. Avoid fake reviews,
   unsupported results, keyword stuffing and purchased spam links.
-- Use the Pocket AI name consistently on genuine business profiles and link them
+- Use the Pocket Helper name consistently on genuine business profiles and link them
   to the site. Build relevant mentions through useful content and real projects.
-- The phrase “Pocket AI” is not exclusive to this site. Ranking first is not
+- The phrase “Pocket Helper” is not exclusive to this site. Ranking first is not
   guaranteed by metadata, structured data, Vercel hosting or ad approval.
 - Popunders and floating ads can distract users; assess their effect on mobile
   usability, page speed and conversions. Keep consent controls available and
@@ -77,3 +77,20 @@ engines. After production deployment, submit the updated sitemap in verified
 Google Search Console and Bing Webmaster Tools, then monitor actual indexing and
 query performance. Keyword choices describe existing functionality; they are not
 based on a live keyword-volume study.
+
+## Current branch SEO update (not yet deployed)
+
+- Pocket Helper is the consistent public brand; old host redirects and compatibility storage identifiers are intentionally retained.
+- 41 directory tools/helpers map to 40 distinct crawlable guides (YouTube Tags shares the local tag tool guide).
+- Four new guides cover plain background removal, portrait retouch, passport photo printing and assignment covers. Their actual limits are documented; no false AI segmentation or passport acceptance claims.
+- 53 canonical public URLs in the sitemap. All have distinct titles/descriptions, Pocket Helper social metadata, and structured data. The directory has a matching 41-item ItemList.
+- New tool pages contain static how-to text and links to their guides. Admin, private studio and advertising iframe remain outside the sitemap; admin/studio keep noindex.
+- Languages remain a partial client-side UI preview. No translated SEO pages or hreflang claims are made. Dynamic blog posts still need individual crawlable URLs/metadata in a future content-SEO task.
+
+After an approved production deployment:
+1. Verify the URL-prefix property `https://pocket-helper.vercel.app/` in Google Search Console. The old hostname property does not replace the new one.
+2. Submit `https://pocket-helper.vercel.app/sitemap.xml` for that property.
+3. Inspect the homepage and four new tool URLs, test live URLs, and request indexing where available.
+4. Monitor indexing and actual search impressions. Submission, validation or structured data never guarantees indexing time, a rich result, or a ranking position.
+
+No Search Console submission or indexing confirmation has been performed by this local build.

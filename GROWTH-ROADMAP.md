@@ -1,4 +1,4 @@
-# Pocket AI: 30-day growth and monetization roadmap
+# Pocket Helper: 30-day growth and monetization roadmap
 
 ## Release rule
 Do not open a PR, push, or deploy these changes until the owner explicitly approves.
@@ -55,21 +55,21 @@ they are a work schedule, not a traffic or income forecast.
 - [ ] Compare referral quality and tool usage before increasing posting frequency.
 
 ### Draft Bengali post — verify the featured tool before publishing
-ছোট একটা creator tool দরকার হলে Pocket AI দেখে নিতে পারো:
+ছোট একটা creator tool দরকার হলে Pocket Helper দেখে নিতে পারো:
 https://pocket-ai-creators.vercel.app/everyday-tools.html
 এক জায়গায় কয়েকটি practical tool আছে। নিজের কাজের জন্য ব্যবহার করে দেখো;
 কোনো সমস্যা পেলে mmahedul358@gmail.com-এ জানাও। AI features-এর availability
 provider configuration-এর ওপর নির্ভর করে।
 
 ### Draft English post
-I’m building Pocket AI, a collection of practical creator tools with step-by-step guides.
+I’m building Pocket Helper, a collection of practical creator tools with step-by-step guides.
 Try the directory: https://pocket-ai-creators.vercel.app/everyday-tools.html
 What would make your workflow easier? Feedback is welcome at mmahedul358@gmail.com.
 AI features depend on provider availability; please check important outputs.
 
 ### Short-video outline (20–30 seconds)
 1. Show one concrete creator problem using non-sensitive sample data.
-2. Open the relevant Pocket AI tool and demonstrate the actual steps.
+2. Open the relevant Pocket Helper tool and demonstrate the actual steps.
 3. Show the result and one honest limitation; do not fabricate output or speed.
 4. End with the guide URL and an invitation to give feedback.
 

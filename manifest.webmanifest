@@ -1,5 +1,5 @@
 {
-  "name": "Pocket Helper — Everyday Tools",
+  "name": "Pocket Helper",
   "short_name": "Pocket Helper",
   "description": "Everyday calculators, documents, images and optional AI helpers, in one friendly home.",
   "id": "/",
@@ -42,9 +42,8 @@
   ],
   "shortcuts": [
     {
-      "name": "Creator Research",
-      "short_name": "Research",
-      "url": "/?go=research",
+      "name": "All Tools",
+      "url": "/everyday-tools.html",
       "icons": [
         {
           "src": "/assets/icon-192.png",
@@ -53,9 +52,8 @@
       ]
     },
     {
-      "name": "Thumbnail Maker",
-      "short_name": "Thumbnail",
-      "url": "/?go=image",
+      "name": "Assignment Cover",
+      "url": "/assignment-cover.html",
       "icons": [
         {
           "src": "/assets/icon-192.png",
@@ -64,9 +62,8 @@
       ]
     },
     {
-      "name": "Visual Research",
-      "short_name": "Diagram",
-      "url": "/?go=diagram",
+      "name": "Face Retouch",
+      "url": "/face-retouch.html",
       "icons": [
         {
           "src": "/assets/icon-192.png",

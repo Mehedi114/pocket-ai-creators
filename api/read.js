@@ -90,7 +90,7 @@ export default async function handler(req, res) {
 
         const outcome = await callAI({
             system:
-                "You are Pocket AI, a sharp research analyst for content creators. " +
+                "You are Pocket Helper, a sharp research analyst for content creators. " +
                 "Only use the supplied page content. Never invent facts. " +
                 "Reply in the same language as the page content.",
             prompt: `

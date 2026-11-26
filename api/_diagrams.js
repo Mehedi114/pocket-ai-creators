@@ -1,5 +1,5 @@
 /**
- * Pocket AI — Diagram & Chart Rendering
+ * Pocket Helper — Diagram & Chart Rendering
  * -------------------------------------
  * AI যে ডায়াগ্রাম কোড লেখে সেটাকে আসল ছবিতে বদলায় — কোনো key ছাড়া।
  *
