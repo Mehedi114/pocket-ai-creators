@@ -1,3 +1,4 @@
+import {extraTools,discoveryAliases} from './discovery-catalog.js';
 import {toolSEOPaths} from './seo-paths.js';
 import QRCode from 'qrcode';
 import {wordStats,textCase,formatJSON,base64,urlCode,safeURL,campaignURL,password,units,convert,percentage} from './utility-core.js';
@@ -27,12 +28,16 @@ const catalog=[
 {"id":"pdf-split","name":"Split / Extract PDF Pages","category":"Files","icon":"▤","color":"sage","desc":"Save selected pages or ranges into a new PDF in your browser.","href":"/creator-tools.html#pdf-split"},
 {"id":"pdf-compress","name":"Compress / Optimize PDF","category":"Files","icon":"↓","color":"purple","desc":"Try lossless structural optimization. Savings depend on the source PDF.","href":"/creator-tools.html#pdf-compress"}
 ];
+catalog.unshift(...extraTools.filter(t=>!t.isAI));catalog.push(...extraTools.filter(t=>t.isAI));
 let category='All tools',active,output='',qrText='',qrSize=512;
 const input=(id,label,placeholder='',type='text',value='')=>`<label for="${id}">${label}</label><input id="${id}" type="${type}" placeholder="${placeholder}" value="${value}" required maxlength="4000">`;
 const area=label=>`<label for="utility-input">${label}</label><textarea id="utility-input" maxlength="200000" spellcheck="false" placeholder="Paste or type here…"></textarea>`;
 const select=(id,label,options)=>`<label for="${id}">${label}</label><select id="${id}">${options.map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select>`;
 const action=text=>`<button class="button primary" type="submit">${text} <span>↗</span></button>`;
 const categoryInfo={
+ Photo:{title:"Photo & Print",description:"Background, face retouch and passport photo printing.",icon:"◈"},
+ Student:{title:"Student Tools",description:"Assignment covers and university essentials.",icon:"▤"},
+ AI:{title:"AI Writing & Ideas",description:"Optional AI helpers. A working provider is required.",icon:"✦"},
  Everyday:{title:'Everyday essentials',description:'Quick fixes for the things you do every day.',icon:'◈'},
  Creators:{title:'YouTube & prompts',description:'Make your next creative task easier.',icon:'▷'},
  Writing:{title:'Writing & text',description:'Make every word count.',icon:'✎'},
@@ -43,11 +48,11 @@ const categoryInfo={
 };
 const searchTerms={qr:'url link barcode scan png svg',password:'secure random generator login',words:'word count characters uppercase lowercase reading text',units:'convert conversion feet foot inches miles kilometers km pounds kg fahrenheit celsius temperature weight length volume',percent:'percentage percent discount increase decrease calculator',utm:'campaign tracking marketing analytics link url',json:'json pretty print minify validate format developer',base64:'base64 encode decode unicode utf8 developer',url:'url uri percent encode decode component developer'};
 const taskLabels={qr:'Create QR code',password:'Generate password',words:'Count & clean text',units:'Convert units',percent:'Calculate percentage',utm:'Build campaign link',json:'Format JSON',base64:'Convert Base64',url:'Encode or decode'};
-function toolCard(t){return `<div class="tool-card-wrap"><a class="tool-card" href="${t.href||'#'+t.id}"><div class="tool-card-top"><span class="tool-icon ${t.color}" aria-hidden="true">${t.icon}</span><span class="badge">${['tags','prompt'].includes(t.id)?'Local + AI':'Free'}</span></div><h3>${t.name}</h3><p>${t.desc}</p><div class="tool-card-bottom"><span>${t.category}</span><strong>${taskLabels[t.id]||'Open tool'} ↗</strong></div></a><a class="tool-guide-link" href="${toolSEOPaths[t.id]}">How to use ${t.name} →</a></div>`}
+function toolCard(t){return `<div class="tool-card-wrap"><a class="tool-card" href="${t.href||'#'+t.id}"><div class="tool-card-top"><span class="tool-icon ${t.color}" aria-hidden="true">${t.icon}</span><span class="badge">${t.isAI?'AI provider required':['tags','prompt'].includes(t.id)?'Local + AI':'Free'}</span></div><h3>${t.name}</h3><p>${t.desc}</p><div class="tool-card-bottom"><span>${t.category}</span><strong>${taskLabels[t.id]||'Open tool'} ↗</strong></div></a>${toolSEOPaths[t.id]?`<a class="tool-guide-link" href="${toolSEOPaths[t.id]}">How to use ${t.name} →</a>`:''}</div>`}
 
 function render(){
  const q=$('#utility-search').value.trim().toLowerCase();
- const matches=catalog.filter(t=>(category==='All tools'||t.category===category)&&q.split(/\s+/).every(word=>`${t.name} ${t.desc} ${searchTerms[t.id]||''}`.toLowerCase().includes(word)));
+ const matches=catalog.filter(t=>(category==='All tools'||t.category===category)&&q.split(/\s+/).every(word=>`${t.name} ${t.desc} ${searchTerms[t.id]||''} ${discoveryAliases[t.id]||''} ${t.keywords||''}`.toLowerCase().includes(word)));
  $('#utilities-grid').innerHTML=Object.entries(categoryInfo).map(([key,info])=>{
   const items=matches.filter(t=>t.category===key);if(!items.length)return '';
   return `<section class="tool-group" aria-labelledby="group-${key}"><div class="tool-group-heading"><div><h3 id="group-${key}">${info.title} <span>${items.length}</span></h3><p>${info.description}</p></div><span aria-hidden="true">${info.icon}</span></div><div class="group-card-grid">${items.map(toolCard).join('')}</div></section>`;
@@ -56,7 +61,8 @@ function render(){
  $('#tool-count').textContent=`${matches.length} of ${catalog.length} tools`;
  document.querySelectorAll('[data-category]').forEach(el=>{const key=el.dataset.category;const count=key==='All tools'?catalog.length:catalog.filter(t=>t.category===key).length;el.innerHTML=`<span>${key==='All tools'?'All tools':categoryInfo[key].title}</span><span class="category-count">${count}</span>`;el.classList.toggle('active',key===category);el.setAttribute('aria-pressed',String(key===category))});
 }
-$('#utility-search').addEventListener('input',render);
+$('#utility-search').value=new URLSearchParams(location.search).get('q')||'';
+$('#utility-search').addEventListener('input',()=>{category='All tools';render();});
 $('#utility-filters').onclick=e=>{const b=e.target.closest('[data-category]');if(!b)return;category=b.dataset.category;render()};
 $('#reset-tool-filters').onclick=()=>{category='All tools';$('#utility-search').value='';render();$('#utility-search').focus()};
 $('#switch-utility').innerHTML=catalog.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');

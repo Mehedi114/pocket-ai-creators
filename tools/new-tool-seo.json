@@ -1,0 +1,78 @@
+[
+  {
+    "id": "remove-background",
+    "name": "Remove Background",
+    "category": "Photo & print",
+    "href": "/remove-background.html",
+    "slug": "plain-background-remover",
+    "title": "How to Remove a Plain Photo Background — Colour & PNG Guide",
+    "description": "Remove an edge-connected plain background locally, choose white or a custom colour, and download PNG or JPG. Not AI removal for complex scenes.",
+    "intro": "Prepare a photo taken against a simple, single-colour backdrop without sending it to an image service. Pocket Helper samples a corner colour and removes similar pixels connected to the image boundary. You can correct the colour selection and adjust tolerance before exporting.",
+    "steps": [
+      "Upload or drop a JPG, PNG or WebP photo with a plain backdrop.",
+      "Check the preview, pick the original background colour if needed, and adjust tolerance. Choose transparent, a preset colour or a custom colour.",
+      "Compare Original and Edited, then download PNG for transparency or JPG with a solid background."
+    ],
+    "example": "A computer shop can prepare a product photo taken against a white wall, remove that plain backdrop and export a transparent PNG for a flyer. Inspect pale edges and fine details before using it.",
+    "limits": "This is colour-based, edge-connected removal, not AI subject segmentation. Hair or clothing similar to the backdrop can be removed. Complex scenery is not supported. Input is limited to 15 MB and 24 megapixels; editing is reduced to at most 2000 pixels on the longest side.",
+    "question": "Is this an AI background remover like remove.bg?",
+    "answer": "No. This tool is designed for plain, single-colour backdrops. It does not identify a person or object with an AI segmentation model. For complex backgrounds, use an appropriate segmentation editor."
+  },
+  {
+    "id": "face-retouch",
+    "name": "Face Retouch",
+    "category": "Photo & print",
+    "href": "/face-retouch.html",
+    "slug": "portrait-retouch-photo-editor",
+    "title": "How to Retouch a Portrait — Light, Softening & Spot Brush Guide",
+    "description": "Adjust portrait brightness and shadows, detect a face locally, soften a selected area and blend small spots. Preview edits and export PNG or JPG.",
+    "intro": "Make small portrait adjustments while keeping control of the result. Pocket Helper provides local face detection to position a softening area, brightness and shadow controls, and a manual brush that blends a small blemish toward the surrounding colour. Original view makes comparisons easy.",
+    "steps": [
+      "Upload a portrait. Wait for local face detection, or select the face centre yourself if no face is found.",
+      "Adjust light and softening gradually. Enable the spot brush and click a small blemish; Undo removes the most recent spot correction.",
+      "Compare Original and Edited, inspect skin and eye detail, and download a PNG or JPG."
+    ],
+    "example": "For a non-official profile photo taken in uneven lighting, slightly raise the shadows and soften a small area. Use a low-strength spot blend and compare the result with the original to retain natural texture.",
+    "limits": "This is not Photoshop, skin reconstruction or an identity-photo validator. The brush blends neighbouring colour rather than restoring missing detail. Detection may miss faces; with multiple faces, the largest is selected. Input limit: 15 MB and 24 megapixels. Editing is capped at 2000 pixels; the smaller interactive preview does not set export dimensions. Do not use retouching where passport or ID rules prohibit it.",
+    "question": "Are portrait photos uploaded for face detection?",
+    "answer": "No. Detection runs in the browser using model files served by Pocket Helper. The photo is not sent to a face-detection API. The first use needs time to load the model, and speed depends on the device."
+  },
+  {
+    "id": "passport-photo",
+    "name": "Passport Photo & Print",
+    "category": "Photo & print",
+    "href": "/photo-desk.html",
+    "slug": "passport-photo-print-sheet-maker",
+    "title": "How to Make a Passport Photo Print Sheet — Sizes & PDF Guide",
+    "description": "Crop photos to 35×45 mm, 2×2 inch or custom sizes. Resize JPGs, set a target KB limit and create A4 or 4×6 photo-sheet PDFs in your browser.",
+    "intro": "Prepare a photo for a printing workflow with explicit dimensions rather than guessing its size on a page. Choose a common preset or custom pixels, position the crop and generate a PDF sheet with copies arranged at their intended physical size. Always follow the receiving institution's instructions.",
+    "steps": [
+      "Upload a photo, choose a size preset and adjust zoom, position or rotation to frame the subject.",
+      "Check the background and photo requirements. For an official application, avoid retouching or background edits unless expressly allowed.",
+      "Download a single JPG or PNG, or choose a sheet size and copy count for a PDF. Print the PDF at Actual size / 100%."
+    ],
+    "example": "Arrange six 35×45 mm photos on a 4×6 inch sheet. The layout reserves margins and gaps; if the requested number does not fit, the tool asks you to reduce the count instead of silently shrinking the photos.",
+    "limits": "Passport and visa requirements vary by country and application. This tool does not verify head size, expression or official acceptance. Input limit: 15 MB and 24 megapixels; editing source is capped at 2000 pixels. Custom output is 50–2400 pixels per side and print dimensions use 300 DPI. A target JPG file size may require smaller dimensions; it is not guaranteed at every resolution.",
+    "question": "Does a 35×45 mm preset guarantee passport acceptance?",
+    "answer": "No. A dimension preset only sets the output shape and print size. Check the official rules for background, head position, recency, expression and permitted editing before submitting."
+  },
+  {
+    "id": "assignment-cover",
+    "name": "Assignment Cover Maker",
+    "category": "Student tools",
+    "href": "/assignment-cover.html",
+    "slug": "assignment-cover-page-maker",
+    "title": "How to Make an Assignment Cover — A4 Layout & Export Guide",
+    "description": "Make a white A4 assignment cover with student name, roll, course, teacher and optional university logo. Three designs, Bengali or English labels, PDF and PNG.",
+    "intro": "Create a clean cover page for a university or college assignment without laying out every line manually. Pocket Helper offers three white-paper designs, restrained accent colours and separate submitted-by and submitted-to sections. Type Bengali or English details and review the live preview before downloading.",
+    "steps": [
+      "Choose Classic, Modern or Editorial, pick an accent colour and select Bengali or English cover labels. Optionally upload your institution logo.",
+      "Enter the institution, assignment topic, course and code, student name and roll, teacher details and submission date. Leave optional fields blank when unnecessary.",
+      "Review spelling and layout, then download A4 PDF or PNG. Use Actual size / 100% when printing and follow your institution's required format."
+    ],
+    "example": "A Management student can add their name, roll, session, course title, assignment topic and lecturer details, then export a restrained navy cover on white A4 paper. Load sample demonstrates the layout; replace all sample details before submission.",
+    "limits": "This creates a cover, not the assignment content. PDF output contains a high-resolution image and is not editable text. Name, institution and topic are required for export. Long text must fit the layout; shorten it if warned. Optional logo input is limited to 3 MB and 12 megapixels. Details are not saved automatically, so reloading clears the form.",
+    "question": "Can I use Bengali text on the cover?",
+    "answer": "Yes. The cover uses locally hosted Bengali fonts and supports Bengali or English labels. Wait for fonts to load before exporting. The design is not an official university template; use the prescribed format if your department requires one."
+  }
+]

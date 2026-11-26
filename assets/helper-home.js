@@ -1,41 +1,30 @@
-/* Bilingual dashboard only. Existing tool forms retain their own language. */
+/* Dashboard filtering; shared language.js owns UI copy and locale persistence. */
 (() => {
  const grid=document.querySelector('#helper-grid');if(!grid)return;
- const entries=[
- ['qr','QR code maker','QR কোড তৈরি','Turn a link into a scannable code.','লিংক থেকে QR কোড তৈরি করুন।','daily','▦','/everyday-tools.html#qr'],
- ['pdf','Merge PDFs','PDF একত্র করুন','Bring your documents together.','একাধিক PDF এক ফাইলে রাখুন।','files','▤','/creator-tools.html#pdf-merge'],
- ['loan','Loan calculator','ঋণের হিসাব','Plan your monthly repayments.','মাসিক কিস্তির আনুমানিক হিসাব।','money','৳','/creator-tools.html#loan'],
- ['image','Image converter','ছবি রূপান্তর','Make a WebP or AVIF image.','ছবিকে WebP বা AVIF করুন।','files','◈','/creator-tools.html#image'],
- ['words','Word counter','শব্দ গণনা','A little clarity for your writing.','লেখার শব্দ ও অক্ষর গুনুন।','writing','Aa','/everyday-tools.html#words'],
- ['percent','Percentage calculator','শতাংশের হিসাব','Work out percentages and changes.','শতাংশ ও পরিবর্তনের হিসাব করুন।','money','%','/everyday-tools.html#percent'],
- ['units','Unit converter','একক রূপান্তর','Length, weight and temperature.','দৈর্ঘ্য, ওজন ও তাপমাত্রা।','daily','⇄','/everyday-tools.html#units'],
- ['password','Password generator','পাসওয়ার্ড তৈরি','Create a strong random password.','এলোমেলো শক্তিশালী পাসওয়ার্ড বানান।','daily','✳','/everyday-tools.html#password']
- ];
- let language='en',category='all';
- try{if(localStorage.getItem('pocket_helper_language')==='bn')language='bn';}catch{}
- const selector=document.querySelector('#helper-language'),search=document.querySelector('#helper-search');
+ const groups={Photo:'photo',Student:'student',Files:'files',Writing:'writing',Finance:'money',Everyday:'daily',AI:'ai',Creators:'creators',Marketing:'marketing',Developer:'developer'};
+ const featured=['remove-background','face-retouch','passport-photo','assignment-cover','qr','pdf-merge','loan','image','words','percent','units','password'];
+ const entries=(window.POCKET_TOOL_CATALOG||[]).map(t=>[t.id,t.id==='loan'?'Loan calculator':t.name,t.keywords||'',t.desc,'',groups[t.category]||'daily',t.icon,t.href]);
+ let category='all';
+ const search=document.querySelector('#helper-search');
+ const tr=text=>window.PHLanguage?.t(text)||text;
  function render(){
   const query=search.value.trim().toLowerCase();
-  const matches=entries.filter(e=>(category==='all'||e[5]===category)&&e.slice(0,6).join(' ').toLowerCase().includes(query));
+  const found=entries.filter(e=>(category==='all'||e[5]===category)&&query.split(/\s+/).every(word=>[...e.slice(0,6),tr(e[1]),tr(e[3])].join(' ').toLowerCase().includes(word)));
+  const matches=!query&&category==='all'?featured.map(id=>entries.find(e=>e[0]===id)).filter(Boolean):found;
+  document.querySelector('#helper-count').textContent=query||category!=='all'?`${matches.length} tools found`:`${entries.length} tools · popular picks below`;
   grid.replaceChildren();
   matches.forEach(e=>{
-   const link=document.createElement('a');link.className='helper-card helper-'+e[5];link.href=e[7];link.lang=language;
+   const link=document.createElement('a');link.className='helper-card helper-'+e[5];link.href=e[7];link.lang=window.PHLanguage?.tag||'en';
    const icon=document.createElement('span');icon.className='helper-card-icon';icon.textContent=e[6];icon.setAttribute('aria-hidden','true');
-   const title=document.createElement('h3');title.textContent=e[language==='bn'?2:1];
-   const desc=document.createElement('p');desc.textContent=e[language==='bn'?4:3];
-   const action=document.createElement('span');action.className='helper-card-action';action.textContent=language==='bn'?'টুল খুলুন ↗':'Open helper ↗';
+   const title=document.createElement('h3');title.textContent=e[1];
+   const desc=document.createElement('p');desc.textContent=e[3];
+   const action=document.createElement('span');action.className='helper-card-action';action.textContent='Open helper ↗';
    link.append(icon,title,desc,action);grid.append(link);
   });
   document.querySelector('#helper-empty').hidden=matches.length!==0;
  }
- function translate(){
-  selector.value=language;
-  document.querySelectorAll('[data-en][data-bn]').forEach(el=>{el.textContent=el.dataset[language];el.lang=language;});
-  search.placeholder=language==='bn'?'টুল খুঁজুন · PDF, ঋণ, QR…':'Search helpers · PDF, loan, QR…';
-  render();
- }
- selector.addEventListener('change',()=>{language=selector.value;try{localStorage.setItem('pocket_helper_language',language);}catch{}translate();});
- search.addEventListener('input',render);
+ window.addEventListener('ph-language-change',()=>{render();window.PHLanguage?.apply();});
+ search.addEventListener('input',()=>{category='all';document.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.category==='all')));render();});
  document.querySelectorAll('[data-category]').forEach(button=>button.addEventListener('click',()=>{category=button.dataset.category;document.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));render();}));
- translate();
+ render();
 })();

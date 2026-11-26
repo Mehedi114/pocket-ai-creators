@@ -36,7 +36,7 @@ export default async function handler(req, res) {
 
         const outcome = await callAI({
             system:
-                "You are Pocket AI, a research assistant. Answer ONLY from the supplied search results. " +
+                "You are Pocket Helper, a research assistant. Answer ONLY from the supplied search results. " +
                 "Cite sources inline as [1], [2]. If the results do not answer the question, say so plainly. " +
                 "Never invent facts, dates or numbers. Reply in the same language the user asked in.",
             prompt: `

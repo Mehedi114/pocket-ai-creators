@@ -1,5 +1,5 @@
 /**
- * Pocket AI — Local Dev Server
+ * Pocket Helper — Local Dev Server
  * ----------------------------
  * Vercel ছাড়াই লোকালি পুরো অ্যাপ চালানোর জন্য।
  *
@@ -169,7 +169,7 @@ server.listen(PORT, HOST, async () => {
     const { describeProviders } = await import("./api/_providers.js");
     const info = describeProviders();
 
-    console.log(`\n  ✦ Pocket AI চলছে →  http://localhost:${PORT}\n`);
+    console.log(`\n  ✦ Pocket Helper চলছে →  http://localhost:${PORT}\n`);
     console.log(`  Active AI providers (${info.activeCount}): ${info.chain.join(" → ") || "কোনোটাই নেই"}`);
     console.log(`  YouTube API key: ${process.env.YOUTUBE_API_KEY ? "আছে ✓" : "নেই ✕"}\n`);
 

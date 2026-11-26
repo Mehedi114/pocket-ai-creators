@@ -1,5 +1,5 @@
 /**
- * Pocket AI — External Free Services
+ * Pocket Helper — External Free Services
  * ----------------------------------
  * LLM-এর বাইরে যেসব ফ্রি API দিয়ে টুলটা আসল powerhouse হয়:
  *
@@ -9,7 +9,7 @@
  *   Groq Whisper  → অডিও/ভিডিও ট্রান্সক্রিপশন (GROQ_API_KEY দিয়েই চলে)
  */
 
-const UA = "PocketAI/2.1 (+https://github.com/Mehedi114/pocket-ai-creators)";
+const UA = "Pocket Helper/2.1 (+https://github.com/Mehedi114/pocket-ai-creators)";
 
 function timeoutSignal(ms) {
     const c = new AbortController();

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://pocket-helper.vercel.app/</loc></url>
+  <url><loc>https://pocket-helper.vercel.app/assignment-cover.html</loc></url>
+  <url><loc>https://pocket-helper.vercel.app/remove-background.html</loc></url>
+  <url><loc>https://pocket-helper.vercel.app/face-retouch.html</loc></url>
+  <url><loc>https://pocket-helper.vercel.app/photo-desk.html</loc></url>
   <url><loc>https://pocket-helper.vercel.app/blog.html</loc></url>
   <url><loc>https://pocket-helper.vercel.app/listen.html</loc></url>
   <url><loc>https://pocket-helper.vercel.app/everyday-tools.html</loc></url>
@@ -9,6 +13,10 @@
   <url><loc>https://pocket-helper.vercel.app/guides/repurpose-content.html</loc></url>
   <url><loc>https://pocket-helper.vercel.app/guides/find-your-brand-voice.html</loc></url>
   <url><loc>https://pocket-helper.vercel.app/tool-guides/index.html</loc></url>
+  <url><loc>https://pocket-helper.vercel.app/tool-guides/plain-background-remover.html</loc></url>
+  <url><loc>https://pocket-helper.vercel.app/tool-guides/portrait-retouch-photo-editor.html</loc></url>
+  <url><loc>https://pocket-helper.vercel.app/tool-guides/passport-photo-print-sheet-maker.html</loc></url>
+  <url><loc>https://pocket-helper.vercel.app/tool-guides/assignment-cover-page-maker.html</loc></url>
   <url><loc>https://pocket-helper.vercel.app/tool-guides/free-qr-code-generator.html</loc></url>
   <url><loc>https://pocket-helper.vercel.app/tool-guides/strong-password-generator.html</loc></url>
   <url><loc>https://pocket-helper.vercel.app/tool-guides/word-counter-character-counter.html</loc></url>

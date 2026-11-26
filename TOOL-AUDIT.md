@@ -1,4 +1,4 @@
-# Pocket AI — tool audit
+# Pocket Helper — tool audit
 
 ## Scope and method
 
