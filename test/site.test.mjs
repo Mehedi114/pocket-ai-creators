@@ -6,6 +6,7 @@ const w=dom.window,d=w.document;
 w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','')};
 w.HTMLDialogElement.prototype.close=function(){this.removeAttribute('open')};
 w.eval(readFileSync(new URL('../site-config.js',import.meta.url),'utf8'));
+delete w.POCKET_SITE.adPolicy; // Policy behavior is exercised in ad-policy.test.mjs.
 w.eval(readFileSync(new URL('../assets/seo-links.js',import.meta.url),'utf8'));
 w.eval(readFileSync(new URL('../site.js',import.meta.url),'utf8'));
 w.eval(readFileSync(new URL('../privacy-controls.js',import.meta.url),'utf8'));

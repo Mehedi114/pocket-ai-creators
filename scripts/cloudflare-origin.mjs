@@ -1,7 +1,7 @@
 // Rewrite only generated public output; Vercel/source metadata stays unchanged.
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-const origin = process.env.CLOUDFLARE_SITE_ORIGIN || 'https://billowing-band-2258.mdmahedulislammehedi.workers.dev';
+const origin = process.env.CLOUDFLARE_SITE_ORIGIN || 'https://pockethelper.phapps.workers.dev';
 const url = new URL(origin);
 if (url.protocol !== 'https:' || url.origin !== origin) throw new Error('CLOUDFLARE_SITE_ORIGIN must be an HTTPS origin without a trailing slash');
 async function visit(dir) {

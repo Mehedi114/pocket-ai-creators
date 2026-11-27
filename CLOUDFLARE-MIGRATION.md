@@ -2,7 +2,7 @@
 
 ## Status
 
-Code and local runtime checks prepared; **not deployed or cut over**. Keep Vercel serving the existing site until the checklist below passes. The connected Worker is `billowing-band-2258`; its current production branch is `main`.
+Cloudflare production deployment succeeded after PR #8, and the user confirmed the website loads. The user has now renamed the Worker to `pockethelper` and reported disconnecting Vercel Git integration (this does not delete or stop existing Vercel deployments). The production branch remains `main`. This rename update must be deployed to align the Worker configuration and generated metadata. AI is intentionally disabled until the user obtains new provider keys; do not request or transfer secrets now. Supabase remains unchanged. Remaining live acceptance checks are listed below.
 
 ## Architecture
 
@@ -29,7 +29,7 @@ The already-selected settings can stay:
 
 Wrangler's own build hook runs `npm run build:cloudflare`, rebuilding the export and updating only generated metadata to the Cloudflare origin. The first dashboard build is redundant but harmless. Do not bypass the Wrangler build hook. Build dependencies must be installed (`npm ci --include=dev` if an install command is available); Node 22.
 
-Default origin: `https://billowing-band-2258.mdmahedulislammehedi.workers.dev`. For a future custom domain set **build-time** `CLOUDFLARE_SITE_ORIGIN` to its HTTPS origin without trailing slash and rebuild. Do not change source Vercel metadata while Vercel remains the fallback.
+Default origin: `https://pockethelper.phapps.workers.dev`. For a future custom domain set **build-time** `CLOUDFLARE_SITE_ORIGIN` to its HTTPS origin without trailing slash and rebuild. Do not change source Vercel metadata while Vercel remains the fallback.
 
 ## Secrets: user enters in Cloudflare dashboard, never in chat
 

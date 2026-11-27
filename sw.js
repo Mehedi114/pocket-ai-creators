@@ -7,7 +7,7 @@
  * /api/* কখনো ক্যাশ হয় না — AI-এর উত্তর সবসময় তাজা থাকবে।
  */
 
-const VERSION = "pocket-helper-v14-install";
+const VERSION = "pocket-helper-v15-ad-controls";
 const SHELL = `${VERSION}-shell`;
 
 const SHELL_FILES = [

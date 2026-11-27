@@ -14,7 +14,7 @@ async function authenticate(){
  }catch(e){if(epoch!==authEpoch)return;resetUI();status('#auth-status',e.message);}
 }
 async function loadRows(){const epoch=authEpoch;const data=must(await cms.from('ph_entries').select('*').order('updated_at',{ascending:false}).limit(1000));if(!authorized||epoch!==authEpoch)return;rows=data;renderList();}
-function show(next){view=next;$('#editor-panel').hidden=true;$('#overview').hidden=next!=='dashboard';$('#content-list-panel').hidden=!['dashboard','blog','audio'].includes(next);$('#media-panel').hidden=next!=='media';$('#settings-panel').hidden=next!=='settings';$('#view-title').textContent=({dashboard:'Your creative home',blog:'Your blog posts',audio:'শুনে শিখি · Audio',media:'Media library',settings:'Account & help'})[next];document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('selected',b.dataset.view===next));renderList();if(next==='media')loadMedia().catch(e=>status('#desk-status',e.message));}
+function show(next){view=next;$('#editor-panel').hidden=true;$('#overview').hidden=next!=='dashboard';$('#content-list-panel').hidden=!['dashboard','blog','audio'].includes(next);$('#media-panel').hidden=next!=='media';$('#settings-panel').hidden=next!=='settings';$('#view-title').textContent=({dashboard:'Your creative home',blog:'Your blog posts',audio:'শুনে শিখি · Audio',media:'Media library',settings:'Account & help'})[next];document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('selected',b.dataset.view===next));renderList();if(next==='settings')void loadAds();if(next==='media')loadMedia().catch(e=>status('#desk-status',e.message));}
 function renderList(){
  for(const k of ['blog','audio'])$('#stat-'+k).textContent=rows.filter(r=>r.kind===k).length;
  $('#stat-draft').textContent=rows.filter(r=>r.status==='draft').length;$('#stat-published').textContent=rows.filter(r=>r.status==='published').length;
@@ -51,3 +51,26 @@ $('#logout').onclick=async()=>{if(!canLeave())return;const result=await cms.auth
 cms.auth.onAuthStateChange((event)=>{if(event==='SIGNED_OUT'){authEpoch++;resetUI();}if(event==='PASSWORD_RECOVERY'){view='settings';setTimeout(authenticate,0);}});
 window.addEventListener('beforeunload',e=>{if(dirty||busy){e.preventDefault();e.returnValue='';}});
 (async()=>{try{const {session}=must(await cms.auth.getSession());if(location.hash)history.replaceState(null,'',location.pathname);if(session){view='settings';await authenticate();}}catch(e){status('#auth-status',e.message);}})();
+
+const adFields=['enabled','banner','popunder','social'];
+let adsBusy=false;
+function lockAds(value){for(const key of adFields)$('#ads-'+key).disabled=value;$('#ads-save').disabled=value;}
+async function loadAds(){
+ if(!authorized||adsBusy)return;adsBusy=true;lockAds(true);const epoch=authEpoch;
+ status('#ads-status','Loading advertising settings…');
+ try{const data=must(await cms.from('ph_ad_settings').select('enabled,banner,popunder,social').eq('id',true).single());
+ if(!authorized||epoch!==authEpoch)return;
+ for(const key of adFields){if(typeof data[key]!=='boolean')throw new Error('Invalid advertising settings.');$('#ads-'+key).checked=data[key];}
+ lockAds(false);status('#ads-status',data.enabled?'Advertising is ON — visitor consent is still required.':'Advertising is OFF for all visitors.');
+ }catch(e){status('#ads-status','Could not load settings: '+e.message);}finally{adsBusy=false;}
+}
+$('#ads-refresh').onclick=()=>void loadAds();
+$('#ads-form').onsubmit=async e=>{
+ e.preventDefault();if(!authorized||adsBusy)return;adsBusy=true;lockAds(true);const epoch=authEpoch;
+ try{const values=Object.fromEntries(adFields.map(key=>[key,$('#ads-'+key).checked]));
+ const data=must(await cms.from('ph_ad_settings').update(values).eq('id',true).select('enabled,banner,popunder,social').single());
+ if(!authorized||epoch!==authEpoch)return;
+ if(!data)throw new Error('No settings saved. Check owner permissions.');
+ status('#ads-status','Saved. Advertising '+(data.enabled?'ON':'OFF')+'. Visitors keep their own consent choices.');
+ }catch(e){status('#ads-status','Save failed: '+e.message);}finally{adsBusy=false;if(authorized&&epoch===authEpoch)lockAds(false);}
+};

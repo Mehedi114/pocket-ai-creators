@@ -11,6 +11,7 @@ function setup({saved=null,storageBlocked=false}={}){
  if(saved)w.localStorage.setItem('pocket_ad_consent',saved);
  if(storageBlocked)Object.defineProperty(w,'localStorage',{get(){throw new Error('Storage denied')}});
  w.eval(readFileSync('site-config.js','utf8'));
+ delete w.POCKET_SITE.adPolicy;
  const calls=[];w.fetch=async(...args)=>{calls.push(args);return {ok:true,text:async()=>embed}};
  // Do not initialize site.js: advertising controls must survive unrelated UI failures.
  w.eval(code);

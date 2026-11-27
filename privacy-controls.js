@@ -12,6 +12,27 @@
  let loading = false, mounted = false, revision = 0, frame = null, frameToken = '', bannerTimer;
  const vendorScripts = new Map();
  const vendorTimers = new Map();
+ let policy=null,policyPending=null,policyChecked=0;
+ async function allowed(kind) {
+  if(!config.adPolicy)return true; // Legacy embeds; production always has a policy URL.
+  if(!policyPending && Date.now()-policyChecked>30000){
+   policyPending=(async()=>{
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
+    try{
+     const response=await fetch(config.adPolicy.url,{headers:{apikey:config.adPolicy.key},cache:'no-store',signal:controller.signal});
+     if(!response.ok)throw new Error('Settings unavailable');
+     const rows=await response.json(),value=rows?.[0];
+     if(!value||!['enabled','banner','popunder','social'].every(k=>typeof value[k]==='boolean'))throw new Error('Invalid settings');
+     policy=value;
+    }catch{policy=null;}finally{clearTimeout(timer);policyChecked=Date.now();policyPending=null;}
+   })();
+  }
+  if(policyPending)await policyPending;
+  const ok=policy?.enabled===true&&policy[kind]===true;
+  if(!ok)status(kind,policy?'Off — disabled by the site owner.':'Ads paused — could not verify owner settings. Try again shortly.');
+  return ok;
+ }
+
  function preference(kind) {
   if (Object.hasOwn(session,kind)) return session[kind];
   try { const value=localStorage.getItem(keys[kind]); return ['accepted','rejected'].includes(value)?value:null; }
@@ -22,7 +43,7 @@
   state[kind]=message;
   const el=$('#ad-status-'+kind);if(el)el.textContent=message;
   if(kind==='banner') {
-   const failure=/blocked|unreachable|No script response|Could not read|execution failed|No banner embed/.test(message);
+   const failure=/blocked|unreachable|No script response|Could not read|execution failed|No banner embed|could not verify/.test(message);
    $('#ad-load-feedback').hidden=!failure;
    $('#ad-load-feedback-text').textContent=failure?message:'';
   }
@@ -88,13 +109,15 @@
  async function loadBanner() {
   if(loading||mounted||preference('banner')!=='accepted')return;
   loading=true;const requestRevision=revision;
+  if(config.adPolicy&&!await allowed('banner')){loading=false;return;}
+  if(requestRevision!==revision||preference('banner')!=='accepted'){loading=false;return;}
   status('banner','Reading banner configuration…');
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
   try {
    const response=await fetch('/adsterra-banner.html',{cache:'no-store',signal:controller.signal});
    if(!response.ok)throw new Error('Banner file unavailable');
    const html=await response.text();
-   if(requestRevision!==revision||preference('banner')!=='accepted')return;
+   if(requestRevision!==revision||preference('banner')!=='accepted'||(config.adPolicy&&(!policy?.enabled||!policy.banner)))return;
    const doc=new DOMParser().parseFromString(html,'text/html');
    if(!doc.querySelector('script,iframe')) {
     if(!fallbackBanner())status('banner','No banner embed configured. The site owner needs to add its publisher code.');
@@ -111,8 +134,9 @@
    if(requestRevision!==revision&&preference('banner')==='accepted'&&!mounted)void loadBanner();
   }
  }
- function loadVendor(kind,urlValue,id) {
+ async function loadVendor(kind,urlValue,id) {
   if(preference('banner')!=='accepted'||preference(kind)!=='accepted')return;
+  if((config.adPolicy&&!await allowed(kind))||preference('banner')!=='accepted'||preference(kind)!=='accepted')return;
   if(vendorScripts.has(kind))return;
   let url;try{url=new URL(urlValue);if(url.protocol!=='https:')throw new Error();}catch{status(kind,'No valid HTTPS publisher script configured.');return;}
   const script=document.createElement('script');script.id=id;script.src=url.href;script.setAttribute('data-cfasync','false');
@@ -150,5 +174,16 @@
  $('#reject-ads').onclick=()=>saveChoice('rejected');
  $('#privacy-accept').onclick=()=>saveChoice('accepted');
  $('#privacy-reject').onclick=()=>saveChoice('rejected');
+ // Recheck the global kill switch while an opted-in homepage remains open.
+ if(config.adPolicy)setInterval(async()=>{
+  if(document.hidden||preference('banner')!=='accepted')return;
+  policyChecked=0;
+  const bannerAllowed=await allowed('banner');
+  if(!bannerAllowed){revision++;clearBanner();await allowed('banner');}
+  if([...vendorScripts.keys()].some(kind=>!policy?.enabled||!policy?.[kind])){
+   window.PocketAds.reload();return;
+  }
+  loadAll();
+ },60000);
  refreshChoice();loadAll();
 })();
