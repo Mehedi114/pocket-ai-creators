@@ -17,7 +17,7 @@ assert.equal(ribbon.children[0].querySelectorAll('a').length,27);
 assert.ok(ribbon.children[1].hasAttribute('inert'));
 assert.equal(ribbon.children[1].getAttribute('aria-hidden'),'true');
 for(const link of ribbon.children[1].querySelectorAll('a'))assert.equal(link.tabIndex,-1);
-const pause=d.querySelector('#tool-orbit-pause');pause.click();assert.equal(pause.getAttribute('aria-pressed'),'true');pause.click();assert.equal(pause.getAttribute('aria-pressed'),'false');
+assert.equal(d.querySelector('#tool-orbit-pause'),null);
 const ribbonCSS=readFileSync('assets/helper-home.css','utf8');assert.match(ribbonCSS,/@keyframes tool-orbit-right/);assert.match(ribbonCSS,/prefers-reduced-motion:reduce/);
 
 for(const link of d.querySelectorAll('.helper-card')){

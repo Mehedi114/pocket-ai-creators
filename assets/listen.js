@@ -9,7 +9,7 @@
  if(window.POCKET_CMS_FEED){try{raw=[...raw,...await window.POCKET_CMS_FEED];}catch{$('#catalog-status').textContent='Published episodes could not load. Check your connection and reload. Private preview is still available.';}}
  const ids=new Set();
  const episodes=raw.filter(e=>{
-  const valid=e&&typeof e.id==='string'&&/^[a-z0-9-]{1,80}$/.test(e.id)&&!ids.has(e.id)&&typeof e.title==='string'&&e.title.trim()&&typeof e.summary==='string'&&typeof e.topic==='string'&&validDate(e.published)&&validDate(e.weekStart)&&validDate(e.weekEnd)&&e.weekStart<=e.weekEnd&&(https(e.audioUrl)||(typeof e.audioPath==='string'&&typeof window.POCKET_CMS_MEDIA==='function'))&&e.reviewed===true&&typeof e.reviewedBy==='string'&&e.reviewedBy.trim()&&e.rightsConfirmed===true&&Array.isArray(e.sources)&&e.sources.length>0&&e.sources.every(s=>s&&typeof s.title==='string'&&s.title.trim()&&https(s.url));
+  const valid=e&&typeof e.id==='string'&&/^[a-z0-9-]{1,80}$/.test(e.id)&&!ids.has(e.id)&&typeof e.title==='string'&&e.title.trim()&&typeof e.summary==='string'&&typeof e.topic==='string'&&validDate(e.published)&&(!e.weekStart||validDate(e.weekStart))&&(!e.weekEnd||validDate(e.weekEnd))&&(!e.weekStart||!e.weekEnd||e.weekStart<=e.weekEnd)&&(https(e.audioUrl)||(typeof e.audioPath==='string'&&typeof window.POCKET_CMS_MEDIA==='function'))&&Array.isArray(e.sources)&&e.sources.every(s=>s&&typeof s.title==='string'&&s.title.trim()&&https(s.url));
   if(valid)ids.add(e.id);return valid;
  }).sort((a,b)=>b.published.localeCompare(a.published));
  let current=null,objectURL=null,lastSaved=0;
@@ -18,7 +18,7 @@
  function stop(){saveProgress();audio.pause();audio.removeAttribute('src');audio.load();if(objectURL){URL.revokeObjectURL(objectURL);objectURL=null;}current=null;}
  function sourceNotes(e){
   const wrap=$('#episode-notes');wrap.replaceChildren();if(e.local)return;
-  wrap.append(node('h3','উৎস ও যাচাই'),node('p',`সময়কাল: ${e.weekStart} — ${e.weekEnd} · প্রকাশ: ${e.published}`),node('p',`AI-assisted audio · Reviewed by ${e.reviewedBy}`));
+  wrap.append(node('h3','উৎস ও যাচাই'),node('p',`প্রকাশ: ${e.published}${e.weekStart||e.weekEnd?' · সময়কাল: '+(e.weekStart||'—')+' — '+(e.weekEnd||'—'):''}`),node('p',e.reviewed?`Reviewed by ${e.reviewedBy||'creator'}`:'Creator-uploaded audio'));
   const list=node('ul');for(const source of e.sources){const li=node('li'),link=node('a',source.title+' ↗');link.href=https(source.url);link.target='_blank';link.rel='noopener noreferrer';li.append(link);list.append(li);}wrap.append(list);
   if(e.slidesPath){const b=node('button','PDF slides খুলুন ↗');b.type='button';b.addEventListener('click',async()=>{b.disabled=true;try{const url=await window.POCKET_CMS_MEDIA(e.slidesPath);if(current!==e)return;const a=node('a','Open slides (link valid for 60 seconds) ↗');a.href=url;a.target='_blank';a.rel='noopener noreferrer';wrap.append(a);}catch{$('#audio-status').textContent='Slides unavailable. Try again.';}finally{b.disabled=false;}});wrap.append(b);}
   if(typeof e.transcript==='string'&&e.transcript.trim()){const details=node('details'),text=node('p',e.transcript);text.className='transcript-text';details.append(node('summary','Transcript / পড়ার নোট'),text);wrap.append(details);}
@@ -35,7 +35,7 @@
   const query=$('#episode-search').value.trim().toLowerCase(),topic=$('#episode-topic').value;
   const matches=episodes.filter(e=>(topic==='all'||e.topic===topic)&&[e.title,e.summary,e.topic,e.weekStart,e.weekEnd].join(' ').toLowerCase().includes(query));
   const list=$('#episode-list');list.replaceChildren();
-  for(const e of matches){const card=node('article',undefined,'episode-card');card.append(node('span',e.topic+' · '+e.weekStart+' — '+e.weekEnd,'episode-meta'),node('h3',e.title),node('p',e.summary));
+  for(const e of matches){const card=node('article',undefined,'episode-card');card.append(node('span',e.topic+(e.weekStart||e.weekEnd?' · '+(e.weekStart||'—')+' — '+(e.weekEnd||'—'):''),'episode-meta'),node('h3',e.title),node('p',e.summary));
    const button=node('button','শোনার player খুলুন →','button primary');button.type='button';button.addEventListener('click',()=>select(e));card.append(button);if(readProgress(e.id)>0)card.append(node('small','আগের শোনার অবস্থান রাখা আছে'));list.append(card);
   }
   $('#episode-count').textContent=episodes.length.toLocaleString('bn-BD')+'টি প্রকাশিত এপিসোড';$('#episode-empty').hidden=matches.length>0;

@@ -14,7 +14,7 @@ function setup(records=[]){
  const {d,close}=setup();assert.equal(d.querySelectorAll('.episode-card').length,0);assert.equal(d.querySelector('#episode-empty').hidden,false);assert.equal(d.querySelector('#audio-player').hidden,true);assert.equal(d.querySelector('audio').hasAttribute('src'),false);assert.match(d.querySelector('.learning-note').textContent,/বই পড়া থেকে বিমুখ/);assert.equal(d.querySelector('script[src*="privacy-controls"]'),null);close();
 }
 {
- const {w,d,close}=setup([fixture,{...fixture,id:'bad',audioUrl:'javascript:alert(1)'},{...fixture,id:'draft',reviewed:false},fixture]);
+ const {w,d,close}=setup([fixture,{...fixture,id:'bad',audioUrl:'javascript:alert(1)'},{...fixture,id:'invalid-date',weekStart:'not-a-date'},fixture]);
  assert.equal(d.querySelectorAll('.episode-card').length,1);assert.ok(d.querySelector('#catalog-status').textContent);
  w.localStorage.setItem('pocket_audio_position_test-week','24');d.querySelector('.episode-card button').click();const audio=d.querySelector('audio');assert.equal(audio.src,fixture.audioUrl);assert.equal(audio.autoplay,false);
  Object.defineProperty(audio,'duration',{value:100,configurable:true});audio.dispatchEvent(new w.Event('loadedmetadata'));assert.equal(audio.currentTime,24);
@@ -33,3 +33,5 @@ function setup(records=[]){
  Object.defineProperty(input,'files',{value:[new w.File(['test'],'bad.txt',{type:'text/plain'})]});input.dispatchEvent(new w.Event('change'));assert.match(d.querySelector('#file-status').textContent,/audio file/);close();
 }
 console.log('✓ Audio library: empty state, safe catalog, filtering, sources, resume, seeking, speed, errors and private-only preview');
+
+{const {d,close}=setup([{...fixture,id:'minimal',weekStart:null,weekEnd:null,sources:[],reviewed:false,rightsConfirmed:false,summary:''}]);assert.equal(d.querySelectorAll('.episode-card').length,1);d.querySelector('.episode-card button').click();assert.doesNotMatch(d.querySelector('#episode-notes').textContent,/Reviewed by|null/);close();}

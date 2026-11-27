@@ -115,7 +115,7 @@
 .tool-orbit{margin-top:20px;min-width:0}
 .tool-orbit-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px;color:#62776f}
 .tool-orbit-top>span{font-size:9px;letter-spacing:1.4px;font-weight:600}
-.tool-orbit-top button{font-size:11px;background:#ffffffaa;border:1px solid #d7e3dd;border-radius:20px;padding:8px 12px;min-height:44px;color:#385b4f}
+
 .tool-orbit-window{min-height:122px;overflow:hidden;padding:12px 0 19px;mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent)}
 .tool-orbit-track{display:flex;width:max-content;animation:tool-orbit-right 160s linear infinite}
 .tool-orbit-group{display:flex;gap:18px;padding-right:18px;flex-shrink:0}
@@ -126,11 +126,11 @@
 .tool-orbit-icon.peach,.tool-orbit-icon.pink{background:linear-gradient(145deg,#fff,#f6dfd7);color:#97665a}
 .tool-orbit-icon.yellow{background:linear-gradient(145deg,#fff,#f1e7c5);color:#85733a}
 .tool-orbit-label{font-size:10px;font-weight:500;text-align:center;line-height:1.4;max-width:112px}
-.tool-orbit.paused .tool-orbit-track,.tool-orbit:hover .tool-orbit-track,.tool-orbit:focus-within .tool-orbit-track{animation-play-state:paused}
+
 .tool-orbit-item:focus-visible{outline:2px solid #24745a;outline-offset:0;border-radius:8px}
 /* On keyboard focus, show the original group in a scrollable, stable order. */
 .tool-orbit:focus-within .tool-orbit-track{animation:none;transform:none}
 .tool-orbit:focus-within .tool-orbit-window{overflow-x:auto;mask-image:none}
 @keyframes tool-orbit-right{from{transform:translateX(-50%)}to{transform:translateX(0)}}
 @media(max-width:700px){.tool-orbit{margin-top:14px}.tool-orbit-group{gap:12px;padding-right:12px}.tool-orbit-item{width:98px}.tool-orbit-icon{width:48px;height:48px;border-radius:14px;font-size:23px}.tool-orbit-top>span{font-size:8px;letter-spacing:.8px}}
-@media(prefers-reduced-motion:reduce){.tool-orbit-track{animation:none;transform:none}.tool-orbit-window{overflow-x:auto;mask-image:none}.tool-orbit-group[aria-hidden]{display:none}#tool-orbit-pause{display:none}}
+@media(prefers-reduced-motion:reduce){.tool-orbit-track{animation:none;transform:none}.tool-orbit-window{overflow-x:auto;mask-image:none}.tool-orbit-group[aria-hidden]{display:none}}
