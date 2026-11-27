@@ -1,6 +1,19 @@
 /* Dashboard filtering; shared language.js owns UI copy and locale persistence. */
 (() => {
  const grid=document.querySelector('#helper-grid');if(!grid)return;
+ const orbit=document.querySelector('#tool-orbit-track'),pause=document.querySelector('#tool-orbit-pause');
+ if(orbit&&pause){
+  const group=document.createElement('div');group.className='tool-orbit-group';
+  for(const tool of window.POCKET_TOOL_CATALOG||[]){
+   const link=document.createElement('a');link.className='tool-orbit-item';link.href=tool.href;link.title=tool.name+(tool.isAI?' · AI currently unavailable':'');
+   const icon=document.createElement('span');icon.className='tool-orbit-icon '+tool.color;icon.setAttribute('aria-hidden','true');icon.textContent=tool.icon;
+   const label=document.createElement('span');label.className='tool-orbit-label';label.textContent=tool.name;
+   link.append(icon,label);group.append(link);
+  }
+  const copy=group.cloneNode(true);copy.setAttribute('aria-hidden','true');copy.setAttribute('inert','');copy.querySelectorAll('a').forEach(a=>a.tabIndex=-1);
+  orbit.replaceChildren(group,copy);
+  pause.onclick=()=>{const stopped=orbit.closest('.tool-orbit').classList.toggle('paused');pause.setAttribute('aria-pressed',String(stopped));pause.textContent=stopped?'Resume motion':'Pause motion';};
+ }
  const groups={Photo:'photo',Student:'student',Files:'files',Writing:'writing',Finance:'money',Everyday:'daily',AI:'ai',Creators:'creators',Marketing:'marketing',Developer:'developer'};
  const featured=['remove-background','face-retouch','passport-photo','assignment-cover','qr','pdf-merge','loan','image','words','percent','units','password'];
  const entries=(window.POCKET_TOOL_CATALOG||[]).map(t=>[t.id,t.id==='loan'?'Loan calculator':t.name,t.keywords||'',t.desc,'',groups[t.category]||'daily',t.icon,t.href]);

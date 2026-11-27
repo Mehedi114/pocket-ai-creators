@@ -9,7 +9,18 @@ const fontPromise=fonts().catch(()=>{status.textContent='Font load হয়নি�
 function render(target=canvas,data=values(),scale=1){target.width=Math.round(794*scale);target.height=Math.round(1123*scale);const c=target.getContext('2d');c.scale(scale,scale);c.fillStyle='#fff';c.fillRect(0,0,794,1123);const accent=data.accent,L=coverLabels[data.language]||coverLabels.en,issues=[];
  const line=(x,y,w,colour=accent,weight=1)=>{c.strokeStyle=colour;c.lineWidth=weight;c.beginPath();c.moveTo(x,y);c.lineTo(x+w,y);c.stroke();};
  function text(value,x,y,width,height,size=20,weight=400,align='left',colour='#27332e'){value=String(value||'');if(!value.trim())return;let lines,actual=size;for(;actual>=10;actual-=.5){c.font=`${weight} ${actual}px ${family}`;lines=wrapLines(value,width,s=>c.measureText(s).width);if(lines.length*actual*1.45<=height)break;}if(actual<10){issues.push(value.slice(0,25));actual=10;c.font=`${weight} ${actual}px ${family}`;}c.save();c.beginPath();c.rect(x,y,width,height);c.clip();c.textAlign=align;c.textBaseline='top';c.fillStyle=colour;const tx=align==='center'?x+width/2:x;lines.forEach((v,i)=>c.fillText(v,tx,y+i*actual*1.45));c.restore();}
- if(data.design==='classic'){c.strokeStyle=accent;c.lineWidth=1.5;c.strokeRect(34,34,726,1055);c.lineWidth=.5;c.strokeRect(42,42,710,1039);}else if(data.design==='editorial'){c.fillStyle=accent;c.fillRect(35,44,8,1035);line(68,52,658,accent,2);line(68,1074,658,accent,1);}else{line(54,44,686,accent,4);line(54,1078,686,accent,1);c.fillStyle=accent;c.fillRect(706,44,34,16);}
+ if(data.design==='classic'){c.strokeStyle=accent;c.lineWidth=1.5;c.strokeRect(34,34,726,1055);c.lineWidth=.5;c.strokeRect(42,42,710,1039);}else if(data.design==='editorial'){c.fillStyle=accent;c.fillRect(35,44,8,1035);line(68,52,658,accent,2);line(68,1074,658,accent,1);}else if(data.design==='corners'){
+  c.strokeStyle=accent;c.lineWidth=2;
+  for(const [x,y,dx,dy] of [[45,45,1,1],[749,45,-1,1],[45,1078,1,-1],[749,1078,-1,-1]]){c.beginPath();c.moveTo(x+dx*90,y);c.lineTo(x,y);c.lineTo(x,y+dy*90);c.stroke();}
+  line(95,302,604,'#dde3df');line(95,610,604,'#dde3df');
+ }else if(data.design==='arch'){
+  c.strokeStyle=accent;c.lineWidth=1.5;c.beginPath();c.moveTo(45,1078);c.lineTo(45,160);c.quadraticCurveTo(45,42,165,42);c.lineTo(629,42);c.quadraticCurveTo(749,42,749,160);c.lineTo(749,1078);c.stroke();line(45,1078,704);
+  c.beginPath();c.arc(397,239,62,0,Math.PI*2);c.stroke();
+ }else if(data.design==='scholar'){
+  line(48,45,698,accent,3);line(48,53,698,accent,.6);line(48,1070,698,accent,.6);line(48,1078,698,accent,3);
+  c.fillStyle=accent;c.fillRect(64,315,4,53);c.fillRect(726,315,4,53);
+  c.strokeStyle='#d9dfda';c.lineWidth=.8;c.strokeRect(63,619,316,380);c.strokeRect(415,619,316,380);
+ }else{line(54,44,686,accent,4);line(54,1078,686,accent,1);c.fillStyle=accent;c.fillRect(706,44,34,16);}
  text(data.institution||L.institution,65,72,664,64,25,600,'center',accent);text(data.department,80,140,634,40,16,400,'center');
  if(logo){const ratio=Math.min(94/logo.width,94/logo.height),w=logo.width*ratio,h=logo.height*ratio;c.drawImage(logo,(794-w)/2,192+(94-h)/2,w,h);}else{line(363,237,68,accent,2);}
  text(data.heading||'ASSIGNMENT',72,315,650,60,32,600,'center',accent);line(324,386,146,accent,1);text(data.topic||L.topic,82,410,630,100,25,600,'center');

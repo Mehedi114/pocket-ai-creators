@@ -9,8 +9,8 @@ assert.equal(wrapLines('বাংলা লেখা',100,s=>s.length)[0],'ব�
 assert.equal(dateLabel('2026-02-30'),'');assert.equal(dateLabel('bad'),'');assert.match(dateLabel('2026-11-07'),/7 November 2026/);assert.ok(coverLabels.bn.student);
 const dom=new JSDOM(readFileSync('assignment-cover.html','utf8')),d=dom.window.document;
 for(const name of ['institution','department','student','roll','registration','session','semester','section','teacher','designation','teacherDepartment','date','topic','course','code'])assert.ok(d.querySelector(`[name="${name}"]`));
-assert.equal(d.querySelectorAll('[name=design] option').length,3);
+assert.equal(d.querySelectorAll('[name=design] option').length,6);
 for(const id of ['cover-canvas','cover-pdf','cover-png','cover-print','cover-logo'])assert.ok(d.getElementById(id));
-const script=readFileSync('tools/assignment-cover.js','utf8');assert.doesNotMatch(script,/localStorage|fetch\(/);assert.match(script,/595\.2756,841\.8898/);assert.match(script,/await fontPromise/);assert.match(script,/issues.length\)throw/);
+const script=readFileSync('tools/assignment-cover.js','utf8');for(const design of ['corners','arch','scholar'])assert.ok(script.includes("data.design==='"+design+"'"));assert.doesNotMatch(script,/localStorage|fetch\(/);assert.match(script,/595\.2756,841\.8898/);assert.match(script,/await fontPromise/);assert.match(script,/issues.length\)throw/);
 assert.doesNotMatch(readFileSync('assignment-cover.html','utf8'),/privacy-controls|adsterra|site\.js/);
 dom.window.close();console.log('✓ Assignment cover: wrapping, dates, field coverage, designs, local-only export and A4 dimensions');

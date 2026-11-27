@@ -7,6 +7,15 @@ for(const file of ['language-data','language','tool-catalog','helper-home'])w.ev
 d.dispatchEvent(new w.Event('DOMContentLoaded'));
 
 assert.equal(d.querySelectorAll('.helper-card').length,12);
+const ribbon=d.querySelector('#tool-orbit-track');
+assert.equal(ribbon.children.length,2);
+assert.equal(ribbon.children[0].querySelectorAll('a').length,41);
+assert.ok(ribbon.children[1].hasAttribute('inert'));
+assert.equal(ribbon.children[1].getAttribute('aria-hidden'),'true');
+for(const link of ribbon.children[1].querySelectorAll('a'))assert.equal(link.tabIndex,-1);
+const pause=d.querySelector('#tool-orbit-pause');pause.click();assert.equal(pause.getAttribute('aria-pressed'),'true');pause.click();assert.equal(pause.getAttribute('aria-pressed'),'false');
+const ribbonCSS=readFileSync('assets/helper-home.css','utf8');assert.match(ribbonCSS,/@keyframes tool-orbit-right/);assert.match(ribbonCSS,/prefers-reduced-motion:reduce/);
+
 for(const link of d.querySelectorAll('.helper-card')){
  const url=new URL(link.href);assert.ok(existsSync(url.pathname.slice(1)));
 }
