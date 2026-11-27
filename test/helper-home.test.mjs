@@ -16,7 +16,7 @@ const search=d.querySelector('#helper-search');search.value='কিস্তি'
 const lang=d.querySelector('#helper-language');lang.value='bn';lang.dispatchEvent(new w.Event('change'));
 assert.equal(d.querySelector('.helper-card h3').textContent,'Loan-এর হিসাব');assert.equal(w.localStorage.getItem('pocket_helper_language'),'bn');assert.equal(d.documentElement.lang,'bn');
 search.value='no-such-helper';search.dispatchEvent(new w.Event('input'));assert.equal(d.querySelector('#helper-empty').hidden,false);
-lang.value='en';lang.dispatchEvent(new w.Event('change'));assert.equal(d.querySelector('h1').textContent,'Make yourself at home.');
+lang.value='en';lang.dispatchEvent(new w.Event('change'));assert.equal(d.querySelector('h1').textContent,'Welcome to your virtual working office');
 assert.ok(d.querySelector('meta[name="google-site-verification"]'));assert.ok(d.title.includes('Pocket Helper'));
 assert.equal(d.querySelector('#creator-name').textContent,'Md Mahedul Islam Mehedi');
 assert.ok(d.querySelector('footer a[href="#creator"]'));

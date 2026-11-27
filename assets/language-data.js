@@ -14,7 +14,7 @@ Dashboard|Dashboard|डैशबोर्ड|ڈیش بورڈ
 Language|ভাষা|भाषा|زبان
 YOUR EVERYDAY COMPANION|প্রতিদিনের সঙ্গী|आपका रोज़मर्रा का साथी|آپ کا روزمرہ کا ساتھی
 A little help. A lighter day.|একটু সাহায্য। সহজ প্রতিদিন।|थोड़ी मदद। आसान दिन।|تھوڑی مدد۔ آسان دن۔
-Make yourself at home.|তোমার কাজের আপন ঠিকানা।|आपके काम का अपना ठिकाना।|آپ کے کام کا اپنا ٹھکانا۔
+Welcome to your virtual working office|আপনার ভার্চুয়াল কাজের অফিসে স্বাগতম|आपके वर्चुअल कार्य कार्यालय में स्वागत है|آپ کے ورچوئل ورکنگ آفس میں خوش آمدید
 Everyday calculations, documents and creative tasks. Find the right helper, all in one little home.|হিসাব, documents আর creative কাজ। প্রয়োজনের tool খুঁজে নাও এক জায়গায়।|रोज़मर्रा की गणना, दस्तावेज़ और रचनात्मक काम। सही टूल पाएँ, एक ही जगह।|روزمرہ کے حساب، دستاویزات اور تخلیقی کام۔ صحیح ٹول پائیں، ایک ہی جگہ۔
 Find your helper ↓|তোমার tool খুঁজে নাও ↓|अपना टूल खोजें ↓|اپنا ٹول تلاش کریں ↓
 Small tasks.|ছোট কাজ।|छोटे काम।|چھوٹے کام۔
