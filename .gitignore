@@ -8,3 +8,8 @@ node_modules/
 
 # Generated, allowlisted Vercel static output
 /public/
+
+# Cloudflare local state and secret files
+.wrangler/
+.dev.vars
+.dev.vars.*

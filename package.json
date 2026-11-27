@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "private": true,
   "type": "module",
-  "description": "Pocket Helper \u2014 photo, student, PDF, finance and optional AI tools.",
+  "description": "Pocket Helper — photo, student, PDF, finance and optional AI tools.",
   "scripts": {
     "dev": "node dev-server.mjs",
     "start": "node dev-server.mjs",
@@ -12,7 +12,10 @@
     "build": "node scripts/build-discovery.mjs && npm run build:seo && npm run build:tools && npm run build:cms && node scripts/refresh-tool-cards.mjs && node scripts/refresh-public-seo.mjs && node scripts/export-static.mjs",
     "build:seo": "node scripts/build-tool-seo.mjs",
     "test:deployment": "node test/deployment.test.mjs && node test/language.test.mjs && node test/pwa.test.mjs",
-    "build:cms": "esbuild tools/admin.js --bundle --minify --outfile=assets/admin.bundle.js && esbuild tools/public-content.js --bundle --minify --outfile=assets/public-content.bundle.js"
+    "build:cms": "esbuild tools/admin.js --bundle --minify --outfile=assets/admin.bundle.js && esbuild tools/public-content.js --bundle --minify --outfile=assets/public-content.bundle.js",
+    "build:cloudflare": "npm run build && node scripts/cloudflare-origin.mjs",
+    "dev:cloudflare": "wrangler dev --ip 0.0.0.0",
+    "test:cloudflare": "node test/cloudflare.test.mjs"
   },
   "engines": {
     "node": "22.x"
@@ -20,7 +23,9 @@
   "devDependencies": {
     "esbuild": "^0.28.2",
     "jsdom": "^26.1.0",
-    "jsqr": "^1.4.0"
+    "jsqr": "^1.4.0",
+    "miniflare": "5.20261123.1-beta",
+    "wrangler": "^4.168.0"
   },
   "dependencies": {
     "@jsquash/avif": "^2.1.1",
