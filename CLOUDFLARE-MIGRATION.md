@@ -29,7 +29,7 @@ The already-selected settings can stay:
 
 Wrangler's own build hook runs `npm run build:cloudflare`, rebuilding the export and updating only generated metadata to the Cloudflare origin. The first dashboard build is redundant but harmless. Do not bypass the Wrangler build hook. Build dependencies must be installed (`npm ci --include=dev` if an install command is available); Node 22.
 
-Default origin: `https://pockethelper.mdmahedulislammehedi.workers.dev`. For a future custom domain set **build-time** `CLOUDFLARE_SITE_ORIGIN` to its HTTPS origin without trailing slash and rebuild. Do not change source Vercel metadata while Vercel remains the fallback.
+Default origin: `https://pockethelper.phapps.workers.dev`. For a future custom domain set **build-time** `CLOUDFLARE_SITE_ORIGIN` to its HTTPS origin without trailing slash and rebuild. Do not change source Vercel metadata while Vercel remains the fallback.
 
 ## Secrets: user enters in Cloudflare dashboard, never in chat
 

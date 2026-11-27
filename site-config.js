@@ -1,5 +1,10 @@
 // Public settings only. NEVER put provider API keys or secrets here.
 window.POCKET_SITE = {
+  // Public read-only policy. Owner updates are protected by Supabase RLS.
+  adPolicy: {
+    url: 'https://hypcrygviekhvqbthktj.supabase.co/rest/v1/ph_ad_settings?id=eq.true&select=enabled,banner,popunder,social',
+    key: 'sb_publishable_Tz4TfZjcqoy8-6p7KOUFsA_OYO9qx5q'
+  },
   // Optional popunder: requires separate visitor opt-in as well as ad consent.
   popunderScriptUrl: 'https://abscloud.org/1/f8e269e4589d8040ab08f8af9e90d75c',
   // Optional floating Social Bar, loaded only after its separate opt-in.
