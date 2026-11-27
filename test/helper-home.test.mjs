@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 const dom=new JSDOM(readFileSync('index.html','utf8'),{url:'https://pocket-helper.vercel.app',runScripts:'outside-only'});
 const w=dom.window,d=w.document;
 // First-response HTML must contain tools even before any scripts execute.
-assert.equal(d.querySelectorAll('#tool-orbit-track > .tool-orbit-group:first-child a').length,41);
+assert.equal(d.querySelectorAll('#tool-orbit-track > .tool-orbit-group:first-child a').length,27);
 
 for(const file of ['language-data','language','tool-catalog','helper-home'])w.eval(readFileSync('assets/'+file+'.js','utf8'));
 d.dispatchEvent(new w.Event('DOMContentLoaded'));
@@ -12,7 +12,8 @@ d.dispatchEvent(new w.Event('DOMContentLoaded'));
 assert.equal(d.querySelectorAll('.helper-card').length,12);
 const ribbon=d.querySelector('#tool-orbit-track');
 assert.equal(ribbon.children.length,2);
-assert.equal(ribbon.children[0].querySelectorAll('a').length,41);
+assert.equal(ribbon.querySelectorAll('a[href*="?tool="]').length,0);
+assert.equal(ribbon.children[0].querySelectorAll('a').length,27);
 assert.ok(ribbon.children[1].hasAttribute('inert'));
 assert.equal(ribbon.children[1].getAttribute('aria-hidden'),'true');
 for(const link of ribbon.children[1].querySelectorAll('a'))assert.equal(link.tabIndex,-1);

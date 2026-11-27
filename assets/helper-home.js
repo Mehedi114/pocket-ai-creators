@@ -4,7 +4,7 @@
  const orbit=document.querySelector('#tool-orbit-track'),pause=document.querySelector('#tool-orbit-pause');
  if(orbit&&pause){
   const group=document.createElement('div');group.className='tool-orbit-group';
-  for(const tool of window.POCKET_TOOL_CATALOG||[]){
+  for(const tool of (window.POCKET_TOOL_CATALOG||[]).filter(tool=>!tool.isAI)){
    const link=document.createElement('a');link.className='tool-orbit-item';link.href=tool.href;link.title=tool.name+(tool.isAI?' · AI currently unavailable':'');
    const icon=document.createElement('span');icon.className='tool-orbit-icon '+tool.color;icon.setAttribute('aria-hidden','true');icon.textContent=tool.icon;
    const label=document.createElement('span');label.className='tool-orbit-label';label.textContent=tool.name;
