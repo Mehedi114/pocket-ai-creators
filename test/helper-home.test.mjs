@@ -3,6 +3,9 @@ import {readFileSync,existsSync} from 'node:fs';
 import assert from 'node:assert/strict';
 const dom=new JSDOM(readFileSync('index.html','utf8'),{url:'https://pocket-helper.vercel.app',runScripts:'outside-only'});
 const w=dom.window,d=w.document;
+// First-response HTML must contain tools even before any scripts execute.
+assert.equal(d.querySelectorAll('#tool-orbit-track > .tool-orbit-group:first-child a').length,41);
+
 for(const file of ['language-data','language','tool-catalog','helper-home'])w.eval(readFileSync('assets/'+file+'.js','utf8'));
 d.dispatchEvent(new w.Event('DOMContentLoaded'));
 

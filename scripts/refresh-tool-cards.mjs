@@ -22,6 +22,9 @@ html=html.slice(0,start)+dom.window.document.querySelector('#tool-grid').outerHT
 dom.window.eval(fs.readFileSync('assets/tool-catalog.js','utf8'));
 dom.window.eval(fs.readFileSync('assets/helper-home.js','utf8'));
 const document=dom.window.document;
+// Ship the full ribbon in HTML too: no empty strip while JS loads.
+const ribbon=document.querySelector('.tool-orbit');
+if(ribbon)html=html.replace(/<section class="tool-orbit"[\s\S]*?<\/section>/,ribbon.outerHTML);
 html=html.replace(/<div id="helper-grid" class="helper-grid">[\s\S]*?<\/div><p id="helper-empty"/,document.querySelector('#helper-grid').outerHTML+'<p id="helper-empty"');
 fs.writeFileSync('index.html',html);dom.window.close();
 console.log('Refreshed homepage and directory cards, including crawlable tool-guide links.');
