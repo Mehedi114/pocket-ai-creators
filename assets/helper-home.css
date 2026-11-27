@@ -83,12 +83,12 @@
 @media(min-width:761px) and (max-width:1100px){.helper-home .header{height:auto;min-height:88px;flex-wrap:wrap;gap:16px;padding-block:17px}.helper-home .header nav{flex-wrap:wrap;gap:14px}}
 
 /* Compact welcome: readable, locally hosted handwriting; tools come first on phones. */
-@font-face{font-family:'Courgette';src:url('/assets/fonts/courgette-latin-400-normal.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
-.helper-home .helper-hero h1{font-family:'Courgette','Plus Jakarta Sans',sans-serif;font-weight:400;font-size:clamp(30px,3.4vw,44px);line-height:1.3;letter-spacing:0;max-width:530px;margin:16px 0}
+@font-face{font-family:'Dancing Script';src:url('/assets/fonts/dancing-script-latin-600-normal.woff2') format('woff2');font-weight:600;font-style:normal;font-display:swap}
+.helper-home .helper-hero h1{font-family:'Dancing Script','Plus Jakarta Sans',cursive;font-weight:600;font-size:clamp(30px,3.4vw,44px);line-height:1.3;letter-spacing:0;max-width:530px;margin:16px 0}
 .helper-home:not(:lang(en)) .helper-hero h1{font-family:inherit;letter-spacing:0}
 @media(max-width:700px){
  .helper-home .helper-hero{padding:20px 22px;min-height:0;border-radius:20px}
- .helper-home .helper-hero h1{font-size:clamp(26px,6vw,32px);line-height:1.3;max-width:450px;margin:0;text-wrap:balance}
+ .helper-home .helper-hero h1{font-size:clamp(30px,6.5vw,36px);line-height:1.25;max-width:450px;margin:0;text-wrap:balance}
  .helper-home .helper-hero .welcome-pill,.helper-home .helper-hero p,.helper-home .helper-hero .helper-house{display:none}
  .helper-home .helper-hero .button{margin-top:15px;min-height:44px;padding:11px 18px}
  .helper-home .helper-greeting{padding-block:12px}
